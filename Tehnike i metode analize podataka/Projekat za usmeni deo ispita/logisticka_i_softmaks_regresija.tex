@@ -11,6 +11,7 @@
 \usepackage{amsmath}
 \usepackage{index}
 \usepackage[autostyle]{csquotes}
+\usepackage{amssymb}
 %\usepackage{booktabs}
 
 \makeindex
@@ -59,10 +60,138 @@ Jedna od tehnika koja se koristi za klasifikaciju se naziva \textit{logistička 
 aktivacione funkcije (\enquote {\textit{threshold functions}}) kod neuronskih mreža.
 \chapter{Teorijske osnove}
 
+\section{Kratak pregled potrebnih pojmova iz verovatnoće i statistike}
+Kako bi se pravilno razumela logistička regresija potrebno je pre toga dobro poznavati njene matematičke osnove. U nastavku je data kratka rekapitulacija potrebnih pojmova iz verovatnoće i statistike koji su potrebni za njeno razumevanje. Da bi se lakše svi pojmovi dati u nastavku, razmatrani su samo u okvirima diskretnih slučajnih promenljivih.\\
+
+\subsection{Verovatnoća} 
+Verovatnoća predstavlja odnos između broja ishoda u kome je neki događaj ispunjen i broja svih mogućih ishoda. 
+\begin{equation} \label{eq:1}
+	P = \frac{\textit{broj pozitivnih ishoda događaja}}{\textit{broj svih mogućih ishoda}} 
+	%\caption{}
+ \end{equation}
+ 
+ \textit {Primer 1.} \
+Primer jednog događaja može biti bacanje novčića. Pozitivan ishod je kada se padne glava. Broj svih mogućih ishoda u jednom bacanju je 2 (može se pasti ili pismo ili glava). Kada zamenimo ove vrednosti u prethodnu jednačinu dobijamo: 
+\begin{equation} \label{eq:2}
+	P = \frac{1}{2} = 0.5
+	%\caption{}
+ \end{equation}
+Iz jednačine se vidi da je verovatnoća da u jednom bacanju novčića dobijemo glavu 0.5, odnosno 50 \%.
+
+\subsection{Šansa}
+
+Šansa predstavlja odnos između verovatnoće da se događaj desio i verovatnoće da se događaj nije desio.
+\begin{equation} \label{eq:3}
+	\textit{šansa} = \frac{\textit{P(događaj se desio)}}{\textit{P(događaj se nije desio)}} = \frac{\textit{p}}{\textit{1-p}}
+	%\caption{}
+ \end{equation}
+
+Ako se vratimo na primer 1 bacanja novčića, vidimo da je šansa da se događaj desi, odnosno da se padne glava jednak: 
+\begin{equation} \label{eq:4}
+	\textit{šansa(glava)} = \frac{0.5}{0.5} = 1, tj. \textit{1:1}
+	%\caption{}
+ \end{equation}
+ 
+ Zaključujemo da je šansa da se padne glava ista kao i šansa da se ne padne glava, tj 1 prema 1. 
+ 
+ Odnos šansi se definiše kao:
+ \begin{equation} \label{eq:4}
+	\textit{odnos šansi} = \frac{\textit{šansa\textsubscript{1}}}{\textit{šansa\textsubscript{1}}} 
+	%\caption{}
+ \end{equation}
+ 
+ \textit {Primer 2.} \ Uzmimo dva novčića, jedan koji je fer i drugi za koji se zna da je verovatnoća da se padne glava 0.7. Naći odnos šansi ova dva novčića za događaj kada se padne glava.\\
+ Za fer novčić važi: 
+ \begin{equation}
+	P(glava) = \frac{1}{2} = 0.5 \\
+	%\caption{}
+ \end{equation}
+ \begin{equation}
+	\textit{šansa(glava)\textsubscript{fer}} = \frac{0.5}{0.5} = 1, tj. \textit{1:1}
+	%\caption{}
+ \end{equation}
+ 
+ Za \enquote{nefer} novčić važi: 
+  \begin{equation}
+	P(glava) = 0.7
+	%\caption{}
+ \end{equation}
+ \begin{equation}
+	\textit{šansa(glava)\textsubscript{nefer}} = \frac{0.7}{0.3} = 2.333
+	%\caption{}
+ \end{equation}
+ 
+ Odnos šansi definišemo kao: 
+  \begin{equation}
+	 \textit{odnos šansi} = \frac{\textit{šansa(glava)\textsubscript{nefer}}}{\textit{šansa(glava)\textsubscript{fer}}} = \frac{2.333}{1} = 2.333
+ \end{equation}
+ Vidi se da su šanse da se padne glava na \enquote(nefer) novčiću veća nego da se dobije glava na \enquote(fer) novčiću 2.333 puta. 
+\subsection{Bernulijeva raspodela}
+
 \section{Logistička regresija}
+Nezavisne promenljiva u logističkoj regresiji imaju Bernulijevu raspodelu i imaju nepoznatu verovatnoću \textit{p}. Logistička regresija procenjuje nepoznatu verovatnoću \textit{p} za neku linearnu kombinaciju nezavisnih promenljivih (najčešće su to elementi ulaznog vektora). Zatim na osnovu procenjene verovatnoće \textit{p} daje izlaz 1, ako je verovatnoća veća od 0.5 odnosno 0, ako je verovatnoća manja od 0.5. Procenjena verovatnoća \textit{p} se često obelažava sa \textit{\^{p}}. \\
+Potrebno je naći vezu između nezavisnih promenljivih na ulazu i izlaza tako da izlaz ima Bernulijevu raspodelu. Ta veza se predstavlja \textit{logit} funkcijom. Logit funkcija mapira linearnu kombinaciju nezavisno promenljivih na ulazu na izlaz u domenu od 0 do 1. Logit funkcija predstavlja prirodni logaritam odnosa šansi. \\
+\begin{equation}
+\textit{logit(p)} = ln \left( \frac{\textit{p}}{\textit{1-p}} \right)
+\end{equation}
 
+\begin{wrapfigure}{l}{0.3\textwidth}
+    \centering
+    \includegraphics[width=0.3\textwidth]{logit.png}
+    \caption{Logit funkcija}\label{fig:prettypic}
+\end{wrapfigure}
+
+Logit funkcija je data na slici 2.1. Domen funkcije je interval $ (0, +1) $, i definisana je svuda sem u 0 i 1. Kodomen funkcije je interval 
+$ (-\infty, +\infty) $. Pošto je potrebno da nama argumenti mogu da uzmu bilo koju realnu vrednost, a da izlaz bude u intervalu između 0 i 1, potražićemo inverznu funkciju ovoj. Ta funkcija se naziva \textit{logistička} funkcija. Izvođenje je dato u jednačini 2.12.
+
+\begin{equation}
+\begin{split}
+ln \left( \frac{\textit{p}}{\textit{1-p}} \right) & = \alpha, \alpha \in \rm I\!R\\  
+	\frac{p}{1-p} = e^\alpha\\
+	p = e^\alpha(1-p)\\
+	p + pe^\alpha - e^\alpha = 0\\
+	p(1+e^\alpha) - e^\alpha = 0\\
+	p = \frac{e^\alpha}{1+e^\alpha}
+\end{split}
+\end{equation}
+\begin{equation}
+ logit^{-1}(\alpha) = \frac{e^\alpha}{1+e^\alpha} =\frac{1}{1+e^{- \alpha}}
+\end{equation}
+
+Grafik logističke funkcije dat je na slici 2.2. Vidimo da je sada domen funkcije $ (-\infty, +\infty) $, a kodomen $ (0, +1) $. Ovakva funkcija se naziva \textit{sigmoidnom} funkcijom (takođe postoji naziv i \enquote{S}-kriva) i ona daje broj uvek između 0 i 1. \\
+Kada logistička regresija nađe verovatnoću \textit{\^{p}} kao funkciju ulaznih parametara \textbf{x\textsuperscript{T} $\theta$}, gde je \textbf{x} = {x\textsubscript{1}, x\textsubscript{2}, ..., x\textsubscript{n}} a $\theta$ = {$\theta$\textsubscript{1}, $\theta$\textsubscript{2}, ..., $\theta$\textsubscript{n}}, ona na osnovu te verovatnoće može da da predikciju da li taj podatak pripada pozitivnoj klasi. 
+
+\begin{equation}
+  \textit{\^{y}} =
+  \begin{cases}
+    1, & \textit{\^{p}} > 0.5 \\
+    0, & \textit{\^{p}} < 0.5
+  \end{cases}
+\end{equation}
+
+%\begin{figure}{h}
+%\centering
+%\includegraphics[width=8cm]{logit.png}
+%\caption{Logit funkcija}\label{fig:prettypic}
+%\end{figure}
+
+
+
+\begin{figure}{h}
+\centering
+\includegraphics[width=8cm]{logistic.png}
+\caption{Logistička funkcija}\label{fig:prettypic}
+\end{figure}
 \section{Softmaks regresija}
-
+asfsdfasffdafsdfasdsdfsdfsdfasdfasdfdfsaasdfdfas
+asd
+f
+sdf
+sdf
+asdf
+sdfa
+asdf
+asdfasdfsdfsdfasdfasdfasdfsdfsdf
 \chapter{Implementacija}
 
 \section{Logistička regresija}
