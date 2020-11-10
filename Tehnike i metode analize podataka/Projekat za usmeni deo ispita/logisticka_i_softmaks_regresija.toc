@@ -1,0 +1,17 @@
+\babel@toc {english}{}
+\babel@toc {serbian}{}
+\contentsline {chapter}{\numberline {1}Uvod}{2}{}%
+\contentsline {chapter}{\numberline {2}Teorijske osnove}{4}{}%
+\contentsline {section}{\numberline {2.1}Kratak pregled potrebnih pojmova iz verovatnoće i statistike}{4}{}%
+\contentsline {subsection}{\numberline {2.1.1}Verovatnoća}{4}{}%
+\contentsline {subsection}{\numberline {2.1.2}Šansa}{4}{}%
+\contentsline {subsection}{\numberline {2.1.3}Bernulijeva raspodela}{5}{}%
+\contentsline {section}{\numberline {2.2}Logistička regresija}{5}{}%
+\contentsline {subsection}{\numberline {2.2.1}Procena verovatnoće}{5}{}%
+\contentsline {subsection}{\numberline {2.2.2}Treniranje modela i funkcija gubitka}{7}{}%
+\contentsline {section}{\numberline {2.3}Softmaks regresija}{9}{}%
+\contentsline {chapter}{\numberline {3}Implementacija}{10}{}%
+\contentsline {section}{\numberline {3.1}Logistička regresija}{10}{}%
+\contentsline {section}{\numberline {3.2}Softmaks regresija}{10}{}%
+\contentsline {chapter}{\numberline {4}Analiza rezultata}{11}{}%
+\contentsline {chapter}{\numberline {5}Primena kod neuronskih mreža}{12}{}%

@@ -129,37 +129,52 @@ Ako se vratimo na primer 1 bacanja novčića, vidimo da je šansa da se događaj
 \subsection{Bernulijeva raspodela}
 
 \section{Logistička regresija}
-Nezavisne promenljiva u logističkoj regresiji imaju Bernulijevu raspodelu i imaju nepoznatu verovatnoću \textit{p}. Logistička regresija procenjuje nepoznatu verovatnoću \textit{p} za neku linearnu kombinaciju nezavisnih promenljivih (najčešće su to elementi ulaznog vektora). Zatim na osnovu procenjene verovatnoće \textit{p} daje izlaz 1, ako je verovatnoća veća od 0.5 odnosno 0, ako je verovatnoća manja od 0.5. Procenjena verovatnoća \textit{p} se često obelažava sa \textit{\^{p}}. \\
-Potrebno je naći vezu između nezavisnih promenljivih na ulazu i izlaza tako da izlaz ima Bernulijevu raspodelu. Ta veza se predstavlja \textit{logit} funkcijom. Logit funkcija mapira linearnu kombinaciju nezavisno promenljivih na ulazu na izlaz u domenu od 0 do 1. Logit funkcija predstavlja prirodni logaritam odnosa šansi. \\
+
+Logistička regresija je tehnika koja se koristi za klasifikaciju. Najčešće primenu nalazi u binarnoj klasifikaciji. Pomoću nje se određuje da li neki podatak pripada nekoj klasi ili ne. Da bi se neki skup podataka mogao modelirati logističkom regresijom, on mora imati Bernulijevu raspodelu. U skladu s tim se očekuje da se na izlazu mogu pojaviti samo dve vrednosti. Nula na izlazu znači da podatak ne pripada klasi, dok jedinica znači da podatak pripada klasi. 
+
+\subsection{Procena verovatnoće}
+
+\ Slično linearnoj regresiji, logistička regresija procenjuje nepoznatu verovatnoću linearne kombinacije elemenata ulaznog vektora. Nepoznatu verovatnoću procenjuje logističkom funkcijom. Nakon procene verovatnoće određene linearne kombinacije elemenata ulaznog vektora, mapira tu verovatnoću na 0 ili 1. Ako je procenjena verovatnoće \textit{p} veća od 0.5 daje izlaz 1, odnosno 0, ako je verovatnoća manja od 0.5. Procenjena verovatnoća \textit{p} se često obelažava sa \textit{\^{p}}. \\
+
+\ Skup ulaznih podataka kod logističke regresije, bar u slučaju mašinskog učenja, predstavljen je kao matrica \textbf{x\textsuperscript{T} $\theta$}, gde je \textbf{x} = {x\textsubscript{1}, x\textsubscript{2}, ..., x\textsubscript{n}} a $\theta$ = {$\theta$\textsubscript{1}, $\theta$\textsubscript{2}, ..., $\theta$\textsubscript{n}}, odnosno \textbf{x} je vektor atributa podataka na ulazu, a $\theta$ su odgovarajuće težine svakog od atributa. \\
+
+Potrebno je naći vezu između nezavisnih promenljivih na ulazu i izlaza tako da, kao kod Bernulijeve raspodele, izlaz bude ili 0 ili 1. Ta veza se predstavlja \textit{logit} funkcijom. Logit funkcija mapira linearnu kombinaciju nezavisno promenljivih na ulazu na izlaz . Logit funkcija predstavlja prirodni logaritam odnosa šansi. \\
 \begin{equation}
 \textit{logit(p)} = ln \left( \frac{\textit{p}}{\textit{1-p}} \right)
 \end{equation}
 
-\begin{wrapfigure}{l}{0.3\textwidth}
+\begin{figure}
     \centering
-    \includegraphics[width=0.3\textwidth]{logit.png}
+    \includegraphics[width=0.5\textwidth]{logit.png}
     \caption{Logit funkcija}\label{fig:prettypic}
-\end{wrapfigure}
+\end{figure}
 
 Logit funkcija je data na slici 2.1. Domen funkcije je interval $ (0, +1) $, i definisana je svuda sem u 0 i 1. Kodomen funkcije je interval 
-$ (-\infty, +\infty) $. Pošto je potrebno da nama argumenti mogu da uzmu bilo koju realnu vrednost, a da izlaz bude u intervalu između 0 i 1, potražićemo inverznu funkciju ovoj. Ta funkcija se naziva \textit{logistička} funkcija. Izvođenje je dato u jednačini 2.12.
+$ (-\infty, +\infty) $. Pošto je potrebno da nama argumenti mogu da uzmu bilo koju realnu vrednost, a da izlaz bude u intervalu između 0 i 1, potražićemo inverznu funkciju ovoj. Ta funkcija se naziva \textit{logistička} funkcija. Izvođenje je dato u jednačini 2.12. Finalni oblik logističke funkcije dat je u jednačini 2.13.
 
 \begin{equation}
 \begin{split}
 ln \left( \frac{\textit{p}}{\textit{1-p}} \right) & = \alpha, \alpha \in \rm I\!R\\  
 	\frac{p}{1-p} = e^\alpha\\
 	p = e^\alpha(1-p)\\
-	p + pe^\alpha - e^\alpha = 0\\
-	p(1+e^\alpha) - e^\alpha = 0\\
-	p = \frac{e^\alpha}{1+e^\alpha}
+	p + pe^\alpha - e^\alpha  = 0\\
+	p(1+e^\alpha) - e^\alpha  = 0\\
+	p  = \frac{e^\alpha}{1+e^\alpha}
 \end{split}
 \end{equation}
-\begin{equation}
- logit^{-1}(\alpha) = \frac{e^\alpha}{1+e^\alpha} =\frac{1}{1+e^{- \alpha}}
+
+\begin{equation}\label{eq:hypothesis}
+ logit^{-1}(\alpha) = \sigma(x) = \frac{e^\alpha}{1+e^\alpha} =\frac{1}{1+e^{- \alpha}}
 \end{equation}
 
+\begin{figure}
+    \centering
+    \includegraphics[width=0.5\textwidth]{logistic.png}
+    \caption{Logistička funkcija}\label{fig:prettypic}
+\end{figure}
+
 Grafik logističke funkcije dat je na slici 2.2. Vidimo da je sada domen funkcije $ (-\infty, +\infty) $, a kodomen $ (0, +1) $. Ovakva funkcija se naziva \textit{sigmoidnom} funkcijom (takođe postoji naziv i \enquote{S}-kriva) i ona daje broj uvek između 0 i 1. \\
-Kada logistička regresija nađe verovatnoću \textit{\^{p}} kao funkciju ulaznih parametara \textbf{x\textsuperscript{T} $\theta$}, gde je \textbf{x} = {x\textsubscript{1}, x\textsubscript{2}, ..., x\textsubscript{n}} a $\theta$ = {$\theta$\textsubscript{1}, $\theta$\textsubscript{2}, ..., $\theta$\textsubscript{n}}, ona na osnovu te verovatnoće može da da predikciju da li taj podatak pripada pozitivnoj klasi. 
+Kada logistička regresija nađe verovatnoću \textit{\^{p}} kao funkciju ulaznih parametara , ona na osnovu te verovatnoće može da da predikciju da li taj podatak pripada pozitivnoj klasi. 
 
 \begin{equation}
   \textit{\^{y}} =
@@ -169,29 +184,96 @@ Kada logistička regresija nađe verovatnoću \textit{\^{p}} kao funkciju ulazni
   \end{cases}
 \end{equation}
 
-%\begin{figure}{h}
-%\centering
-%\includegraphics[width=8cm]{logit.png}
-%\caption{Logit funkcija}\label{fig:prettypic}
-%\end{figure}
+\subsection{Treniranje modela i funkcija gubitka}
 
+Cilj treniranja modela je da se podese parametri vektora  $\theta$ tako da model daje visoku verovatnoću za pozitivne instance (y = 1) i nisku verovatnoću za negativne instance (y = 0).  Funkcija gubitka se koristi kada se optimizuju parametri modela. Funkcija gubitka mapira neku realnu vrednost, najčešće je to nekakva razlika predviđene vrednosti i stvarne vrednosti labele neke instance, u realan broj. Taj realan broj predstavlja cenu. Cilj optimizacije modela je da minimizira funkciju gubitka. Početni izgled funkcije gubitka za logističku regresiju je dat u jednačini . 
 
+\begin{equation} \label{eq:f-ja kostanja}
+  \textit{c($\theta$)} =
+  \begin{cases}
+    -ln($\^{p}$), &  y = 1 \\
+    -ln(1 - $\^{p}$), & y = 0
+  \end{cases}
+\end{equation}
 
-\begin{figure}{h}
-\centering
-\includegraphics[width=8cm]{logistic.png}
-\caption{Logistička funkcija}\label{fig:prettypic}
+\begin{figure}
+    \centering
+    \includegraphics[width=0.5\textwidth]{neglog.png}
+    \caption{Grafik funkcije -ln(x)}\label{fig:neglog}
 \end{figure}
+
+Na slici \ref{fig:neglog} je dat grafik funkcije $-ln(x)$. Kada $x \to 0$ , tada $ -ln(x) \to \infty $. Zbog toga će cena biti velika ako model proceni verovatnoću koja teži nuli za pozitivne instance. Takođe biće jako velika ako model proceni verovatnoću blizu jedinice za negativne instance. Ako je x u okolini jedinice, tada će -ln(x)  imati vrednost oko nule. Odnosno ako cena će biti 0 ako je procenjena verovatnoća blizu 0 za negativne instance, ili blizu 1 za pozitivne instance. Funkcija \ref{eq:f-ja kostanja} se može takođe napisati kao:
+\begin{equation} \label{eq:logloss}
+	 \textit{c($\theta$)} = [\ y ln(\hat{p}) + (1 - y)ln(1 - \hat{p}) ]\
+\end{equation}
+Odnosno za sve elemente ulazne matrice dobijamo konačni oblik, dat u jednačini \ref{eq:loglossfinal}. 
+\begin{equation} \label{eq:loglossfinal}
+	 J(\theta) = -  \frac{1}{m} \sum_{i=1}^{m} [\ y^i ln(\hat{p}^i) + (1 - y^i)ln(1 - \hat{p}^i) ]\
+\end{equation}
+
+Konstanta $\frac{1}{m}$ se koristi da bi se našla prosečna vrednost svih grešaka. Jednačina zatvorenog oblika koja optimalne izračunava vrednosti $\theta$ vektora nije poznata. Međutim ova funkcija jeste konveksna, tako da se optimizacionim algoritmom opadajućeg gradijenta može naći globalni minimum funkcije. Za globalni minimum funkcije gubitaka svi parametri vektora $\theta$ imaju optimalne vrednosti, odnosno najmanja je razlika između pravih labela i procenjenih labela. Kada se stigne do globalnog minimuma nije više moguće smanjivati razliku između procenjene i realne vrednosti. \\
+
+U nastavku biće dat postupak dobijanja gradijenta funkcije \ref{eq:loglossfinal}. Biće dat postupak dobijanja parcijalnog izvoda po promenljivoj $\theta \textsubscript{j}$. Gradijent funkcije je specijalan slučaj Jakobijeve matrice, kada je funkcija skalarna. U opštem slučaju gradijent skalarne diferencijabilne funkcije više promenljih je vektorsko polje $ \nabla $ \textit{f} čija vrednost u tački \textit{p} je vektor čije komponente su parcijalni izvodi \textit{f} u \textit{p}. Odnosno za \textit{f}: $ \rm I\!R  ^ n \to \rm I\!R $, njen gradijent je definisan kao: $ \nabla $ \textit{f}: $ \rm I\!R  ^ n \to \rm I\!R ^ n $   je definisan u tački \textit{p} = (x\textsubscript{1}, x\textsubscript{2}, ..., x\textsubscript{n}) u n-to dimenzionalnom prostoru kao vektor:
+
+\begin{equation}
+\begin{split}
+\nabla \textit{f(p)} = 
+\begin{pmatrix} \frac{\partial f}{\partial x \textsubscript{1}} \\\\ \frac{\partial f}{\partial x\textsubscript{2}} \\.\\ .\\.\\ \frac{\partial f}{\partial x\textsubscript{n}} \end{pmatrix}
+\end{split}
+\end{equation}
+
+Gradijent vektor se može protumačiti kao \enquote{pravac i stopa najbržeg rasta} funkcije. Ako je gradijent funkcije u tački \textit{p} nenulti, pravac gradijenta je pravac u kome funkcija najbrže raste od tačke \textit{p}. Intenzitet gradijenta je stopa rasta u tom pravcu. Gradijent je nulti vektor u tački samo ako je to stacionarna tačka, tj. ako je to tačka ekstremuma. Kasnije će biti potrebno da iterativnim metodama smanjujemo vrednost funkcije i za ovo će nam biti potreban negativan gradijent funkcije, umesto pozitivnog.\\
+
+\textbf{Izvod logističke funkcije}\\
+
+U nastavku je dat izvod logističke funkcije $\sigma(x)  = \frac{1}{1+e^{-x}}$.
+
+\begin{equation}
+\begin{split}
+	\frac{\partial (\sigma(x))}{\partial x} & = \frac{0 * (1 + e^{-x}) - (1)*(e^{-x}*(-1))}{({1+e^{-x}})^2} \\
+ 		& = \frac{ e^{-x}}{({1+e^{-x}})^2} = \frac{1-1 + e^{-x}}{({1+e^{-x}})^2}= \frac{ 1 + e^{-x}}{({1+e^{-x}})^2} - \frac{1}{({1+e^{-x}})^2} \\
+ 		& = \frac{1}{1+e^{-x}} * \left( 1 - \frac{1}{1+e^{-x}}\right) = \sigma(x)(1-\sigma(x))
+\end{split}
+\end{equation}
+
+\textbf{Izvod funkcije gubitaka}\\
+
+U nastavku je dat izvod funkcije gubitaka \ref{eq:loglossfinal}.\\\\\\\\
+
+\textbf{Korak 1:}
+
+\begin{equation}
+\begin{split}
+	\frac{\partial (J(\theta))}{\partial \theta\textsubscript{j}} & = -  \frac{1}{m} \left( \sum_{i=1}^{m} \left[\ y^i * \frac{1}{h\textsubscript {$\theta$} (x^i)}  * \frac{\partial (h\textsubscript {$\theta$}(x^i)}{\partial \theta\textsubscript{j}}\right] + \sum_{i=1}^{m} \left[\ (1 - y^i) * \frac{1}{1 - h\textsubscript {$\theta$} (x^i)}    * \frac{\partial (1 -h\textsubscript {$\theta$}(x^i)}{\partial \theta\textsubscript{j}}\right]\ \right) \\
+ 		& = - \frac{1}{m} \left( \sum_{i=1}^{m} \left[\ y^i * \frac{1}{h\textsubscript {$\theta$} (x^i)} * \sigma(z)(1-\sigma(z))  * \frac{\partial (\theta^T x)}{\partial \theta\textsubscript{j}} \right] \right) \\ 
+ 		& - \frac{1}{m} \left( \sum_{i=1}^{m} \left[\ (1 - y^i) * \frac{1}{1 - h\textsubscript {$\theta$} (x^i)} * -\sigma(z)(1-\sigma(z))  * \frac{\partial (\theta^T x)}{\partial \theta\textsubscript{j}}\right]\ \right) \\
+\end{split}
+\end{equation}
+
+\textbf{Korak 2:} 
+
+\begin{equation}
+\begin{split}
+	\frac{\partial (J(\theta))}{\partial \theta\textsubscript{j}} & = - \frac{1}{m} \left( \sum_{i=1}^{m} \left[\ y^i * \frac{1}{h\textsubscript {$\theta$} (x^i)} * \sigma(z)(1-\sigma(z))  * \frac{\partial (\theta^T x)}{\partial \theta\textsubscript{j}} \right] \right) \\ 
+ 		& - \frac{1}{m} \left( \sum_{i=1}^{m} \left[\ (1 - y^i) * \frac{1}{1 - h\textsubscript {$\theta$} (x^i)} * -\sigma(z)(1-\sigma(z))  * \frac{\partial (\theta^T x)}{\partial \theta\textsubscript{j}}\right]\ \right) \\
+ 		& = - \frac{1}{m} \left( \sum_{i=1}^{m} \left[\ y^i * \frac{1}{h\textsubscript {$\theta$} (x^i)} * {h\textsubscript {$\theta$} (x^i)}(1-{h\textsubscript {$\theta$} (x^i)})  * x\textsubscript{j}^i \right] \right) \\ 
+ 		& - \frac{1}{m} \left( \sum_{i=1}^{m} \left[\ (1 - y^i) * \frac{1}{1 - h\textsubscript {$\theta$} (x^i)} * -{h\textsubscript {$\theta$} (x^i)}(1-{h\textsubscript {$\theta$} (x^i)})  * x\textsubscript{j}^i\right]\ \right) \\
+\end{split}
+\end{equation}
+
+\textbf{Korak 3:} 
+
+\begin{equation}
+\begin{split}
+	\frac{\partial (J(\theta))}{\partial \theta\textsubscript{j}} & = \\
+	 & = - \frac{1}{m} \left( \sum_{i=1}^{m} \left[\ y^i * (1-{h\textsubscript {$\theta$} (x^i)})  * x\textsubscript{j}^i  - (1 - y^i)  * {h\textsubscript {$\theta$} (x^i)}  * x\textsubscript{j}^i\right]\ \right) \\
+	  & = - \frac{1}{m} \left( \sum_{i=1}^{m} \left[\ y^i  - y^i * {h\textsubscript {$\theta$} (x^i)} - {h\textsubscript {$\theta$} (x^i)} + y^i  * {h\textsubscript {$\theta$} (x^i)} \right]\ x\textsubscript{j}^i  \right)  \\
+	   & = - \frac{1}{m} \left( \sum_{i=1}^{m} \left[\ y^i  - {h\textsubscript {$\theta$} (x^i)} \right]\ x\textsubscript{j}^i  \right)  \\
+\end{split}
+\end{equation}
+
 \section{Softmaks regresija}
-asfsdfasffdafsdfasdsdfsdfsdfasdfasdfdfsaasdfdfas
-asd
-f
-sdf
-sdf
-asdf
-sdfa
-asdf
-asdfasdfsdfsdfasdfasdfasdfsdfsdf
+
 \chapter{Implementacija}
 
 \section{Logistička regresija}
