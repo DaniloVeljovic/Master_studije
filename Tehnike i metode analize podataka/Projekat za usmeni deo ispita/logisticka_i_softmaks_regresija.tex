@@ -128,6 +128,51 @@ Ako se vratimo na primer 1 bacanja novčića, vidimo da je šansa da se događaj
  Vidi se da su šanse da se padne glava na \enquote(nefer) novčiću veća nego da se dobije glava na \enquote(fer) novčiću 2.333 puta. 
 \subsection{Bernulijeva raspodela}
 
+Bernulijevu raspodelu je najlakše razumeti kroz Bernulijev eksperiment. Bernulijev eksperiment je eksperiment koji se dešava jednom i koji kao rezultat može da ima uspeh (obično obeležen 1) ili neuspeh (obično obeležen 0) tj ima samo dve moguće posledice. Najbolji primer za to je bacanje novčića. Dve moguće posledice su da se padne ili pismo ili glava. Uzmimo da se uspešnim događajem smatra da se pala glava pri bacanju. Odavde sledi da ako se padne pismo, to smatramo neuspehom. Izvedemo eksperiment jednom i ako se padne glava smatramo da se desio uspešan događaj, ako se padne glava smatramo da se desio neuspešan događaj. \\
+
+Definišemo slučajnu promenljivu $X$ = broj uspeha pri bacanju novčića i $X \sim Bernoulli(p)$. Moguće vrednosti koje slučajna promenljiva može da ima (obeležavamo ih sa x) su 0 ili 1. Nula se dobija ako se pri jednom bacanju nije desio uspešan događaj, odnosno 1 ako se desio uspešan događaj.  Obeležavamo to sa x = 0, 1. \\
+Verovatnoća da se desio uspešan događaj je ujedno i jedini parametar distribucije, i obeležava se sa $p$.
+  \begin{equation}
+	 P(X = 1) = p 
+ \end{equation}
+Jedan parametar se prosleđuje jer imamo samo jedan eksperiment. Odavde se može primetiti da je Bernulijeva raspodela specijalan slučaj Binomne raspodele za $n = 1$.\\
+Verovatnoća da se desio neuspešan događaj je:
+\begin{equation}
+	 P(X = 0) = 1-p = q 
+ \end{equation}
+
+Za primer fer bacanja novčića, verovatnoća uspeha je:
+  \begin{equation}
+	 P(X = 1) = 0.5 
+ \end{equation}
+Verovatnoća neuspeha je data u jednačini
+  \begin{equation}
+	 P(X = 0) = 0.5 
+ \end{equation}
+ 
+Očekivana vrednost (srednja vrednost) se za diskretne slučajne promenljive koje imaju Bernulijevu raspodelu dobija kao:  
+   \begin{equation}
+	 \mu = E[X] = \sum_{x\textsubscript{i} \in \mathcal{X}}^{\mathcal{X}} x\textsubscript{i} p(X = x\textsubscript{i}) = 1 * p + 0 * q = p
+ \end{equation}
+
+gde je $X$ slučajna promenljiva, $x$ moguće vrednosti slučajne promenljive i $\mathcal{X}$ je skup vrednosti koje slučajna promenljiva može da ima.\\
+
+Varijansa (mera koja pokazuje meru odstupanja od srednje vrednosti) se dobija kao:
+\begin{equation}
+\begin{split}
+Var[X] = \sigma^2 & =  \\
+& = Cov[X, X] = \\
+& = E[(X - \mu)(X - \mu)] = E[(X - \mu)^2] = \\ 
+& = \sum_{x\textsubscript{i} \in \mathcal{X}}^{\mathcal{X}} (x\textsubscript{i} - \mu)^2 p(X = x\textsubscript{i}) = \\
+& = (0 - p)^2 * q + (1 - p)^2 * p = p^2*q +  q^2*p = pq (p + q) = pq
+ \end{split}
+ \end{equation}
+ 
+Standardna devijacija predstavlja koren iz varijanse:
+\begin{equation}
+\sigma = \sqrt{(Var[X])} = \sqrt{pq}
+\end{equation}
+
 \section{Logistička regresija}
 
 Logistička regresija je tehnika koja se koristi za klasifikaciju. Najčešće primenu nalazi u binarnoj klasifikaciji. Pomoću nje se određuje da li neki podatak pripada nekoj klasi ili ne. Da bi se neki skup podataka mogao modelirati logističkom regresijom, on mora imati Bernulijevu raspodelu. U skladu s tim se očekuje da se na izlazu mogu pojaviti samo dve vrednosti. Nula na izlazu znači da podatak ne pripada klasi, dok jedinica znači da podatak pripada klasi. 
@@ -136,18 +181,12 @@ Logistička regresija je tehnika koja se koristi za klasifikaciju. Najčešće p
 
 \ Slično linearnoj regresiji, logistička regresija procenjuje nepoznatu verovatnoću linearne kombinacije elemenata ulaznog vektora. Nepoznatu verovatnoću procenjuje logističkom funkcijom. Nakon procene verovatnoće određene linearne kombinacije elemenata ulaznog vektora, mapira tu verovatnoću na 0 ili 1. Ako je procenjena verovatnoće \textit{p} veća od 0.5 daje izlaz 1, odnosno 0, ako je verovatnoća manja od 0.5. Procenjena verovatnoća \textit{p} se često obelažava sa \textit{\^{p}}. \\
 
-\ Skup ulaznih podataka kod logističke regresije, bar u slučaju mašinskog učenja, predstavljen je kao matrica \textbf{x\textsuperscript{T} $\theta$}, gde je \textbf{x} = {x\textsubscript{1}, x\textsubscript{2}, ..., x\textsubscript{n}} a $\theta$ = {$\theta$\textsubscript{1}, $\theta$\textsubscript{2}, ..., $\theta$\textsubscript{n}}, odnosno \textbf{x} je vektor atributa podataka na ulazu, a $\theta$ su odgovarajuće težine svakog od atributa. \\
+\ Skup ulaznih podataka kod logističke regresije, bar u slučaju mašinskog učenja, predstavljen je kao matrica \textbf{$\theta^T$x}, gde je \textbf{x} = {x\textsubscript{1}, x\textsubscript{2}, ..., x\textsubscript{n}} a $\theta$ = {$\theta$\textsubscript{1}, $\theta$\textsubscript{2}, ..., $\theta$\textsubscript{n}}, odnosno \textbf{x} je vektor atributa podataka na ulazu, a $\theta$ su odgovarajuće težine svakog od atributa. \\
 
-Potrebno je naći vezu između nezavisnih promenljivih na ulazu i izlaza tako da, kao kod Bernulijeve raspodele, izlaz bude ili 0 ili 1. Ta veza se predstavlja \textit{logit} funkcijom. Logit funkcija mapira linearnu kombinaciju nezavisno promenljivih na ulazu na izlaz . Logit funkcija predstavlja prirodni logaritam odnosa šansi. \\
+Potrebno je naći vezu između nezavisnih promenljivih na ulazu i izlaza tako da, kao kod Bernulijeve raspodele, izlaz bude ili 0 ili 1. Ta veza se predstavlja \textit{logit} funkcijom. Logit funkcija mapira linearnu kombinaciju nezavisno promenljivih na ulazu na izlaz . Logit funkcija predstavlja prirodni logaritam šanse. Logit funkcija je podobna jer ima samo jedan ulazni parametar koji ce kasnije biti verovatnoća p \\
 \begin{equation}
 \textit{logit(p)} = ln \left( \frac{\textit{p}}{\textit{1-p}} \right)
 \end{equation}
-
-\begin{figure}
-    \centering
-    \includegraphics[width=0.5\textwidth]{logit.png}
-    \caption{Logit funkcija}\label{fig:prettypic}
-\end{figure}
 
 Logit funkcija je data na slici 2.1. Domen funkcije je interval $ (0, +1) $, i definisana je svuda sem u 0 i 1. Kodomen funkcije je interval 
 $ (-\infty, +\infty) $. Pošto je potrebno da nama argumenti mogu da uzmu bilo koju realnu vrednost, a da izlaz bude u intervalu između 0 i 1, potražićemo inverznu funkciju ovoj. Ta funkcija se naziva \textit{logistička} funkcija. Izvođenje je dato u jednačini 2.12. Finalni oblik logističke funkcije dat je u jednačini 2.13.
@@ -164,9 +203,13 @@ ln \left( \frac{\textit{p}}{\textit{1-p}} \right) & = \alpha, \alpha \in \rm I\!
 \end{equation}
 
 \begin{equation}\label{eq:hypothesis}
- logit^{-1}(\alpha) = \sigma(x) = \frac{e^\alpha}{1+e^\alpha} =\frac{1}{1+e^{- \alpha}}
+ logit^{-1}(\alpha) = h\textsubscript{$\theta$}(\alpha) = \sigma(\alpha) = \frac{e^\alpha}{1+e^\alpha} =\frac{1}{1+e^{- \alpha}}
 \end{equation}
-
+\begin{figure}
+    \centering
+    \includegraphics[width=0.5\textwidth]{logit.png}
+    \caption{Logit funkcija}\label{fig:prettypic}
+\end{figure}
 \begin{figure}
     \centering
     \includegraphics[width=0.5\textwidth]{logistic.png}
@@ -238,9 +281,9 @@ U nastavku je dat izvod logističke funkcije $\sigma(x)  = \frac{1}{1+e^{-x}}$.
 
 \textbf{Izvod funkcije gubitaka}\\
 
-U nastavku je dat izvod funkcije gubitaka \ref{eq:loglossfinal}.\\\\\\\\
+U nastavku je dat izvod funkcije gubitaka \ref{eq:loglossfinal}.\\
 
-\textbf{Korak 1:}
+\textbf{Korak 1: Nalaženje diferencijala složene funkcije:}
 
 \begin{equation}
 \begin{split}
@@ -250,7 +293,7 @@ U nastavku je dat izvod funkcije gubitaka \ref{eq:loglossfinal}.\\\\\\\\
 \end{split}
 \end{equation}
 
-\textbf{Korak 2:} 
+\textbf{Korak 2: Zamena sigmoidne funkcije i nalaženje diferencijala argumenta:} 
 
 \begin{equation}
 \begin{split}
@@ -260,8 +303,9 @@ U nastavku je dat izvod funkcije gubitaka \ref{eq:loglossfinal}.\\\\\\\\
  		& - \frac{1}{m} \left( \sum_{i=1}^{m} \left[\ (1 - y^i) * \frac{1}{1 - h\textsubscript {$\theta$} (x^i)} * -{h\textsubscript {$\theta$} (x^i)}(1-{h\textsubscript {$\theta$} (x^i)})  * x\textsubscript{j}^i\right]\ \right) \\
 \end{split}
 \end{equation}
+Napomena: z = \textbf{$\theta^T$x} \\
 
-\textbf{Korak 3:} 
+\textbf{Korak 3: Uprošćavanje množenjem:} 
 
 \begin{equation}
 \begin{split}
