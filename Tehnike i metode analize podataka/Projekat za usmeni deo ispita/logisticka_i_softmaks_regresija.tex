@@ -12,6 +12,7 @@
 \usepackage{index}
 \usepackage[autostyle]{csquotes}
 \usepackage{amssymb}
+\DeclareMathOperator*{\argmax}{argmax}
 %\usepackage{booktabs}
 
 \makeindex
@@ -318,6 +319,39 @@ Napomena: z = \textbf{$\theta^T$x} \\
 
 \section{Softmaks regresija}
 
+Logistička regresija se može generalizovati tako da podržava višeklasnu klasifikaciju, bez potrebe da se trenira i kombinuje više binarnih klasifikatora. Ovakav tip regresije se naziva \textit{softmax regresija}, ili \textit{multinomna logistička regresija}. \\
+
+Kada se softmaks regresiji prosledi instanca \textbf{x}, prvo se za tu instancu izračunava vrednost $s$\textsubscript{k}(\textit{x}) za svaku klasu $k$. Zatim se procenjuje verovatnoća za svaku klasu primenom \textit{softmaks funkcije} nad vrednostima $s$\textsubscript{k}(\textit{x}). Jednačina za izračunavanje vrednosti $s$\textsubscript{k}(\textit{x}) je data na slici \ref{eq:skscore}
+\begin{equation} \label{eq:skscore}
+	 s\textsubscript{k}(\textit{x}) =  \textbf{x}^T\theta^{(k)}
+\end{equation}
+
+U jednačini se može primetiti da svaka klasa ima svoj poseban vektorski parametar $\theta^{(k)}$. Svi ovi vektori se pamte kao redovi u matrici parametara $\Theta.$. Kada se izračuna vrednost za instancu \textbf{x} može se proceniti verovatnoća $\hat{p}\textsubscript{k}$ da instanca pripada klasi k. To se radi tako što se vrednosti $s$\textsubscript{k}(\textit{x}) prosleđuju kao parametri softmaks funkciji (slika \ref{eq:softmax}). Softmaks funkcija računa $e^{s\textsubscript{k}(\textit{x})}$ za svaku vrednost $s$\textsubscript{k}(\textit{x}) koju jedna instanca ima. Zatim svaku od vrednosti normalizuje. Ako imamo \textit{k} klasa po kojima vršimo klasifikaciju, rezultat koji se dobija je \textit{k} verovatnoća, po jedna za svaku klasu kojoj se vrši klasifikacija, za svaku instancu u skupu podataka. 
+
+\begin{equation} \label{eq:softmax}
+	\hat{p}\textsubscript{k} = \sigma(\textbf{s(x)})\textsubscript{k} =  \frac{e^{s\textsubscript{k}(\textit{x})}}{\sum_{j = 1}^{K} s\textsubscript{j}(\textit{x})}
+\end{equation}
+Oznake u jednačini \ref{eq:softmax}: K broj klasa po kojima se vrši klasifikacija, \textbf{s(x)} je vektor koji sadrži softmaks rezultate za svaku klasu, a $\sigma(\textbf{s(x)})\textsubscript{k}$ je procenjena verovatnoća da ta instanca \textbf{x} pripada klasi \textit{k}\\
+
+Kao kod logističke regresije, i softmaks regresija kao izlaz će imati oznaku klase koja ima najveću verovatnoću za tu instancu kao što se vidi u jednačini {eq:softmaxprediction}.
+\begin{equation} \label{eq:softmaxprediction}
+	\hat{y}\textsubscript{k} = \argmax_k \sigma(\textbf{s(x)})\textsubscript{k} = \argmax_k s\textsubscript{k}(\textbf{x}) = \argmax_k ((\theta^{(k)})^T)\textbf{x})
+\end{equation}
+Operator $argmax$ vraća vrednost promenljive koja maksimizuje funkciju. U ovoj jednačini vraća vrednost $k$ koja maksimizuje procenjenu verovatnoću $\sigma(\textbf{s(x)})\textsubscript{k}$. Softmaks regresija vraća jednu klasu po instanci i stoga bi je trebalo koristi samo sa klasama koje su međusobno isključive. \\
+
+Cilj treniranja modela je da on daje visoku verovatnoću za klase kojima trening instance pripadaju i nisku verovatnoću za sve ostale klase. Minimizacija funkcije gubitaka (koja se još naziva i \textit{cross-entropy}) će dati takav rezultat. Ona \enquote{kažnjava} model kada da nisku verovatnoću za klasu kojoj trening instanca pripada. Cross-entropy funkcija se često koristi kada se meri koliko dobro skup procenjenih verovatnoća odgovara skupu klasa kojima instance stvarno pripadaju. 
+\begin{equation}\label{eq:crossentropy}
+	J(\Theta) = - \frac{1}{m}\sum_{i = 1}^{m}\sum_{k = 1}^{K} y\textsubscript{k}^{(i)} ln(\hat{p}\textsubscript{k}^{(i)})
+\end{equation}
+Oznake u jednačini\ref{eq:crossentropy}: $y\textsubscript{k}^{(i)}$ je verovatnoća da li i-ta instanca pripada klasi $k$. 
+U praksi generalno može biti jednaka 1 ili 0 jer instanca može samo da pripada ili ne pripada, nema delimičnog pripadanja. Za K = 2 (kada postoje samo dve klase), ova funkcija gubitka je jednaka funkciji gubitka kod logističke regresije. \\
+
+Gradijent vektor ove funkcije gubitaka po $\theta^{(k)}$ je dat u jednačini \ref{eq:gradient}. 
+\begin{equation} \label{eq:gradient}
+	\nabla\textsubscript{$\theta^{k}$}   J(\Theta) = \frac{1}{m}\sum_{i = 1}^{m} (\hat{p}\textsubscript{k}^{(i)} - y\textsubscript{k}^{(i)})\textbf{x}^{i}
+\end{equation}
+
+Sad se može izračunati gradijent vektor za svaku klasu, onda da se iskoristi metoda opdajućeg gradijenta da se nađu parametri u matrixi $\Theta$ koji minimizuju funkciju gubitaka. 
 \chapter{Implementacija}
 
 \section{Logistička regresija}
