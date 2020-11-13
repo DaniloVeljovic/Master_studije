@@ -13,6 +13,7 @@
 \usepackage[autostyle]{csquotes}
 \usepackage{amssymb}
 \DeclareMathOperator*{\argmax}{argmax}
+\usepackage{listings}
 %\usepackage{booktabs}
 
 \makeindex
@@ -316,7 +317,20 @@ Napomena: z = \textbf{$\theta^T$x} \\
 	   & = - \frac{1}{m} \left( \sum_{i=1}^{m} \left[\ y^i  - {h\textsubscript {$\theta$} (x^i)} \right]\ x\textsubscript{j}^i  \right)  \\
 \end{split}
 \end{equation}
+\textbf{Korak 4: Dobijanje matričnog oblika radi lakšeg izračunavanja:}
 
+\begin{equation}
+\frac{\partial (J(\theta))}{\partial \theta\textsubscript{j}}  = \frac{1}{m} X^T [ h\textsubscript {$\theta$} - y ]
+\end{equation} 
+
+\textbf{Korak 5: Formiranje gradijenta:}
+\begin{equation}
+\begin{split}
+\nabla \textit{f(p)} = 
+\begin{pmatrix} \frac{\partial f}{\partial x \textsubscript{1}} \\\\ \frac{\partial f}{\partial x\textsubscript{2}} \\.\\ .\\.\\ \frac{\partial f}{\partial x\textsubscript{n}} \end{pmatrix}
+= \frac{1}{m} x^T [ h\textsubscript {$\theta$} - y ]
+\end{split}
+\end{equation}
 \section{Softmaks regresija}
 
 Logistička regresija se može generalizovati tako da podržava višeklasnu klasifikaciju, bez potrebe da se trenira i kombinuje više binarnih klasifikatora. Ovakav tip regresije se naziva \textit{softmax regresija}, ili \textit{multinomna logistička regresija}. \\
@@ -356,9 +370,50 @@ Sad se može izračunati gradijent vektor za svaku klasu, onda da se iskoristi m
 
 \section{Logistička regresija}
 
+U nastavku biće data kompletna implementacija logističke regresije u programskom jeziku Python. Uz programski jezik Python, korišćena je i biblioteka NumPy za numerička izračunavanja i Pandas biblioteka za lakšu manipulaciju podacima. Python je slabo tipiziran jezik koji ima dinamičku proveru tipova i podršku za objektno orijentisanu paradigmu. Uz to takođe ima veliku podršku za biblioteke otvorenog koda. Sama implementacija je rađena u Jupyter svesci.\\ 
+
+\subsection{Opis klase}
+
+Funkcije logističke regresije su enkapsulirane u klasi \texttt{LogisticRegression}. Klasa izlaže konstruktor u kome se prosleđuje broj interacija i parametar $\alpha$ koji predstavlja brzinu učenja (engl. \textit{learning rate}). Brzina učenja je parametar u funkciji optimizacije (u ovom slučaju algoritma opadajućeg gradijenta) koji govori koliko brzo trenutno rešenje konvergira minimumu funkcije. Najčešće se za taj parametar bira vrednost $10^{-3}$ pa se koriguje u zavisnosti od rezultata. Na slici {fig:logconst} je dat prikaz konstruktora klase \texttt{LogisticRegression}.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\textwidth]{logistic_constructor.png}
+    \caption{Konstruktor klase \texttt{LogisticRegression}}\label{fig:logconst}
+\end{figure}
+
+Funkcije koje enkapsulira klasa su sigmoidna funkcija (datu u jednačini \ref{eq:hypothesis}) koja daje predviđenu verovatnoću da instanca pripada pozitivnoj klasi i funkcija gubitaka koja smanjuje razliku između predviđene klase i klase kojoj trening instanca zaista pripada (datu u jednačini \ref{eq:loglossfinal}). Delovi koda koji prikazuju implementaciju dati su na slici \ref{fig:logsigloss}.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\textwidth]{logistic_sigmoid_loss.png}
+    \caption{Implementacija sigmoidne funkcije i funkcije gubitaka klase \texttt{LogisticRegression}}\label{fig:logsigloss}
+\end{figure}
+
+Jedna od funkcija koja je izložena spoljnoj upotrebi je funkcija \texttt{fit}. Ova funkcija je kreirana po ugledu na funkcije iz biblioteke otvorenog koda \texttt{scikit-learn}. Ona služi za treniranje modela. Kao parametre ima matricu podataka obeleženu sa \textbf{X}, gde jedna vrsta matrice predstavlja jednu instancu, i vektor \textbf{y} koji sadrži labele za svaku instancu. Funkcija u okviru treniranja modela vrši predviđanja, nalazi gradijent funkcije u svakoj tački i onda optimizuje parametre $\theta$. To ponavlja određeni broj iteracija. Što je broj iteracija veći to 
+će predviđanja biti preciznija, jer se će funkcija u svakoj iteraciji kretati bliže globalnom minimumu. Implementacija funkcije koja trenira model je data na slici \ref{fig:logfit}.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\textwidth]{logistic_fit.png}
+    \caption{Implementacija funkcije za treniranje modela klase \texttt{LogisticRegression}}\label{fig:logfit}
+\end{figure}
+
+Nakon treniranja modela potrebno je da model može da vrši predviđanja za instance čije su labele nepoznate. Ovo se postiže funkcijama \texttt{predict prob} i \texttt{predict}. Obe klase imaju \texttt{public} modifikator pristupa što znači da bilo ko može da im pristupi. Funkcija \texttt{predict prob} uzima jednu instancu (vektor) ili više instanci (matricu)  i vraća predviđenu verovatnoću da instanca/instance pripada/ju pozitivnoj klasi. Funkcija \texttt{predict} takođe uzima kao parametar jednu instancu (vektor) ili više instanci (matricu) i vraća klasu koju je model predvideo da ta instanca/e pripada/ju.  Implementacija funkcija \texttt{predict prob} i \texttt{predict} je data na slici \ref{fig:logpred}.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\textwidth]{logistic_predict.png}
+    \caption{Implementacije funkcija \texttt{predict prob} i \texttt{predict} klase \texttt{LogisticRegression}}\label{fig:logpred}
+\end{figure}
+
+\subsection{Primena i analiza rezultata}
+
 \section{Softmaks regresija}
 
-\chapter{Analiza rezultata}
+\subsection{Opis klase}
+
+\subsection{Primena i analiza rezultata}
 
 \chapter{Primena kod neuronskih mreža}
 
