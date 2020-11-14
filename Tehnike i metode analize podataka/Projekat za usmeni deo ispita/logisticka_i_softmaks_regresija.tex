@@ -408,10 +408,98 @@ Nakon treniranja modela potrebno je da model može da vrši predviđanja za inst
 \end{figure}
 
 \subsection{Primena i analiza rezultata}
+ 
+U ovom delu ćemo implementirati projekat u kome ćemo klasu \texttt{LogisticRegression} za predikciju podataka. Glavni koraci pri izradi jednog projekta su: 
+\begin{enumerate}
+\item Pribavljanje podataka
+\item Vizualizacija i upoznavanje podataka
+\item Priprema podataka za obradu
+\item Odabir modela i treniranje
+\item Evaluacija modela
+\item Testiranje modela
+\end{enumerate}
+
+\textbf{Pribavljanje i vizualizacija podataka}\\
+ 
+Najčešći izvori podataka za analizu su relacione baze podataka. Vrlo često je potrebno da se podaci koji se nalaze u različitim tabelama denormalizuju i onda povežu u jednu logičku tabelu. U ovom projektu neće biti korišćeni podaci koji se nalaze u bazi podataka, već podaci u .csv formatu. Skup podataka koji će se koristiti je skup podataka o biljci perunici. Ovaj skup podataka od atributa sadrži dužinu i širinu čašičnog listića, kao i dužinu i širinu latice ove biljke. Uz ova četiri atributa takođe sadrži i informacije o vrsti perunike, odnosno labelu klase kojoj instanca pripada. Tri moguće klase, odnosno vrste perunike, kojima instance mogu da pripadaju su: \textit{Iris setosa, Iris virginica i Iris versicolor}. Skup podataka sadrži po 50 instanci svake klase. \\
+
+Ovaj dataset je sastavni deo biblioteke scikit-learn i kod za njegovo učitavanje je dat na slici \ref{fig:irisload}.
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\textwidth]{iris_load.png}
+    \caption{Učitavanje skupa podataka za perunike}\label{fig:irisload}
+\end{figure}
+ Na slici se vidi da je matrica \textbf{X} dimenzija 150x4, odnosno 150 instanci sa po četiri atributa. Vektor y sadrži 150 labela koje su oznake klase kojoj svaka instanca pripada.\\ 
+ 
+Kako bi se stekao nekakav intuitivni osećaj za podatke, moguće je da se tabelarno prikaže prvih 5 elemenata skupa podataka. Ovo se u Pythonu postiže naredbom \texttt{head()}. Efekti naredbe su dati na slici \ref{fig:irishead}. Sa slike se može primetiti da su svi podaci mereni u cm.   
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\textwidth]{iris_head.png}
+    \caption{Prvih 5 elemenata skupa podataka}\label{fig:irishead}
+\end{figure}
+
+Naredbom \texttt{describe()} moguće je dobiti statističke podatke o skupu podataka. Funkcija vraća tabelu gde svaka kolona odgovara jednom atributu. U redovima tabele se nalaze informacije o broju instanci koje imaju ovaj podatak (gde je ova vrednost različita od null), o matematičkom očekivanju za taj atribut, o standardnoj devijaciji, o minimalnom i maksimalnom elementu skupa itd. Rezultat naredbe vidljiv je na slici \ref{fig:irisdescribe}.
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\textwidth]{iris_describe.png}
+    \caption{Primena \texttt{describe} metode nad skupom podataka}\label{fig:irisdescribe}
+\end{figure}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\textwidth]{iris_3_scatter.png}
+    \caption{Vizuelizacija podataka za skup podataka o perunici}\label{fig:irisscatter}
+\end{figure}
+
+Vizualizacija podataka je jako važan korak pri upoznavanju skupa podataka. U Pythonu ovo se postiže funkcijama iz biblioteke otvorenog koda \textit{matplotlib}. Na grafiku na slici \ref{fig:irisscatter} na x osi imamo predstavljenu dužinu čašičnog listića, a na y osi širinu čašičnog listića. Instance su dobile boju na osnovu klase kojoj pripadaju. Vidimo da ako gledamo samo na osnovu ova dva atributa, klasa 1 čini jednu grupu, a klase 2 i 3 drugu grupu. Drugim rečima klase 1 i klase 2 i 3 su linearno razdvojive. Ovo je dobar problem za binarnu klasifikaciju i samim tim testiranje malopre implementirane klase za logističku regresiju. Model će biti treniran da prepoznaje da li instance pripadaju klasi 1 ili ne pripadaju. 
+
+
+\textbf{Priprema podataka i treniranje modela}\\
+Ovde treba ukljuciiti informacije o tome kako si izdvojio sve podatke da nije bilo potrebno da se bilo sta skalira i da nema vrednosti koje su suvisne. Informacije kako si izdvojio samo dva atributa, kako si istrenirao model. Treba i da podelis skup na test skup i trening skup podataka. \\
+
+\textbf{Evaluacija modela}\\
+Sve metrike za binarne klasifikatore od matrice konfuzije, preciznosti, odziva, f mere sve. Da ne treba ovde i cross validacija?????? \\ 
+
+\textbf{Testiranje modela}\\
+Primeni podatke nad test skupom i vidi koliko se razlikuju predvidjene vrednosti od vrednosti koje su prave. \\
 
 \section{Softmaks regresija}
 
+U nastavku biće data kompletna implementacija softmaks regresije u programskom jeziku Python. Regresija je implementirana kao klasa \texttt{Softmax Regression}. Metode koje instanca ove klase može javno pozivati su metoda \texttt{fit} i \texttt{predict}. Metoda \texttt{fit} omogućava treniranje modela softmaks regresije. Metoda \texttt{predict} omogućava da se vrši predikcija za podatke čija je klasa nepoznata. Skup podataka koji je korišćen za testiranje modela je takođe \textit{iris} skup podataka. U ovom slučaju smo umesto dve klase koristili sve tri, tako da i za predikciju imamo sve tri vrste klasa.
+
 \subsection{Opis klase}
+
+Funkcionalnosti softmaks regresije su enkapsulirane u klasi \texttt{SoftmaxRegression}. Klasa izlaže konstruktor u kome se prosleđuje broj interacija i parametar $\alpha$ koji predstavlja brzinu učenja (engl. \textit{learning rate}). Uz ova dva parametra prosleđuje se i broj klasa koji postoji u skupu podataka, kao parametar \textit{K}. Na slici \ref{fig:softmaxconst} je dat prikaz konstruktora klase \texttt{SoftmaxRegression}.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\textwidth]{softmax_constructor.png}
+    \caption{Konstruktor klase \texttt{SoftmaxRegression}}\label{fig:softmaxconst}
+\end{figure}
+
+Funkcije koje enkapsulira klasa su softmaks funkcija (datu u jednačini \ref{eq:softmax}) koja daje predviđenu verovatnoću da instanca pripada pozitivnoj klasi i funkcija gubitaka koja smanjuje razliku između predviđene klase i klase kojoj trening instanca zaista pripada (datu u jednačini \ref{eq:crossentropy}). Delovi koda koji prikazuju implementaciju dati su na slici \ref{fig:softmaxpred}.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.6\textwidth]{softmax_predict.png}
+    \caption{Implementacija softmaks funkcije i funkcije gubitaka klase \texttt{SoftmaxRegression}}\label{fig:softmaxpred}
+\end{figure}
+
+Jedna od funkcija koja je izložena spoljnoj upotrebi je funkcija \texttt{fit}. Ona služi za treniranje modela. Kao parametre ima matricu podataka obeleženu sa \textbf{X}, gde jedna vrsta matrice predstavlja jednu instancu, i vektor \textbf{y} koji sadrži labele za svaku instancu. Funkcija u okviru treniranja modela vrši predviđanja, nalazi gradijent funkcije u svakoj tački i onda optimizuje parametre $\theta$. To ponavlja određeni broj iteracija. Što je broj iteracija veći to će predviđanja biti preciznija, jer se će funkcija u svakoj iteraciji kretati bliže globalnom minimumu. Implementacija funkcije koja trenira model je data na slici \ref{fig:softfit}.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\textwidth]{softfit.png}
+    \caption{Implementacija funkcije za treniranje modela klase \texttt{SoftmaxRegression}}\label{fig:softfit}
+\end{figure}
+
+Nakon treniranja modela potrebno je da model može da vrši predviđanja za instance čije su labele nepoznate. Ovo se postiže funkcijama \texttt{predict prob} i \texttt{predict}. Obe klase imaju \texttt{public} modifikator pristupa što znači da bilo ko može da im pristupi. Funkcija \texttt{predict prob} uzima jednu instancu (vektor) ili više instanci (matricu)  i vraća predviđenu verovatnoću da instanca/instance pripada/ju pozitivnoj klasi. Funkcija \texttt{predict} takođe uzima kao parametar jednu instancu (vektor) ili više instanci (matricu) i vraća klasu koju je model predvideo da ta instanca/e pripada/ju.  Implementacija funkcija \texttt{predict prob} i \texttt{predict} je data na slici \ref{fig:softpred}.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\textwidth]{softpred.png}
+    \caption{Implementacije funkcija \texttt{predict prob} i \texttt{predict} klase \texttt{SoftmaxRegression}}\label{fig:softpred}
+\end{figure}
 
 \subsection{Primena i analiza rezultata}
 
