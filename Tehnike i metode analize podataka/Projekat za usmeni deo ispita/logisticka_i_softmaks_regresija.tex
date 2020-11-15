@@ -451,14 +451,100 @@ Naredbom \texttt{describe()} moguće je dobiti statističke podatke o skupu poda
     \caption{Vizuelizacija podataka za skup podataka o perunici}\label{fig:irisscatter}
 \end{figure}
 
-Vizualizacija podataka je jako važan korak pri upoznavanju skupa podataka. U Pythonu ovo se postiže funkcijama iz biblioteke otvorenog koda \textit{matplotlib}. Na grafiku na slici \ref{fig:irisscatter} na x osi imamo predstavljenu dužinu čašičnog listića, a na y osi širinu čašičnog listića. Instance su dobile boju na osnovu klase kojoj pripadaju. Vidimo da ako gledamo samo na osnovu ova dva atributa, klasa 1 čini jednu grupu, a klase 2 i 3 drugu grupu. Drugim rečima klase 1 i klase 2 i 3 su linearno razdvojive. Ovo je dobar problem za binarnu klasifikaciju i samim tim testiranje malopre implementirane klase za logističku regresiju. Model će biti treniran da prepoznaje da li instance pripadaju klasi 1 ili ne pripadaju. 
-
+Vizualizacija podataka je jako važan korak pri upoznavanju skupa podataka. U Pythonu ovo se postiže funkcijama iz biblioteke otvorenog koda \textit{matplotlib}. Na grafiku na slici \ref{fig:irisscatter} na x osi imamo predstavljenu dužinu čašičnog listića, a na y osi širinu čašičnog listića. Instance su dobile boju na osnovu klase kojoj pripadaju. Vidimo da ako gledamo samo na osnovu ova dva atributa, klasa 1 čini jednu grupu, a klase 2 i 3 drugu grupu. Drugim rečima klase 1 i klase 2 i 3 su linearno razdvojive. Ovo je dobar problem za binarnu klasifikaciju i samim tim testiranje malopre implementirane klase za logističku regresiju. Model će biti treniran da prepoznaje da li instance pripadaju klasi 1 ili ne pripadaju. \\
 
 \textbf{Priprema podataka i treniranje modela}\\
-Ovde treba ukljuciiti informacije o tome kako si izdvojio sve podatke da nije bilo potrebno da se bilo sta skalira i da nema vrednosti koje su suvisne. Informacije kako si izdvojio samo dva atributa, kako si istrenirao model. Treba i da podelis skup na test skup i trening skup podataka. \\
+
+Pre nego što je neki skup podataka spreman da se njime trenira, i testira model, potrebno je podatke skalirati u neki opseg i rešiti se null vrednosti koje postoje u podacima. Skup podataka koji koristimo u ovom primeru je već prečišćen, odnosno skup podataka nema null vrednosti i sve su vrednosti otprilike istog reda veličine pa ih nema potrebe dalje skalirati. Treniranje modela je proces u kome se modelu, prosleđuje jedna po jedna ili čitava grupa instanci nekog skupa podataka sa labelama koje su oznake kojoj klasi pripadaju ili koju kontinualnu vrednost imaju kao labelu. Model ima funkciju kojom vrši predikciju labele za neku instancu. Zatim upoređuje labelu koju je predvideo sa labelom koja odgovara tom modelu. Ako se labele ne poklapaju model nekom metodom optimizacije optimizuje svoje parametre da bolje odgovaraju skupu podataka. Krajnji cilj je minimum funkcije koja se optimizuje tj da razlika između predviđene i stvarne vrednosti za labelu za sve instance bude minimalna. Pošto će isti skup podataka biti korišćen i za treniranje i za testiranje, potrebno ga je podeliti u test i trening skup podataka. Trening  i test skup podataka se deli u razmeri od 80:20. Trening skup podataka se koristi za treniranje modela, a test skup podataka za testiranje performansi modela. Funkcija koja će podeliti skup podatka u trening i test je data na slici \ref{fig:irissplit}.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\textwidth]{iris_split_dataset.png}
+    \caption{Podela podataka na trening i test skup}\label{fig:irissplit}
+\end{figure}
+
+Treniranje modela se vrši pozivanjem \texttt{fit()} funkcije instance klase \texttt{LogisticRegression}. Poziv funkcije za treniranje modela je dat na slici \ref{fig:logisticfitcall}. Funkciji se prosleduju vrednosti atributa u trening klasi i odgovarajuće labele. 
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\textwidth]{logistic_fitcall.png}
+    \caption{Podela podataka na trening i test skup}\label{fig:logisticfitcall}
+\end{figure}
 
 \textbf{Evaluacija modela}\\
-Sve metrike za binarne klasifikatore od matrice konfuzije, preciznosti, odziva, f mere sve. Da ne treba ovde i cross validacija?????? \\ 
+
+Nakon treniranja modela potrebno je videti kakve performanse daje. Kod klasifikacionih modela glavne performanse mere su \textit{preciznost}, \textit{odziv}, \textit{matrica konfuzije}, \textit{f-mera} i \textit{ROC kriva}. U nastavku biće dat pregled svake od mera. \\
+
+\textbf{Tačnost}\\
+
+Tačnost je mera koja pokazuje koliko je ukupno istanci, od svih mogućih, klasifikator ispravno klasifikovao. To znači koliko je instanci pravilno raspodelio u pozitivnu i negativnu klasu u slučaju ovog binarnog klasifikatora. Da bi se izbegla pristrasnost klasifikatora pri evaluaciji modela, za merenje preciznosti se najčešće koristi \textit{k-fold cross validation} metoda. Trening skup podataka, najčešće se on korisiti za validaciju, ova metoda deli na \textit{k} skupova. Pri evaluaciji modela ovom metodom, treniranje modela se radi k puta. U svakoj iteraciji jedan od k skupova, (svaki put različiti, tako da na kraju treniranja svi dođu na red) se uzima da bude validacioni skup. Ostalih k-1 su trening skupovi. Kada se model istrenira, na validacionom skupu se proverava tačnost klasifikatora. Implementacija i primena k-fold cross validation funkcije je data na slici \ref{fig:logisticprecission}.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\textwidth]{logistic_precision.png}
+    \caption{K fold cross validation funkcija u evaluaciji modela}\label{fig:logisticprecission}
+\end{figure}
+
+U ovom slučaju se trening skup deli na tri dela i rezultati tačnosti su redom 1.0, 1.0 i 0.97, što je jako dobar rezultat.\\
+
+\textbf{Matrica konfuzije}\\
+
+Mnogo temeljniji način za evaluaciju performansi klasifikatora je matrica konfuzije. Matrica konfuzije nam govori koliko je instanci jedne klase klasifikovano kao instanca neke druge klase. Na glavnoj dijagonali se nalazi broj ispravno klasifikovanih instanci, odnosno za binarni klasifikator TP (True Positive - instance koje su klasifikovane kao pozitivne i čija je labela pozitivna, ispravno klasifikovane pozitivne instance) i TN (True Negative - 
+instance koje su klasifikovane kao negativne i čija je labela negativna). Na slici \ref{fig:confussion} je dat šematski prikaz matrice konfuzije za binarni klasifikator. Polje FN (False Negatives) prikazuje broj elemenata čija je predviđena klasa negaitvna, a koji zapravo pripadaju pozitivnoj klasi.  Polje FP (False Positives) prikazuje broj elemenata čija je predviđena klasa pozitivna, a koji zapravo pripadaju negativnoj klasi.\\
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\textwidth]{confusion_matrix.jpg}
+    \caption{Primer matrice konfuzije}\label{fig:confussion}
+\end{figure}
+
+Matrica konfuzije za model logističke regresije primenjen na skup podataka za peruniku je dat na slici \ref{fig:confusioniris}.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\textwidth]{logistic_confusion.png}
+    \caption{Matrica konfuzije za model logističke regresije nad skupom podataka vezanim za perunike}\label{fig:confusioniris}
+\end{figure}
+
+Zaključak koji se može izvesti iz matrice konfuzije \ref{fig:confusioniris} je da po 1/3 instanci pozitivne i negativne klase klasifikator ne prepoznaje, što nije tako idealan rezultat.\\
+
+\textbf{Preciznost, odziv i f-mera}\\
+
+Jedna od metrika koja se može dobiti iz matrice konfuzije je preciznost. Preciznost klasifikatora je tačnost pozitivnih predviđanja. Jednačinom \ref{eq:accuracy} se računa preciznost klasifikatora. 
+
+\begin{equation} \label{eq:accuracy}
+	preciznost = \frac{TP}{TP + FP} = \frac{34}{34 + 17} = 0.67
+\end{equation}
+
+Preciznost je 0.67, odnosno od ukupnog broja instanci za koje je klasifikator rekao da su pozitivne, samo 67\% je stvarno pozitivno. Ovo nije tako dobar rezultat.
+
+\begin{equation} \label{eq:recall}
+	odziv = \frac{TP}{TP + FN} = \frac{34}{34 + 16} = 0.68
+\end{equation}
+
+Jednačinom \ref{eq:recall} se računa odziv. Odziv predstavlja odnos između instanci koje je klasifikator prepoznao kao pozitivne i koje stvarno jesu pozitivne i ukupnog broja stvarno pozitivnih instanci u skupu podataka. Ovaj model ima preciznost 0.68\%, što znači da je od svih mogućih pozitivnih instanci model prepoznao samo 68\%.
+
+\begin{equation} \label{eq:f-measure}
+	f-mera = \frac{2}{\frac{1}{preciznost} + \frac{1}{odziv}} =  \frac{2}{\frac{1}{0.67} + \frac{1}{0.68}} = 0.67
+\end{equation}
+
+F mera je potrebna kada je poželjno kombinovati odziv i preciznost u jednu meru. F mera je harmonijska sredina preciznosti i odziva (jednačina \ref{eq:f-measure}). Obično se koristi kada je potreban brz i jednostavan način da se uporede dva klasifikatora. Iz jednačine se vidi da će F mera imati visoku vrednost samo ako su i preciznost i odziv visoki. 
+
+\textbf{ROC kriva}\\
+
+ROC kriva (engl. \textit{Receiver operating characteristic} je još jedan važan alat pri evaluaciji binarnih klasfikatora. Na x-osi se nalazi True Positive Rate (odziv), a na y osi False Positive Rate (odnos negativnih instanci koje su pogrešno klasifikovane kao pozitivne). Idealni klasifikator ima površinu ispod ROC krive jednaku 1. ROC kriva za ovaj klasifikator je data na slici \ref{fig:logisticroc}. Površina ispod krive je data na slici \ref{fig:logisticrocscore}.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\textwidth]{logistic_roc.png}
+    \caption{ROC kriva}\label{fig:logisticroc}
+\end{figure}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\textwidth]{logistic_roc_score.png}
+    \caption{Površina ispod ROC krive}\label{fig:logisticrocscore}
+\end{figure}
 
 \textbf{Testiranje modela}\\
 Primeni podatke nad test skupom i vidi koliko se razlikuju predvidjene vrednosti od vrednosti koje su prave. \\
