@@ -408,6 +408,7 @@ Nakon treniranja modela potrebno je da model može da vrši predviđanja za inst
 \end{figure}
 
 \subsection{Primena i analiza rezultata}
+ \label{chap:primenalogistic}
  
 U ovom delu ćemo implementirati projekat u kome ćemo klasu \texttt{LogisticRegression} za predikciju podataka. Glavni koraci pri izradi jednog projekta su: 
 \begin{enumerate}
@@ -477,7 +478,7 @@ Nakon treniranja modela potrebno je videti kakve performanse daje. Kod klasifika
 
 \textbf{Tačnost}\\
 
-Tačnost je mera koja pokazuje koliko je ukupno istanci, od svih mogućih, klasifikator ispravno klasifikovao. To znači koliko je instanci pravilno raspodelio u pozitivnu i negativnu klasu u slučaju ovog binarnog klasifikatora. Da bi se izbegla pristrasnost klasifikatora pri evaluaciji modela, za merenje preciznosti se najčešće koristi \textit{k-fold cross validation} metoda. Trening skup podataka, najčešće se on korisiti za validaciju, ova metoda deli na \textit{k} skupova. Pri evaluaciji modela ovom metodom, treniranje modela se radi k puta. U svakoj iteraciji jedan od k skupova, (svaki put različiti, tako da na kraju treniranja svi dođu na red) se uzima da bude validacioni skup. Ostalih k-1 su trening skupovi. Kada se model istrenira, na validacionom skupu se proverava tačnost klasifikatora. Implementacija i primena k-fold cross validation funkcije je data na slici \ref{fig:logisticprecission}.
+Tačnost je mera koja pokazuje koliko je ukupno istanci, od svih mogućih, klasifikator ispravno klasifikovao. To znači koliko je instanci pravilno raspodelio u pozitivnu i negativnu klasu u slučaju ovog binarnog klasifikatora. Da bi se izbegla pristrasnost klasifikatora pri evaluaciji modela najčešće se  koristi \textit{k-fold cross validation} metoda. Trening skup podataka, najčešće se on korisiti za validaciju, ova metoda deli na \textit{k} skupova. Pri evaluaciji modela ovom metodom, treniranje modela se radi k puta. U svakoj iteraciji jedan od k skupova, (svaki put različiti, tako da na kraju treniranja svi dođu na red) se uzima da bude validacioni skup. Ostalih k-1 su trening skupovi. Kada se model istrenira, na validacionom skupu se proverava tačnost klasifikatora. Implementacija i primena k-fold cross validation funkcije je data na slici \ref{fig:logisticprecission}.
 
 \begin{figure}[h]
     \centering
@@ -494,7 +495,7 @@ instance koje su klasifikovane kao negativne i čija je labela negativna). Na sl
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.8\textwidth]{confusion_matrix.jpg}
+    \includegraphics[width=0.6\textwidth]{confusion_matrix.jpg}
     \caption{Primer matrice konfuzije}\label{fig:confussion}
 \end{figure}
 
@@ -502,7 +503,7 @@ Matrica konfuzije za model logističke regresije primenjen na skup podataka za p
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.8\textwidth]{logistic_confusion.png}
+    \includegraphics[width=0.6\textwidth]{logistic_confusion.png}
     \caption{Matrica konfuzije za model logističke regresije nad skupom podataka vezanim za perunike}\label{fig:confusioniris}
 \end{figure}
 
@@ -513,26 +514,26 @@ Zaključak koji se može izvesti iz matrice konfuzije \ref{fig:confusioniris} je
 Jedna od metrika koja se može dobiti iz matrice konfuzije je preciznost. Preciznost klasifikatora je tačnost pozitivnih predviđanja. Jednačinom \ref{eq:accuracy} se računa preciznost klasifikatora. 
 
 \begin{equation} \label{eq:accuracy}
-	preciznost = \frac{TP}{TP + FP} = \frac{34}{34 + 17} = 0.67
+	preciznost = \frac{TP}{TP + FP} = \frac{50}{1 + 50} = 0.98
 \end{equation}
 
-Preciznost je 0.67, odnosno od ukupnog broja instanci za koje je klasifikator rekao da su pozitivne, samo 67\% je stvarno pozitivno. Ovo nije tako dobar rezultat.
+Preciznost je 0.67, odnosno od ukupnog broja instanci za koje je klasifikator rekao da su pozitivne, samo 67\% je stvarno pozitivno. 
 
 \begin{equation} \label{eq:recall}
-	odziv = \frac{TP}{TP + FN} = \frac{34}{34 + 16} = 0.68
-\end{equation}
+	odziv = \frac{TP}{TP + FN} = \frac{50}{0 + 50} = 1
+\end{equation}-
 
 Jednačinom \ref{eq:recall} se računa odziv. Odziv predstavlja odnos između instanci koje je klasifikator prepoznao kao pozitivne i koje stvarno jesu pozitivne i ukupnog broja stvarno pozitivnih instanci u skupu podataka. Ovaj model ima preciznost 0.68\%, što znači da je od svih mogućih pozitivnih instanci model prepoznao samo 68\%.
 
 \begin{equation} \label{eq:f-measure}
-	f-mera = \frac{2}{\frac{1}{preciznost} + \frac{1}{odziv}} =  \frac{2}{\frac{1}{0.67} + \frac{1}{0.68}} = 0.67
+	f-mera = \frac{2}{\frac{1}{preciznost} + \frac{1}{odziv}} =  \frac{2}{\frac{1}{0.98} + \frac{1}{1}} = 0.99
 \end{equation}
 
-F mera je potrebna kada je poželjno kombinovati odziv i preciznost u jednu meru. F mera je harmonijska sredina preciznosti i odziva (jednačina \ref{eq:f-measure}). Obično se koristi kada je potreban brz i jednostavan način da se uporede dva klasifikatora. Iz jednačine se vidi da će F mera imati visoku vrednost samo ako su i preciznost i odziv visoki. 
+F mera je potrebna kada je poželjno kombinovati odziv i preciznost u jednu meru. F mera je harmonijska sredina preciznosti i odziva (jednačina \ref{eq:f-measure}). Obično se koristi kada je potreban brz i jednostavan način da se uporede dva klasifikatora. Iz jednačine se vidi da će F mera imati visoku vrednost samo ako su i preciznost i odziv visoki. \\
 
 \textbf{ROC kriva}\\
 
-ROC kriva (engl. \textit{Receiver operating characteristic} je još jedan važan alat pri evaluaciji binarnih klasfikatora. Na x-osi se nalazi True Positive Rate (odziv), a na y osi False Positive Rate (odnos negativnih instanci koje su pogrešno klasifikovane kao pozitivne). Idealni klasifikator ima površinu ispod ROC krive jednaku 1. ROC kriva za ovaj klasifikator je data na slici \ref{fig:logisticroc}. Površina ispod krive je data na slici \ref{fig:logisticrocscore}.
+ROC kriva (engl. \textit{Receiver operating characteristic} je još jedan važan alat pri evaluaciji binarnih klasfikatora. Na x-osi se nalazi True Positive Rate (odziv), a na y osi False Positive Rate (odnos negativnih instanci koje su pogrešno klasifikovane kao pozitivne). Idealni klasifikator ima površinu ispod ROC krive jednaku 1. ROC kriva za ovaj klasifikator je data na slici \ref{fig:logisticroc}. Površina ispod krive je data na slici \ref{fig:logisticrocscore}.\\
 
 \begin{figure}[h]
     \centering
@@ -547,7 +548,16 @@ ROC kriva (engl. \textit{Receiver operating characteristic} je još jedan važan
 \end{figure}
 
 \textbf{Testiranje modela}\\
-Primeni podatke nad test skupom i vidi koliko se razlikuju predvidjene vrednosti od vrednosti koje su prave. \\
+
+Testiranje modela se radi tako što se podaci iz dela skupa podataka koji su odvojeni testiranje daju modelu. Model generiše predikcije za te podatke. Zatim računa preciznost klasifikatora na test skupu podataka. Primena testiranja i preciznost klasifikatora su dati na slici \ref{fig:logistictesting}. 
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.6\textwidth]{logistic_testing.png}
+    \caption{Testiranje modela logističke regresije i preciznost}\label{fig:logistictesting}
+\end{figure}
+
+Preciznost klasifikatora nad test podacima je 1, što znači da su sve instance test skupa ispravno klasifikovane. \\
 
 \section{Softmaks regresija}
 
@@ -588,6 +598,50 @@ Nakon treniranja modela potrebno je da model može da vrši predviđanja za inst
 \end{figure}
 
 \subsection{Primena i analiza rezultata}
+
+Softmaks regresija je vrsta višeklasne regresije. Kod višeklasne regresije postoji više klasa za koje se instance klasifikuju. Jedna instanca uvek pripada jednoj klasi. \\ 
+
+U ovom delu ćemo implementirati projekat u kome ćemo klasu \texttt{SoftmaxRegression} za predikciju podataka. Za treniranje i implementaciju modela koristićemo isti skup podataka o perunikama kao za logističku regresiju. U narednoj sekciji ćemo se kratko osvrnuti na proces treniranja modela, evaluaciju i testiranje modela. Pošto je skup podataka isti deo koji se odnosi na pribavljanje podataka, vizuelizaciju i pripremu podataka biće izostavljen, pošto je već priložen u sekciji \ref{chap:primenalogistic}. \\
+
+\textbf{Treniranje i evaluacija modela}\\
+
+Za treniranje modela podelićemo skup podataka u dva podskupa. Podskup za treniranje će sadržati 140 instanci, a podskup za testiranje će sadržati samo 10 instanci. Podela skupa podataka na trening i test skup data je na slici \ref{fig:softsplit}. \\
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.7\textwidth]{softmax_split_train_test.png}
+    \caption{Podela skupa podataka na trening i test skup za softmaks regresiju}\label{fig:softsplit}
+\end{figure}
+
+Treniranje modela se radi funkcijom \texttt{fit()}. Poziv funkcije za treniranje modela je dat na slici \ref{fig:softtrain}. \\
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.7\textwidth]{softmax_train.png}
+    \caption{Podela skupa podataka na trening i test skup za softmaks regresiju}\label{fig:softtrain}
+\end{figure}
+
+Nakon treniranja modela, za evaluaciju biće prikazane metrike poput matrice konfuzije, preciznosti, odziva i f-mere. Vrednosti za sve ove mere biće generisane preko biblioteke scikit-learn. Kod kojim se dobijaju je dat na slici \ref{fig:softmaxeval}. \\
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.7\textwidth]{softmax_evaluation.png}
+    \caption{Evaluacija modela za softmaks regresiju}\label{fig:softmaxeval}
+\end{figure}
+
+Iz matrice konfuzije se jasno vidi da model savršeno prepoznaje instance prve klase, međutim meša instance koje pripadaju klasi 2 i 3. Ovo je bila činjenica koju smo eksploatisali kada smo ovaj skup podataka koristili da logističkom regresijom radimo binarnu klasifikaciju za klasu 1. Da bi se izbegla pristrasnost klasifikatora pri evaluaciji modela najčešće se koristi \textit{k-fold cross validation} metoda. Korišćenjem metode \texttt{precision recall fscore support()} iz biblioteke sklearn, dobićemo preciznost, odziv f meru za svaku od klasa. Iz priloženih metrika se jasno vidi da model savršeno prepoznaje sve instance klase 1, a da meša instance klase 2 i 3. Preciznost je najlošija za klasu 3, što znači da od svih instanci koje je klasifikator prepoznao kao da pripadaju klasi 3, samo 63\% zaista pripada klasi 3. Najlošiji odziv ima klasa 2, što znači da je klasifikator od svih instanci koje pripadaju klasi 2, samo njih 56\% prepoznao kao da pripadaju klasi 2. \\
+
+\textbf{Testiranje modela}\\
+
+Testiranje modela se radi sa 10 instanci koje su izdvojene iz početnog skupa podataka. Kod kojim se instance prosleđuju istreniranom modelu je dat na slici \ref{fig:softmaxtest}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.7\textwidth]{softmax_test.png}
+    \caption{Testiranje modela za softmaks regresiju}\label{fig:softmaxtest}
+\end{figure}
+
+Modelu su prosleđene instance koje pripadaju klasi 2, i on ih je sve ispravno klasifikovao. \\
 
 \chapter{Primena kod neuronskih mreža}
 
