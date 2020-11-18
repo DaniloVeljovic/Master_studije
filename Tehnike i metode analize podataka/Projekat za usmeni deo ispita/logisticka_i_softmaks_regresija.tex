@@ -66,14 +66,14 @@ aktivacione funkcije (\enquote {\textit{threshold functions}}) kod neuronskih mr
 Kako bi se pravilno razumela logistička regresija potrebno je pre toga dobro poznavati njene matematičke osnove. U nastavku je data kratka rekapitulacija potrebnih pojmova iz verovatnoće i statistike koji su potrebni za njeno razumevanje. Da bi se lakše svi pojmovi dati u nastavku, razmatrani su samo u okvirima diskretnih slučajnih promenljivih.\\
 
 \subsection{Verovatnoća} 
-Verovatnoća predstavlja odnos između broja ishoda u kome je neki događaj ispunjen i broja svih mogućih ishoda. 
+Verovatnoća predstavlja odnos između broja ishoda u povoljnih za realizaciju događaja i broja svih mogućih ishoda. 
 \begin{equation} \label{eq:1}
 	P = \frac{\textit{broj pozitivnih ishoda događaja}}{\textit{broj svih mogućih ishoda}} 
 	%\caption{}
  \end{equation}
  
  \textit {Primer 1.} \
-Primer jednog događaja može biti bacanje novčića. Pozitivan ishod je kada se padne glava. Broj svih mogućih ishoda u jednom bacanju je 2 (može se pasti ili pismo ili glava). Kada zamenimo ove vrednosti u prethodnu jednačinu dobijamo: 
+Primer jednog eksperimenta može biti bacanje novčića. Povoljan ishod je kada se padne glava. Broj svih mogućih ishoda u jednom bacanju je 2 (može se pasti ili pismo ili glava). Kada zamenimo ove vrednosti u prethodnu jednačinu dobijamo: 
 \begin{equation} \label{eq:2}
 	P = \frac{1}{2} = 0.5
 	%\caption{}
@@ -96,54 +96,28 @@ Ako se vratimo na primer 1 bacanja novčića, vidimo da je šansa da se događaj
  
  Zaključujemo da je šansa da se padne glava ista kao i šansa da se ne padne glava, tj 1 prema 1. 
  
- Odnos šansi se definiše kao:
- \begin{equation} \label{eq:4}
-	\textit{odnos šansi} = \frac{\textit{šansa\textsubscript{1}}}{\textit{šansa\textsubscript{1}}} 
-	%\caption{}
- \end{equation}
- 
- \textit {Primer 2.} \ Uzmimo dva novčića, jedan koji je fer i drugi za koji se zna da je verovatnoća da se padne glava 0.7. Naći odnos šansi ova dva novčića za događaj kada se padne glava.\\
- Za fer novčić važi: 
- \begin{equation}
-	P(glava) = \frac{1}{2} = 0.5 \\
-	%\caption{}
- \end{equation}
- \begin{equation}
-	\textit{šansa(glava)\textsubscript{fer}} = \frac{0.5}{0.5} = 1, tj. \textit{1:1}
-	%\caption{}
- \end{equation}
- 
- Za \enquote{nefer} novčić važi: 
-  \begin{equation}
-	P(glava) = 0.7
-	%\caption{}
- \end{equation}
- \begin{equation}
-	\textit{šansa(glava)\textsubscript{nefer}} = \frac{0.7}{0.3} = 2.333
-	%\caption{}
- \end{equation}
- 
- Odnos šansi definišemo kao: 
-  \begin{equation}
-	 \textit{odnos šansi} = \frac{\textit{šansa(glava)\textsubscript{nefer}}}{\textit{šansa(glava)\textsubscript{fer}}} = \frac{2.333}{1} = 2.333
- \end{equation}
- Vidi se da su šanse da se padne glava na \enquote(nefer) novčiću veća nego da se dobije glava na \enquote(fer) novčiću 2.333 puta. 
 \subsection{Bernulijeva raspodela}
+
+Da bi se izbegao rad sa ishodima nekog eksperimenta (koji nisu uvek numerički) uveden je \textit{slučajne promenljive}. Slučajna promenljiva je funkcija koja preslikava skup ishoda u skup realnih brojeva. Raspodela slučajne promenljive predstavlja verovatnoću da slučajna promenljiva uzme neku od mogućih vrednosti.\\
+
+Definišemo slučajnu promenljivu $X$ = broj uspeha pri bacanju novčića i $X \sim Bernoulli(p)$. Moguće vrednosti koje slučajna promenljiva može da ima (obeležavamo ih sa x) su 0 ili 1. Nula se dobija ako se pri jednom bacanju nije desio uspešan događaj, odnosno 1 ako se desio uspešan događaj.  Obeležavamo to sa x = 0, 1. \\
 
 Bernulijevu raspodelu je najlakše razumeti kroz Bernulijev eksperiment. Bernulijev eksperiment je eksperiment koji se dešava jednom i koji kao rezultat može da ima uspeh (obično obeležen 1) ili neuspeh (obično obeležen 0) tj ima samo dve moguće posledice. Najbolji primer za to je bacanje novčića. Dve moguće posledice su da se padne ili pismo ili glava. Uzmimo da se uspešnim događajem smatra da se pala glava pri bacanju. Odavde sledi da ako se padne pismo, to smatramo neuspehom. Izvedemo eksperiment jednom i ako se padne glava smatramo da se desio uspešan događaj, ako se padne glava smatramo da se desio neuspešan događaj. \\
 
-Definišemo slučajnu promenljivu $X$ = broj uspeha pri bacanju novčića i $X \sim Bernoulli(p)$. Moguće vrednosti koje slučajna promenljiva može da ima (obeležavamo ih sa x) su 0 ili 1. Nula se dobija ako se pri jednom bacanju nije desio uspešan događaj, odnosno 1 ako se desio uspešan događaj.  Obeležavamo to sa x = 0, 1. \\
-Verovatnoća da se desio uspešan događaj je ujedno i jedini parametar distribucije, i obeležava se sa $p$.
+Verovatnoća da se desio uspešan događaj je ujedno i jedini parametar raspodele, i obeležava se sa $p$.
   \begin{equation}
 	 P(X = 1) = p 
  \end{equation}
 Jedan parametar se prosleđuje jer imamo samo jedan eksperiment. Odavde se može primetiti da je Bernulijeva raspodela specijalan slučaj Binomne raspodele za $n = 1$.\\
+
 Verovatnoća da se desio neuspešan događaj je:
+
 \begin{equation}
 	 P(X = 0) = 1-p = q 
  \end{equation}
 
 Za primer fer bacanja novčića, verovatnoća uspeha je:
+
   \begin{equation}
 	 P(X = 1) = 0.5 
  \end{equation}
@@ -152,9 +126,9 @@ Verovatnoća neuspeha je data u jednačini
 	 P(X = 0) = 0.5 
  \end{equation}
  
-Očekivana vrednost (srednja vrednost) se za diskretne slučajne promenljive koje imaju Bernulijevu raspodelu dobija kao:  
+Matematičko očekivanje (srednja vrednost) se za diskretne slučajne promenljive koje imaju Bernulijevu raspodelu dobija kao:  
    \begin{equation}
-	 \mu = E[X] = \sum_{x\textsubscript{i} \in \mathcal{X}}^{\mathcal{X}} x\textsubscript{i} p(X = x\textsubscript{i}) = 1 * p + 0 * q = p
+	 \mu = E[X] = \sum_{x\textsubscript{i} \in \mathcal{X}}^{} x\textsubscript{i} p(X = x\textsubscript{i}) = 1 * p + 0 * q = p
  \end{equation}
 
 gde je $X$ slučajna promenljiva, $x$ moguće vrednosti slučajne promenljive i $\mathcal{X}$ je skup vrednosti koje slučajna promenljiva može da ima.\\
@@ -181,9 +155,9 @@ Logistička regresija je tehnika koja se koristi za klasifikaciju. Najčešće p
 
 \subsection{Procena verovatnoće}
 
-\ Slično linearnoj regresiji, logistička regresija procenjuje nepoznatu verovatnoću linearne kombinacije elemenata ulaznog vektora. Nepoznatu verovatnoću procenjuje logističkom funkcijom. Nakon procene verovatnoće određene linearne kombinacije elemenata ulaznog vektora, mapira tu verovatnoću na 0 ili 1. Ako je procenjena verovatnoće \textit{p} veća od 0.5 daje izlaz 1, odnosno 0, ako je verovatnoća manja od 0.5. Procenjena verovatnoća \textit{p} se često obelažava sa \textit{\^{p}}. \\
+Slično linearnoj regresiji, logistička regresija procenjuje nepoznatu verovatnoću linearne kombinacije elemenata ulaznog vektora. Nepoznatu verovatnoću procenjuje logističkom funkcijom. Nakon procene verovatnoće određene linearne kombinacije elemenata ulaznog vektora, mapira tu verovatnoću na 0 ili 1. Ako je procenjena verovatnoće \textit{p} veća od 0.5 daje izlaz 1, odnosno 0, ako je verovatnoća manja od 0.5. Procenjena verovatnoća \textit{p} se često obelažava sa \textit{\^{p}}. \\
 
-\ Skup ulaznih podataka kod logističke regresije, bar u slučaju mašinskog učenja, predstavljen je kao matrica \textbf{$\theta^T$x}, gde je \textbf{x} = {x\textsubscript{1}, x\textsubscript{2}, ..., x\textsubscript{n}} a $\theta$ = {$\theta$\textsubscript{1}, $\theta$\textsubscript{2}, ..., $\theta$\textsubscript{n}}, odnosno \textbf{x} je vektor atributa podataka na ulazu, a $\theta$ su odgovarajuće težine svakog od atributa. \\
+Skup ulaznih podataka kod logističke regresije, bar u slučaju mašinskog učenja, predstavljen je kao vektor \textbf{$\theta^T$x}, gde je \textbf{x} = {x\textsubscript{1}, x\textsubscript{2}, ..., x\textsubscript{n}} a $\theta$ = {$\theta$\textsubscript{1}, $\theta$\textsubscript{2}, ..., $\theta$\textsubscript{n}}, odnosno \textbf{x} je vektor atributa podataka na ulazu, a $\theta$ su odgovarajuće težine svakog od atributa. \\
 
 Potrebno je naći vezu između nezavisnih promenljivih na ulazu i izlaza tako da, kao kod Bernulijeve raspodele, izlaz bude ili 0 ili 1. Ta veza se predstavlja \textit{logit} funkcijom. Logit funkcija mapira linearnu kombinaciju nezavisno promenljivih na ulazu na izlaz . Logit funkcija predstavlja prirodni logaritam šanse. Logit funkcija je podobna jer ima samo jedan ulazni parametar koji ce kasnije biti verovatnoća p \\
 \begin{equation}
@@ -218,7 +192,7 @@ ln \left( \frac{\textit{p}}{\textit{1-p}} \right) & = \alpha, \alpha \in \rm I\!
     \caption{Logistička funkcija}\label{fig:prettypic}
 \end{figure}
 
-Grafik logističke funkcije dat je na slici 2.2. Vidimo da je sada domen funkcije $ (-\infty, +\infty) $, a kodomen $ (0, +1) $. Ovakva funkcija se naziva \textit{sigmoidnom} funkcijom (takođe postoji naziv i \enquote{S}-kriva) i ona daje broj uvek između 0 i 1. \\
+Grafik logističke funkcije dat je na slici 2.2. Vidimo da je sada domen funkcije $ (-\infty, +\infty) $, a kodomen $ (0, +1) $. Ovakva funkcija se naziva i \textit{sigmoidnom} funkcijom (takođe postoji naziv i \enquote{S}-kriva) i ona daje broj uvek između 0 i 1. \\
 Kada logistička regresija nađe verovatnoću \textit{\^{p}} kao funkciju ulaznih parametara , ona na osnovu te verovatnoće može da da predikciju da li taj podatak pripada pozitivnoj klasi. 
 
 \begin{equation}
@@ -231,7 +205,7 @@ Kada logistička regresija nađe verovatnoću \textit{\^{p}} kao funkciju ulazni
 
 \subsection{Treniranje modela i funkcija gubitka}
 
-Cilj treniranja modela je da se podese parametri vektora  $\theta$ tako da model daje visoku verovatnoću za pozitivne instance (y = 1) i nisku verovatnoću za negativne instance (y = 0).  Funkcija gubitka se koristi kada se optimizuju parametri modela. Funkcija gubitka mapira neku realnu vrednost, najčešće je to nekakva razlika predviđene vrednosti i stvarne vrednosti labele neke instance, u realan broj. Taj realan broj predstavlja cenu. Cilj optimizacije modela je da minimizira funkciju gubitka. Početni izgled funkcije gubitka za logističku regresiju je dat u jednačini . 
+Cilj treniranja modela je da se podese parametri vektora  $\theta$ tako da model daje visoku verovatnoću za pozitivne instance (y = 1) i nisku verovatnoću za negativne instance (y = 0).  Funkcija gubitka se koristi kada se optimizuju parametri modela. Funkcija gubitka mapira neku realnu vrednost, najčešće je to nekakva razlika predviđene vrednosti i stvarne vrednosti labele neke instance, u realan broj. Taj realan broj predstavlja cenu. Cilj optimizacije modela je da minimizira funkciju gubitka. Početni izgled funkcije gubitka za logističku regresiju je dat u jednačini  \ref{eq:f-ja kostanja}. 
 
 \begin{equation} \label{eq:f-ja kostanja}
   \textit{c($\theta$)} =
@@ -249,14 +223,14 @@ Cilj treniranja modela je da se podese parametri vektora  $\theta$ tako da model
 
 Na slici \ref{fig:neglog} je dat grafik funkcije $-ln(x)$. Kada $x \to 0$ , tada $ -ln(x) \to \infty $. Zbog toga će cena biti velika ako model proceni verovatnoću koja teži nuli za pozitivne instance. Takođe biće jako velika ako model proceni verovatnoću blizu jedinice za negativne instance. Ako je x u okolini jedinice, tada će -ln(x)  imati vrednost oko nule. Odnosno ako cena će biti 0 ako je procenjena verovatnoća blizu 0 za negativne instance, ili blizu 1 za pozitivne instance. Funkcija \ref{eq:f-ja kostanja} se može takođe napisati kao:
 \begin{equation} \label{eq:logloss}
-	 \textit{c($\theta$)} = [\ y ln(\hat{p}) + (1 - y)ln(1 - \hat{p}) ]\
+	 \textit{c($\theta$)} = [\ yln(\hat{p}) + (1 - y)ln(1 - \hat{p}) ]\
 \end{equation}
 Odnosno za sve elemente ulazne matrice dobijamo konačni oblik, dat u jednačini \ref{eq:loglossfinal}. 
 \begin{equation} \label{eq:loglossfinal}
 	 J(\theta) = -  \frac{1}{m} \sum_{i=1}^{m} [\ y^i ln(\hat{p}^i) + (1 - y^i)ln(1 - \hat{p}^i) ]\
 \end{equation}
 
-Konstanta $\frac{1}{m}$ se koristi da bi se našla prosečna vrednost svih grešaka. Jednačina zatvorenog oblika koja optimalne izračunava vrednosti $\theta$ vektora nije poznata. Međutim ova funkcija jeste konveksna, tako da se optimizacionim algoritmom opadajućeg gradijenta može naći globalni minimum funkcije. Za globalni minimum funkcije gubitaka svi parametri vektora $\theta$ imaju optimalne vrednosti, odnosno najmanja je razlika između pravih labela i procenjenih labela. Kada se stigne do globalnog minimuma nije više moguće smanjivati razliku između procenjene i realne vrednosti. \\
+Konstanta $\frac{1}{m}$ se koristi da bi se našla prosečna vrednost svih grešaka. Jednačina zatvorenog oblika koja izračunava optimalne vrednosti $\theta$ vektora nije poznata. Međutim ova funkcija jeste konveksna, tako da se optimizacionim algoritmom opadajućeg gradijenta može naći globalni minimum funkcije. Za globalni minimum funkcije gubitaka svi parametri vektora $\theta$ imaju optimalne vrednosti, odnosno najmanja je razlika između pravih labela i procenjenih labela. Kada se stigne do globalnog minimuma nije više moguće smanjivati razliku između procenjene i realne vrednosti. \\
 
 U nastavku biće dat postupak dobijanja gradijenta funkcije \ref{eq:loglossfinal}. Biće dat postupak dobijanja parcijalnog izvoda po promenljivoj $\theta \textsubscript{j}$. Gradijent funkcije je specijalan slučaj Jakobijeve matrice, kada je funkcija skalarna. U opštem slučaju gradijent skalarne diferencijabilne funkcije više promenljih je vektorsko polje $ \nabla $ \textit{f} čija vrednost u tački \textit{p} je vektor čije komponente su parcijalni izvodi \textit{f} u \textit{p}. Odnosno za \textit{f}: $ \rm I\!R  ^ n \to \rm I\!R $, njen gradijent je definisan kao: $ \nabla $ \textit{f}: $ \rm I\!R  ^ n \to \rm I\!R ^ n $   je definisan u tački \textit{p} = (x\textsubscript{1}, x\textsubscript{2}, ..., x\textsubscript{n}) u n-to dimenzionalnom prostoru kao vektor:
 
@@ -267,7 +241,13 @@ U nastavku biće dat postupak dobijanja gradijenta funkcije \ref{eq:loglossfinal
 \end{split}
 \end{equation}
 
-Gradijent vektor se može protumačiti kao \enquote{pravac i stopa najbržeg rasta} funkcije. Ako je gradijent funkcije u tački \textit{p} nenulti, pravac gradijenta je pravac u kome funkcija najbrže raste od tačke \textit{p}. Intenzitet gradijenta je stopa rasta u tom pravcu. Gradijent je nulti vektor u tački samo ako je to stacionarna tačka, tj. ako je to tačka ekstremuma. Kasnije će biti potrebno da iterativnim metodama smanjujemo vrednost funkcije i za ovo će nam biti potreban negativan gradijent funkcije, umesto pozitivnog.\\
+Gradijent vektor se može protumačiti kao \enquote{pravac i stopa najbržeg rasta} funkcije. Ako je gradijent funkcije u tački \textit{p} nenulti, pravac gradijenta je pravac u kome funkcija najbrže raste od tačke \textit{p}. Intenzitet gradijenta je stopa rasta u tom pravcu. Gradijent je nulti vektor u tački samo ako je to stacionarna tačka, tj. ako je to tačka ekstremuma. Kasnije će biti potrebno da iterativnim metodama smanjujemo vrednost funkcije i za ovo će nam biti potreban negativan gradijent funkcije, umesto pozitivnog. Funkcija koja iterativno računa globalni minimum, metodom opadajućeg gradijenta je data na slici \ref{eq:graddesc}\\
+
+\begin{equation} \label{eq:graddesc}
+	 a\textsubscript{n+1} = a\textsubscript{n} - \gamma \nabla f(a\textsubscript{n})
+\end{equation}
+
+Tražimo gradijent funkcije u datoj tački i onda idemo u smeru opadajućeg gradijenta. Vrednost a je trenutna tačka odakle se krećemo, f(n) je funkcija čiji se minimum traži. U ovom slučaju funkcija čiji se minimum traži biće funkcija gubitaka data u jednačini \ref{eq:loglossfinal}.\\
 
 \textbf{Izvod logističke funkcije}\\
 
@@ -317,39 +297,37 @@ Napomena: z = \textbf{$\theta^T$x} \\
 	   & = - \frac{1}{m} \left( \sum_{i=1}^{m} \left[\ y^i  - {h\textsubscript {$\theta$} (x^i)} \right]\ x\textsubscript{j}^i  \right)  \\
 \end{split}
 \end{equation}
-\textbf{Korak 4: Dobijanje matričnog oblika radi lakšeg izračunavanja:}
 
-\begin{equation}
-\frac{\partial (J(\theta))}{\partial \theta\textsubscript{j}}  = \frac{1}{m} X^T [ h\textsubscript {$\theta$} - y ]
-\end{equation} 
-
-\textbf{Korak 5: Formiranje gradijenta:}
+\textbf{Korak 4: Formiranje gradijenta:}
 \begin{equation}
 \begin{split}
-\nabla \textit{f(p)} = 
-\begin{pmatrix} \frac{\partial f}{\partial x \textsubscript{1}} \\\\ \frac{\partial f}{\partial x\textsubscript{2}} \\.\\ .\\.\\ \frac{\partial f}{\partial x\textsubscript{n}} \end{pmatrix}
-= \frac{1}{m} x^T [ h\textsubscript {$\theta$} - y ]
+\nabla \textit{f(p)} = \frac{\partial (J(\theta))}{\partial \theta} =
+\begin{pmatrix} \frac{\partial (J(\theta))}{\partial \theta\textsubscript{1}} \\\\ \frac{\partial (J(\theta))}{\partial \theta\textsubscript{2}} \\.\\ .\\.\\ \frac{\partial (J(\theta))}{\partial \theta\textsubscript{n}} \end{pmatrix}
+= \frac{1}{m} X^T [ h\textsubscript {$\theta$} - y ]
 \end{split}
 \end{equation}
+
+Gde je X matrica čiji su redovi instance trening skupa modela. \\
+
 \section{Softmaks regresija}
 
 Logistička regresija se može generalizovati tako da podržava višeklasnu klasifikaciju, bez potrebe da se trenira i kombinuje više binarnih klasifikatora. Ovakav tip regresije se naziva \textit{softmax regresija}, ili \textit{multinomna logistička regresija}. \\
 
-Kada se softmaks regresiji prosledi instanca \textbf{x}, prvo se za tu instancu izračunava vrednost $s$\textsubscript{k}(\textit{x}) za svaku klasu $k$. Zatim se procenjuje verovatnoća za svaku klasu primenom \textit{softmaks funkcije} nad vrednostima $s$\textsubscript{k}(\textit{x}). Jednačina za izračunavanje vrednosti $s$\textsubscript{k}(\textit{x}) je data na slici \ref{eq:skscore}
+Kada se softmaks regresiji prosledi instanca \textbf{x}, prvo se za tu instancu izračunava rezultat funkcije $s$\textsubscript{k}(\textit{x}) za svaku klasu $k$. Zatim se procenjuje verovatnoća za svaku klasu primenom \textit{softmaks funkcije} nad vrednostima $s$\textsubscript{k}(\textit{x}). Jednačina za izračunavanje vrednosti $s$\textsubscript{k}(\textit{x}) je data na slici \ref{eq:skscore}
 \begin{equation} \label{eq:skscore}
-	 s\textsubscript{k}(\textit{x}) =  \textbf{x}^T\theta^{(k)}
+	 s\textsubscript{k}(\textit{x}) =  \textbf{x}^T\theta^{k}
 \end{equation}
 
-U jednačini se može primetiti da svaka klasa ima svoj poseban vektorski parametar $\theta^{(k)}$. Svi ovi vektori se pamte kao redovi u matrici parametara $\Theta.$. Kada se izračuna vrednost za instancu \textbf{x} može se proceniti verovatnoća $\hat{p}\textsubscript{k}$ da instanca pripada klasi k. To se radi tako što se vrednosti $s$\textsubscript{k}(\textit{x}) prosleđuju kao parametri softmaks funkciji (slika \ref{eq:softmax}). Softmaks funkcija računa $e^{s\textsubscript{k}(\textit{x})}$ za svaku vrednost $s$\textsubscript{k}(\textit{x}) koju jedna instanca ima. Zatim svaku od vrednosti normalizuje. Ako imamo \textit{k} klasa po kojima vršimo klasifikaciju, rezultat koji se dobija je \textit{k} verovatnoća, po jedna za svaku klasu kojoj se vrši klasifikacija, za svaku instancu u skupu podataka. 
+U jednačini se može primetiti da svaka klasa ima svoj poseban vektorski parametar $\theta^{k}$. Svi ovi vektori se pamte kao redovi u matrici parametara $\Theta$. Kada se izračuna vrednost za instancu \textbf{x} može se proceniti verovatnoća $\hat{p}\textsubscript{k}$ da instanca pripada klasi k. To se radi tako što se vrednosti $s$\textsubscript{k}(\textit{x}) prosleđuju kao parametri softmaks funkciji (slika \ref{eq:softmax}). Softmaks funkcija računa $e^{s\textsubscript{k}(\textit{x})}$ za svaku vrednost $s$\textsubscript{k}(\textit{x}) koju jedna instanca ima. Zatim svaku od vrednosti normalizuje. Ako imamo \textit{k} klasa po kojima vršimo klasifikaciju, rezultat koji se dobija je \textit{k} verovatnoća, po jedna za svaku klasu kojoj se vrši klasifikacija, za svaku instancu u skupu podataka. 
 
 \begin{equation} \label{eq:softmax}
 	\hat{p}\textsubscript{k} = \sigma(\textbf{s(x)})\textsubscript{k} =  \frac{e^{s\textsubscript{k}(\textit{x})}}{\sum_{j = 1}^{K} s\textsubscript{j}(\textit{x})}
 \end{equation}
 Oznake u jednačini \ref{eq:softmax}: K broj klasa po kojima se vrši klasifikacija, \textbf{s(x)} je vektor koji sadrži softmaks rezultate za svaku klasu, a $\sigma(\textbf{s(x)})\textsubscript{k}$ je procenjena verovatnoća da ta instanca \textbf{x} pripada klasi \textit{k}\\
 
-Kao kod logističke regresije, i softmaks regresija kao izlaz će imati oznaku klase koja ima najveću verovatnoću za tu instancu kao što se vidi u jednačini {eq:softmaxprediction}.
+Kao kod logističke regresije, i softmaks regresija kao izlaz će imati oznaku klase koja ima najveću verovatnoću za tu instancu kao što se vidi u jednačini \ref{eq:softmaxprediction}.
 \begin{equation} \label{eq:softmaxprediction}
-	\hat{y}\textsubscript{k} = \argmax_k \sigma(\textbf{s(x)})\textsubscript{k} = \argmax_k s\textsubscript{k}(\textbf{x}) = \argmax_k ((\theta^{(k)})^T)\textbf{x})
+	\hat{y}\textsubscript{k} = \argmax_k \sigma(\textbf{s(x)})\textsubscript{k} = \argmax_k s\textsubscript{k}(\textbf{x}) = \argmax_k ((\theta^{k})^T)\textbf{x})
 \end{equation}
 Operator $argmax$ vraća vrednost promenljive koja maksimizuje funkciju. U ovoj jednačini vraća vrednost $k$ koja maksimizuje procenjenu verovatnoću $\sigma(\textbf{s(x)})\textsubscript{k}$. Softmaks regresija vraća jednu klasu po instanci i stoga bi je trebalo koristi samo sa klasama koje su međusobno isključive. \\
 
@@ -357,10 +335,10 @@ Cilj treniranja modela je da on daje visoku verovatnoću za klase kojima trening
 \begin{equation}\label{eq:crossentropy}
 	J(\Theta) = - \frac{1}{m}\sum_{i = 1}^{m}\sum_{k = 1}^{K} y\textsubscript{k}^{(i)} ln(\hat{p}\textsubscript{k}^{(i)})
 \end{equation}
-Oznake u jednačini\ref{eq:crossentropy}: $y\textsubscript{k}^{(i)}$ je verovatnoća da li i-ta instanca pripada klasi $k$. 
+Oznake u jednačini \ref{eq:crossentropy}: $y\textsubscript{k}^{(i)}$ je verovatnoća da li i-ta instanca pripada klasi $k$. 
 U praksi generalno može biti jednaka 1 ili 0 jer instanca može samo da pripada ili ne pripada, nema delimičnog pripadanja. Za K = 2 (kada postoje samo dve klase), ova funkcija gubitka je jednaka funkciji gubitka kod logističke regresije. \\
 
-Gradijent vektor ove funkcije gubitaka po $\theta^{(k)}$ je dat u jednačini \ref{eq:gradient}. 
+Gradijent vektor ove funkcije gubitaka po $\theta^{k}$ je dat u jednačini \ref{eq:gradient}. 
 \begin{equation} \label{eq:gradient}
 	\nabla\textsubscript{$\theta^{k}$}   J(\Theta) = \frac{1}{m}\sum_{i = 1}^{m} (\hat{p}\textsubscript{k}^{(i)} - y\textsubscript{k}^{(i)})\textbf{x}^{i}
 \end{equation}
@@ -374,7 +352,7 @@ U nastavku biće data kompletna implementacija logističke regresije u programsk
 
 \subsection{Opis klase}
 
-Funkcije logističke regresije su enkapsulirane u klasi \texttt{LogisticRegression}. Klasa izlaže konstruktor u kome se prosleđuje broj interacija i parametar $\alpha$ koji predstavlja brzinu učenja (engl. \textit{learning rate}). Brzina učenja je parametar u funkciji optimizacije (u ovom slučaju algoritma opadajućeg gradijenta) koji govori koliko brzo trenutno rešenje konvergira minimumu funkcije. Najčešće se za taj parametar bira vrednost $10^{-3}$ pa se koriguje u zavisnosti od rezultata. Na slici {fig:logconst} je dat prikaz konstruktora klase \texttt{LogisticRegression}.
+Funkcionalnosti logističke regresije su enkapsulirane u klasi \texttt{LogisticRegression}. Objekti klase se kreiraju pomoću konstruktora kome se prosleđuje broj interacija i parametar $\alpha$ koji predstavlja brzinu učenja (engl. \textit{learning rate}). Brzina učenja je parametar u funkciji optimizacije (u ovom slučaju algoritma opadajućeg gradijenta) koji govori koliko brzo trenutno rešenje konvergira minimumu funkcije. Najčešće se za taj parametar bira vrednost $10^{-3}$ pa se koriguje u zavisnosti od rezultata. Na slici \ref{fig:logconst} je data implementacija konstruktora klase \texttt{LogisticRegression}.
 
 \begin{figure}[h]
     \centering
@@ -390,7 +368,7 @@ Funkcije koje enkapsulira klasa su sigmoidna funkcija (datu u jednačini \ref{eq
     \caption{Implementacija sigmoidne funkcije i funkcije gubitaka klase \texttt{LogisticRegression}}\label{fig:logsigloss}
 \end{figure}
 
-Jedna od funkcija koja je izložena spoljnoj upotrebi je funkcija \texttt{fit}. Ova funkcija je kreirana po ugledu na funkcije iz biblioteke otvorenog koda \texttt{scikit-learn}. Ona služi za treniranje modela. Kao parametre ima matricu podataka obeleženu sa \textbf{X}, gde jedna vrsta matrice predstavlja jednu instancu, i vektor \textbf{y} koji sadrži labele za svaku instancu. Funkcija u okviru treniranja modela vrši predviđanja, nalazi gradijent funkcije u svakoj tački i onda optimizuje parametre $\theta$. To ponavlja određeni broj iteracija. Što je broj iteracija veći to 
+Jedna od funkcija koja je javno dostupna je funkcija \texttt{fit}. Ova funkcija je kreirana po ugledu na funkcije iz biblioteke otvorenog koda \texttt{scikit-learn}. Ona služi za treniranje modela. Kao parametre ima matricu podataka obeleženu sa \textbf{X}, gde jedna vrsta matrice predstavlja jednu instancu, i vektor \textbf{y} koji sadrži labele za svaku instancu. Funkcija u okviru treniranja modela vrši predviđanja, nalazi gradijent funkcije u svakoj tački i onda optimizuje parametre $\theta$. To ponavlja određeni broj iteracija. Što je broj iteracija veći to 
 će predviđanja biti preciznija, jer se će funkcija u svakoj iteraciji kretati bliže globalnom minimumu. Implementacija funkcije koja trenira model je data na slici \ref{fig:logfit}.
 
 \begin{figure}[h]
@@ -456,7 +434,7 @@ Vizualizacija podataka je jako važan korak pri upoznavanju skupa podataka. U Py
 
 \textbf{Priprema podataka i treniranje modela}\\
 
-Pre nego što je neki skup podataka spreman da se njime trenira, i testira model, potrebno je podatke skalirati u neki opseg i rešiti se null vrednosti koje postoje u podacima. Skup podataka koji koristimo u ovom primeru je već prečišćen, odnosno skup podataka nema null vrednosti i sve su vrednosti otprilike istog reda veličine pa ih nema potrebe dalje skalirati. Treniranje modela je proces u kome se modelu, prosleđuje jedna po jedna ili čitava grupa instanci nekog skupa podataka sa labelama koje su oznake kojoj klasi pripadaju ili koju kontinualnu vrednost imaju kao labelu. Model ima funkciju kojom vrši predikciju labele za neku instancu. Zatim upoređuje labelu koju je predvideo sa labelom koja odgovara tom modelu. Ako se labele ne poklapaju model nekom metodom optimizacije optimizuje svoje parametre da bolje odgovaraju skupu podataka. Krajnji cilj je minimum funkcije koja se optimizuje tj da razlika između predviđene i stvarne vrednosti za labelu za sve instance bude minimalna. Pošto će isti skup podataka biti korišćen i za treniranje i za testiranje, potrebno ga je podeliti u test i trening skup podataka. Trening  i test skup podataka se deli u razmeri od 80:20. Trening skup podataka se koristi za treniranje modela, a test skup podataka za testiranje performansi modela. Funkcija koja će podeliti skup podatka u trening i test je data na slici \ref{fig:irissplit}.
+Pre nego što je neki skup podataka spreman da se njime trenira i testira model, potrebno je podatke skalirati u neki opseg i rešiti se null vrednosti koje postoje u podacima. Skup podataka koji koristimo u ovom primeru je već prečišćen, odnosno skup podataka nema null vrednosti i sve su vrednosti otprilike istog reda veličine pa ih nema potrebe dalje skalirati. Treniranje modela je proces u kome se modelu, prosleđuje jedna po jedna ili čitava grupa instanci nekog skupa podataka, sa labelama (oznake kojoj klasi pripadaju ili koju kontinualnu vrednost imaju kao labelu). Model ima funkciju kojom vrši predikciju labele za neku instancu. Zatim upoređuje labelu koju je predvideo sa labelom koja odgovara tom modelu. Ako se labele ne poklapaju model nekom metodom optimizacije optimizuje svoje parametre da bolje odgovaraju skupu podataka. Krajnji cilj je minimum funkcije gubitaka koja se optimizuje. Pošto će isti skup podataka biti korišćen i za treniranje i za testiranje, potrebno ga je podeliti u test i trening skup podataka. Trening i test skup podataka se deli u razmeri od 80:20. Trening skup podataka se koristi za treniranje modela, a test skup podataka za testiranje performansi modela. Funkcija koja će podeliti skup podatka u trening i test je data na slici \ref{fig:irissplit}.
 
 \begin{figure}[h]
     \centering
@@ -474,11 +452,11 @@ Treniranje modela se vrši pozivanjem \texttt{fit()} funkcije instance klase \te
 
 \textbf{Evaluacija modela}\\
 
-Nakon treniranja modela potrebno je videti kakve performanse daje. Kod klasifikacionih modela glavne performanse mere su \textit{preciznost}, \textit{odziv}, \textit{matrica konfuzije}, \textit{f-mera} i \textit{ROC kriva}. U nastavku biće dat pregled svake od mera. \\
+Nakon treniranja modela potrebno je videti kakve performanse daje. Kod klasifikacionih modela glavne performanse mere su \textit{tačnost},\textit{preciznost}, \textit{odziv}, \textit{matrica konfuzije}, \textit{f-mera} i \textit{ROC kriva}. U nastavku biće dat pregled svake od mera. \\
 
 \textbf{Tačnost}\\
 
-Tačnost je mera koja pokazuje koliko je ukupno istanci, od svih mogućih, klasifikator ispravno klasifikovao. To znači koliko je instanci pravilno raspodelio u pozitivnu i negativnu klasu u slučaju ovog binarnog klasifikatora. Da bi se izbegla pristrasnost klasifikatora pri evaluaciji modela najčešće se  koristi \textit{k-fold cross validation} metoda. Trening skup podataka, najčešće se on korisiti za validaciju, ova metoda deli na \textit{k} skupova. Pri evaluaciji modela ovom metodom, treniranje modela se radi k puta. U svakoj iteraciji jedan od k skupova, (svaki put različiti, tako da na kraju treniranja svi dođu na red) se uzima da bude validacioni skup. Ostalih k-1 su trening skupovi. Kada se model istrenira, na validacionom skupu se proverava tačnost klasifikatora. Implementacija i primena k-fold cross validation funkcije je data na slici \ref{fig:logisticprecission}.
+Tačnost je mera koja pokazuje koliko je ukupno istanci, od svih mogućih, klasifikator ispravno klasifikovao. To znači koliko je instanci pravilno raspodelio u pozitivnu i negativnu klasu u slučaju ovog binarnog klasifikatora. Da bi se izbegla pristrasnost klasifikatora pri evaluaciji modela najčešće se  koristi \textit{k-fold cross validation} metoda. Trening skup podataka, najčešće se on korisiti za validaciju, ova metoda deli na \textit{k} podskupova. Pri evaluaciji modela ovom metodom, treniranje modela se radi k puta. U svakoj iteraciji jedan od k skupova, (svaki put različiti, tako da na kraju treniranja svi dođu na red) se uzima da bude validacioni skup. Ostalih k-1 su trening skupovi. Kada se model istrenira, na validacionom skupu se proverava tačnost klasifikatora. Implementacija i primena k-fold cross validation funkcije je data na slici \ref{fig:logisticprecission}.
 
 \begin{figure}[h]
     \centering
@@ -491,7 +469,7 @@ U ovom slučaju se trening skup deli na tri dela i rezultati tačnosti su redom 
 \textbf{Matrica konfuzije}\\
 
 Mnogo temeljniji način za evaluaciju performansi klasifikatora je matrica konfuzije. Matrica konfuzije nam govori koliko je instanci jedne klase klasifikovano kao instanca neke druge klase. Na glavnoj dijagonali se nalazi broj ispravno klasifikovanih instanci, odnosno za binarni klasifikator TP (True Positive - instance koje su klasifikovane kao pozitivne i čija je labela pozitivna, ispravno klasifikovane pozitivne instance) i TN (True Negative - 
-instance koje su klasifikovane kao negativne i čija je labela negativna). Na slici \ref{fig:confussion} je dat šematski prikaz matrice konfuzije za binarni klasifikator. Polje FN (False Negatives) prikazuje broj elemenata čija je predviđena klasa negaitvna, a koji zapravo pripadaju pozitivnoj klasi.  Polje FP (False Positives) prikazuje broj elemenata čija je predviđena klasa pozitivna, a koji zapravo pripadaju negativnoj klasi.\\
+instance koje su klasifikovane kao negativne i čija je labela negativna). Na slici \ref{fig:confussion} je dat šematski prikaz matrice konfuzije za binarni klasifikator. Polje FN (False Negatives) prikazuje broj elemenata čija je predviđena klasa negativna, a koji zapravo pripadaju pozitivnoj klasi.  Polje FP (False Positives) prikazuje broj elemenata čija je predviđena klasa pozitivna, a koji zapravo pripadaju negativnoj klasi.\\
 
 \begin{figure}[h]
     \centering
@@ -499,7 +477,7 @@ instance koje su klasifikovane kao negativne i čija je labela negativna). Na sl
     \caption{Primer matrice konfuzije}\label{fig:confussion}
 \end{figure}
 
-Matrica konfuzije za model logističke regresije primenjen na skup podataka za peruniku je dat na slici \ref{fig:confusioniris}.
+Matrica konfuzije za model logističke regresije primenjen na skup podataka za peruniku je data na slici \ref{fig:confusioniris}.
 
 \begin{figure}[h]
     \centering
@@ -507,7 +485,7 @@ Matrica konfuzije za model logističke regresije primenjen na skup podataka za p
     \caption{Matrica konfuzije za model logističke regresije nad skupom podataka vezanim za perunike}\label{fig:confusioniris}
 \end{figure}
 
-Zaključak koji se može izvesti iz matrice konfuzije \ref{fig:confusioniris} je da po 1/3 instanci pozitivne i negativne klase klasifikator ne prepoznaje, što nije tako idealan rezultat.\\
+Zaključak koji se može izvesti iz matrice konfuzije \ref{fig:confusioniris} je da klasifikator skoro idealno prepoznaje instance klase 1 i skoro da ih uopste ne mesa sa instancama druge klase, sto je i ocekivan rezultat. Rezultat je ocekivan jer smo videli da su instance klase 1 i ostalih klasa skoro savrseno linearno razdvojive.\\
 
 \textbf{Preciznost, odziv i f-mera}\\
 
@@ -523,7 +501,7 @@ Preciznost je 0.67, odnosno od ukupnog broja instanci za koje je klasifikator re
 	odziv = \frac{TP}{TP + FN} = \frac{50}{0 + 50} = 1
 \end{equation}-
 
-Jednačinom \ref{eq:recall} se računa odziv. Odziv predstavlja odnos između instanci koje je klasifikator prepoznao kao pozitivne i koje stvarno jesu pozitivne i ukupnog broja stvarno pozitivnih instanci u skupu podataka. Ovaj model ima preciznost 0.68\%, što znači da je od svih mogućih pozitivnih instanci model prepoznao samo 68\%.
+Jednačinom \ref{eq:recall} se računa odziv. Odziv predstavlja odnos između instanci koje je klasifikator prepoznao kao pozitivne i koje stvarno jesu pozitivne i ukupnog broja stvarno pozitivnih instanci u skupu podataka. Ovaj model ima preciznost 1, što znači da je od svih mogućih pozitivnih instanci model prepoznao sve.
 
 \begin{equation} \label{eq:f-measure}
 	f-mera = \frac{2}{\frac{1}{preciznost} + \frac{1}{odziv}} =  \frac{2}{\frac{1}{0.98} + \frac{1}{1}} = 0.99
@@ -533,7 +511,7 @@ F mera je potrebna kada je poželjno kombinovati odziv i preciznost u jednu meru
 
 \textbf{ROC kriva}\\
 
-ROC kriva (engl. \textit{Receiver operating characteristic} je još jedan važan alat pri evaluaciji binarnih klasfikatora. Na x-osi se nalazi True Positive Rate (odziv), a na y osi False Positive Rate (odnos negativnih instanci koje su pogrešno klasifikovane kao pozitivne). Idealni klasifikator ima površinu ispod ROC krive jednaku 1. ROC kriva za ovaj klasifikator je data na slici \ref{fig:logisticroc}. Površina ispod krive je data na slici \ref{fig:logisticrocscore}.\\
+ROC kriva (engl. \textit{Receiver operating characteristic} je još jedan važan alat pri evaluaciji binarnih klasfikatora. Na x-osi se nalazi True Positive Rate (odziv), a na y osi False Positive Rate (odnos negativnih instanci koje su pogrešno klasifikovane kao pozitivne). Idealni klasifikator ima površinu ispod ROC krive jednaku 1. ROC kriva za ovaj klasifikator je data na slici \ref{fig:logisticroc}. Površina ispod krive je data na slici \ref{fig:logisticrocscore}. Sa slike vidimo da je povrsina ispod krive 0.99 sto znaci da je klasifikator skoro savrsen.\\
 
 \begin{figure}[h]
     \centering
@@ -561,7 +539,7 @@ Preciznost klasifikatora nad test podacima je 1, što znači da su sve instance 
 
 \section{Softmaks regresija}
 
-U nastavku biće data kompletna implementacija softmaks regresije u programskom jeziku Python. Regresija je implementirana kao klasa \texttt{Softmax Regression}. Metode koje instanca ove klase može javno pozivati su metoda \texttt{fit} i \texttt{predict}. Metoda \texttt{fit} omogućava treniranje modela softmaks regresije. Metoda \texttt{predict} omogućava da se vrši predikcija za podatke čija je klasa nepoznata. Skup podataka koji je korišćen za testiranje modela je takođe \textit{iris} skup podataka. U ovom slučaju smo umesto dve klase koristili sve tri, tako da i za predikciju imamo sve tri vrste klasa.
+U nastavku biće data kompletna implementacija softmaks regresije u programskom jeziku Python. Regresija je implementirana kao klasa \texttt{SoftmaxRegression}. Metode koje instanca ove klase može javno pozivati su metoda \texttt{fit} i \texttt{predict}. Metoda \texttt{fit} omogućava treniranje modela softmaks regresije. Metoda \texttt{predict} omogućava da se vrši predikcija za podatke čija je klasa nepoznata. Skup podataka koji je korišćen za testiranje modela je takođe \textit{iris} skup podataka. U ovom slučaju smo umesto dve klase koristili sve tri, tako da i za predikciju imamo sve tri vrste klasa.
 
 \subsection{Opis klase}
 
