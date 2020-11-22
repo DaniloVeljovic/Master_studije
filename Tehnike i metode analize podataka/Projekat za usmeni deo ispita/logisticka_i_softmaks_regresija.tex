@@ -623,4 +623,58 @@ Modelu su prosleđene instance koje pripadaju klasi 2, i on ih je sve ispravno k
 
 \chapter{Primena kod neuronskih mreža}
 
+Veštačke neuronske mreže su inspirisane idejom bioloških neurona. Vremenom je razlika između prirodnih neurona i veštačkih postajala sve veća, ali se ime i dalje zadržalo. Veštačke neuronske mreže (u daljem tekstu \textit{NN}) su sama srž \textit{dubokog učenja (engl. deep learning)}. NN su moćne, sklabilne i mogu da se primene na veliki broj problema. Neki od problema na koje se mogu primeniti su: klasifikacija velikog broja slika, prepoznavanje govora, preporuka video klipova itd. 
+
+\section{Uvod u veštačke neuronske mreže}
+
+\textbf{Model veštačkog neurona} ima jedan ili više binarnih (1/0) ulaza i jedan binarni izlaz. Veštački neuron aktivira svoj izlaz kada je određeni broj ulaza aktivan. Arhitekture sastavljene od ovog modela su bile pojednostavljene ali su mogle da izvršavaju jednostavne logičke operacije poput: \textit{$\wedge, \lor, \neg$} itd. \\
+
+Vremenom se došlo do bolje arhitekture veštačkih neuronskih mreža, tzv. \textbf{Perceptron} model. Perceptron arhitektura je smišljena 1957. godine. Zasnovana je na nešto drugačijem modelu veštačkog neurona koji se naziva \textit{threshold logic unit (srp. logička jedinica sa pragom)} u daljem tekstu TLU. Ulazi i izlazi u TLU su brojevi (ne binarne 1/0 vrednosti) i svaka ulazna konekcija ima određenu \textbf{težinu}. TLU računa skalarni proizvod ulaznog vektora i odgovarajućih težina (z = $x^T w$ = x\textsubscript{1}w\textsubscript{1} + x\textsubscript{2}w\textsubscript{2} + ... + x\textsubscript{n}w\textsubscript{n}).  Nad realnom vrednošću dobijenom iz skalarnog proizvoda primenjuje se \textit{stepena funkcija (engl. step function)} koja daje izlaz iz neurona, h\textsubscript{w}(x) = step(z), gde je z = $x^T w$. Ilustracija ovakvog modela veštačkog neurona je data na slici \ref{fig:perceptronAn}.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.7\textwidth]{perceptron_an_model.png}
+    \caption{Model veštačkog neurona kod perceptrona - TLU}\label{fig:perceptronAn}
+\end{figure}
+
+Najčešće korišćena stepena funkcija kod TLU je \textit{Heavyside step function} koja je dana u jednačini \eqref{eq:heavyside}. 
+
+\begin{equation}\label{eq:heavyside}
+  \textit{heavyside(z)} =
+  \begin{cases}
+    0, & \textit{z} < 0 \\
+    1, & \textit{z} \geq 0
+  \end{cases}
+\end{equation}
+
+Jedan TLU može da se koristi za jednostavnu binarnu klasifikaciju. Računa linearnu kombinaciju elemenata na ulazu, i ako je rezultat veći od zadate granice, na izlazu je 1, tj smatra se da instanca pripada pozitivnoj klasi. U suprotonom se radi o negativnoj klasi (slično kao logistička regresija, na čiju ćemo se primenu kasnije osvrnuti). Trening TLU se svodi na to da se nađu optimalne vrednosti za ulazne težine vektora $w$, tako da se tačne predikcije daju za što više instanci. \\
+
+Perceptron se sastoji od jednog sloja TLU-ova, i svaki TLU je povezan sa svakim ulazom. Kada su svi neuroni jednog sloja povezani sa svim neuronima prethodnog sloja, takav sloj se naziva \textit{potpuno povezan sloj ili gusti sloj}. Ulazi Perceptrona se propuštaju kroz posebne propusne neurone, koji se nazivaju \textit{ulazni neuroni}. Oni na izlazu daju šta god im se nalazi na ulazu. Svi ulazni neuroni formiraju \textit{ulazni sloj}. Svim ulaznim neuronima se dodaje još jedan neuron  koji se naziva \textit{bias} neuron koji ima konstantan izlaz 1. Perceptron koji ima dva ulaza i tri izlaza dat je na slici \ref{fig:perceptron2i3o}. Ovakav perceptron može da klasifikuje instance simultano u tri različite klase, što ga čini višeizlaznim klasifikatorom. 
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.7\textwidth]{perceptron_2_i_3_o.png}
+    \caption{Arhitektura Perceptrona sa dva ulazna neurona, jednim bias neuronom i tri izlazna neurona}\label{fig:perceptron2i3o}
+\end{figure}
+
+Jednačinom \eqref{eq:outputsFullyConnected} je moguće efikasno izračunati izlaze sloja veštačkih neurona za nekoliko instanci istovremeno. U jednačini $X$ predstavlja matricu ulaznih instanci, $W$ je matrica težina, koja sadrži težine svih konekcija sem konekcija koje dolaze od bias neurona, $b$ je bias vektor koji sadrži sve težine konekcija između bias neurona i svih neurona sa kojima je povezan, funkcija $\phi$ se naziva \textit{aktivacionom funkcijom}: ona određuje kada neuron aktivira izlaz. Kod TLU aktivaciona funkcija je stepena funkcija. 
+
+\begin{equation}\label{eq:outputsFullyConnected}
+h\textsubscript{W, b} = \phi (XW + b)
+\end{equation}
+
+Pravilo za treniranje perceptrona osnažuje konekcije koje smanjuju grešku pri predikciji. Perceptron dobija jednu po jednu trening instancu, i za svaku od njih pravi predikciju. Nakon predikcije, za svaki izlazni neuron koji je napravio pogrešnu predikciju, njemu se osnažuju/povećavaju težine onih konekcija sa ulaza koje bi doprinele pravilnoj predikciji. Pravilo je dato u jednačini \eqref{eq:perceptronlearningrule}.
+
+\begin{equation}\label{eq:perceptronlearningrule}
+w\textsubscript{i, j}\textsuperscript{sledeći korak} = w\textsubscript{i, j} + \eta (y\textsubscript{j} - \hat{y}\textsubscript{j})x\textsubscript{i}
+\end{equation}
+
+U ovoj jednačini, w\textsubscript{i, j} je težina konekcije između i-tog ulaznog neurona i j-tog izlaznog neurona, x\textsubscript{i} je i-ta ulazna vrednost trenutne trening instance, \^y\textsubscript{j} je izlaz j-tog izlaznog neurona za trenutnu trening instancu, y\textsubscript{j} je prava izlazna vrednost j-tog neurona tj vrednost koju bi trebalo da ima izlazni neuron za trenutnu trening instancu, $\eta$ je learning rate parametar.\\
+
+\textbf{Višeslojni Perceptroni i bekpropagacija}\\s
+
+\section{Treniranje dubokih neuronskih mreža}
+
+
+
 \end{document}
