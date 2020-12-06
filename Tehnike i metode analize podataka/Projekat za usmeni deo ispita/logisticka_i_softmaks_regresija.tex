@@ -671,10 +671,22 @@ w\textsubscript{i, j}\textsuperscript{sledeći korak} = w\textsubscript{i, j} + 
 
 U ovoj jednačini, w\textsubscript{i, j} je težina konekcije između i-tog ulaznog neurona i j-tog izlaznog neurona, x\textsubscript{i} je i-ta ulazna vrednost trenutne trening instance, \^y\textsubscript{j} je izlaz j-tog izlaznog neurona za trenutnu trening instancu, y\textsubscript{j} je prava izlazna vrednost j-tog neurona tj vrednost koju bi trebalo da ima izlazni neuron za trenutnu trening instancu, $\eta$ je learning rate parametar.\\
 
-\textbf{Višeslojni Perceptroni i bekpropagacija}\\s
+\textbf{Višeslojni Perceptroni i bekpropagacija}\\
 
-\section{Treniranje dubokih neuronskih mreža}
+Višeslojni perceptroni se sastoje od jednog sloja propusnih neurona, i jednog ili više slojeva TLU, koji se nazivaju \enquote{skriveni slojevi} i poslednjeg izlaznog sloja. Slojevi koji su bliži ulaznom sloju nazivaju se niži ili donji slojevi, a slojevi koji su bliži izlaznom sloju nazivaju se viši slojevi. Svaki sloj sem ulaznog sloja ima svoj bias neuron i svi susedni slojevi su potpuno povezani. Na slici \ref{fig:mlp} je dat prikaz jednog višeslojnog perceptrona. 
 
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.7\textwidth]{MLP_architecture.png}
+    \caption{Arhitektura višeslojnog perceptrona}\label{fig:mlp}
+\end{figure}
 
+Kada neuronska mreža sadrži više skrivenih slojeva obično se naziva dubokom neuronskom mrežom. U početku razvoja ovog tipa mreža dugo vremena nije bilo moguće naći rešenje za njihovo treniranje. Međutim, 1986. godine grupa naučnika je dala rada kojim su osmislili algoritam bekpropagacije koji se i danas koristi kod treniranja mreža. Srž ovog algoritma je algoritam opadajućeg gradijenta o kojem je ranije bilo reči. U samo dva prolaza kroz mrežu (jedan napred, i jedan unazad) algoritam bekpropagacije može da izračuna gradijent funkcije gubitaka za svaki parametar modela. Jednostavnije rečeno, može da izračuna kako težina svake konekcije i svaki bias neuron treba da budu optimizovani da bi se smanjila greška u predikciji. Kada mreža izračuna ove parametre, postupa kao u slučaju klasičnog algoritma opadajućeg gradijenta, tj \enquote{kreće se niz strminu} sve dok ne konvergira ka nekom rešenju. U prolazu unapred model vrši predikciju, i meri grešku u predikciji na kraju. U povratku kroz mrežu meri koliko je svaka od konekcija doprinela grešci i na kraju optimizuje parametre da bi se greška smanjila. \\
+
+Da bi algoritam funkcionisao bez problema potrebno je promeniti i aktivacionu funkciju neurona. Umesto stepene funkcije, potrebno je koristiti sigmoidnu funkciju. Ova izmena je neophodna jer je stepena funkcija \enquote{ravna}, nema prevojnih tačaka, nema lokalnih i globalnih minimuma ka kojima bi se moglo kretati. Logistička funkcija ima svuda definisani nenulti izvod i zbog toga je moguće primeniti algoritam opadajućeg gradijenta. Logistička funkcija se i u neuronskim mrežama može koristiti za binarnu klasifikaciju tj određivanje da li instanca pripada nekoj klasi ili ne. Ako je potrebno da raditi višeklasnu klasifikaciju moguće je koristiti kao aktivacionu funkciju, softmaks funkciju. U narednom delu biće data implementacija neuronskih mreža za binarnu i višeklasnu klasifikaciju korišćenjem TensorFlow biblioteke otvorenog koda. Pored klasifikacija, neuronske mreže se mogu koristiti i za regresiju, kao i za klasifikaciju slika i obradu prirodnih jezika. \\
+
+ \section{Implementacija veštačkih neuronskih mreža za klasifikaciju}
+
+Veštačke neuronske mreže se mogu implementirati u više različitih frejmvorka. Najčešći izbor su biblioteke poput TensorFlow ili PyTorch. TensorFlow je biblioteka otvorenog koga koja sadrži specijalizovane funkcije za kreiranje, treniranje i testiranje neuronskih mreža. Razvijena je u okviru Google Brain projekta, za interne potrebe, a zatim je 2015. godine predstavljena javnosti kao biblioteka otvorenog koda. Danas je uz Pytorch jedna od najpopularnijih biblioteka za kreiranje i treniranje neuronskih mreža. U nastavku će biti data implementacija veštačkih neuronskih mreža TensorFlow bibliotekom. Jedna mreža će se koristiti za binarnu klasifikaciju i imaće kao aktivacionu funkciju poslednjeg sloja, logističku funkciju. Druga mreža će se koristiti za višeklasnu klasifikaciju i koristiće softmaks kao aktivacionu funkciju poslednjeg sloja. Za višeklasnu klasifikaciju biće korišćen već prečišćeni skup podataka \textit{Fashion MNIST}. Ovaj skup podataka se najčešće koristi kada se testira neki novi model, i standard je meru performansi modela. Sadrži preko 70000 slika odeće, svaka slika je veličine 28x28 piksela. Svaka slika ima labelu od 1 do 9 kom tipu odeće pripada. Za binarnu klasifikaciju biće korišćen  ...
 
 \end{document}
