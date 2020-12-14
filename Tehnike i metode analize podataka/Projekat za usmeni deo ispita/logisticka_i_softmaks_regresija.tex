@@ -761,17 +761,26 @@ Nakon izgradnje modela, potrebno je taj model istrenirati nad skupom podataka. N
 
 Posle treniranja modela moguće je koristiti model za predikciju. Najjednostavnije je uzeti nekoliko instanci iz test skupa i videti kako model vrši predikciju za njih. Primer koda za testiranje skupa dat je na slici \ref{fig:test_logistic}.
 
-\begin{figure}[h]
-    \centering
-    \includegraphics[width=0.5\textwidth]{test_logistic.png}
-    \caption{Testiranje neuronske mreže Fashion MNIST skupom podataka}\label{fig:test_logistic}
-\end{figure}
+
+\begin{wrapfigure}{c}{1\textwidth}
+  \begin{center}
+    \includegraphics[width=0.5\textwidth]{test_logistic}
+  \end{center}
+  \caption{Testiranje neuronske mreže Fashion MNIST skupom podataka}\label{fig:test_logistic}
+\end{wrapfigure}
 
 \chapter{Zaključak}
+
+Logistička i softmaks regresija imaju jako veliku primenu u mašinskom učenju. Skupovi podataka čije se ponašanje može modelovati logističkom ili softmaks regresijom treba da ima međusobno linearno razdvojive grupe. U takvim slučajevima će ove regresije davati dobre predikcije za skup podataka. U ostalim slučajevima treba primeniti tehnike prečišavanja podataka da bi se izdvojili atributi koji najviše doprinose vrednosti izlazne labele. Takođe zbog toga što su ove funkcije diferencijabilne, imaju primenu kao aktivacione funkcije u neuronskim mrežama. Osobina diferencijabilnosti omogućava nalaženje gradijenta funkcije i korišćenje optimizacionog algoritma bekpropagacije. Uz ove primene, logistička i softmaks regresija daje puno mogućnosti u istraživanju i primenama naročito u novim tipovima neuronskih mreža i kod dubokog učenja.
 
 \end{document}
 
 Prvi primer mreže će se koristiti za višeklasnu klasifikaciju i koristiće softmaks kao aktivacionu funkciju poslednjeg sloja. Za višeklasnu klasifikaciju biće korišćen već prečišćeni skup podataka \textit{Fashion MNIST}. Ovaj skup podataka se najčešće koristi kada se testira neki novi model, i standard je meru performansi modela. Sadrži preko 70000 slika odeće, svaka slika je veličine 28x28 piksela. Svaka slika ima labelu od 1 do 9 kom tipu odeće pripada. Na slici \ref{fig:loadfmnist} je dat kod za učitavanje skupa podataka. 
+
+\begin{wrapfigure}[h]
+    \includegraphics[width=0.5\textwidth]{test_logistic.png}
+    \caption{Testiranje neuronske mreže Fashion MNIST skupom podataka}\label{fig:test_logistic}
+\end{wrapfigure}
 
 \begin{figure}[h]
     \centering
