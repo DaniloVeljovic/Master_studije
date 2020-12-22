@@ -38,7 +38,7 @@
 \chapter{Uvod}
 \ Termini poput veštačke inteligencije i mašinskog učenja su sve popularniji u savremenoj kulturi. Preko medija sve češće čujemo nagoveštaje vodećih naučnika iz ove oblasti da će sistemi koji koriste veštačku inteligenciju zameniti ljude na mnogim radnim mestima. Priča se da će prvo nestati najrepetitivniji poslovi poput vozača kamiona, radnika u skladištima, prodavaca i dr. Treba postaviti suštinsko pitanje zašto je to tako. Zašto će prvo rutinski poslovi nestati prvi? Odgovor na to pitanje daje prave smernice kada neko pokušava da shvati šta je to mašinsko učenje. \\ 
 
-Mašinsko učenje vuče korene iz statistike. Slobodno rečeno, mašinsko učenje se može shvatiti kao primena statističkih metoda nad velikom količinom podataka, da bi se izvukle nekakve pravilnosti iz podataka. Te pravilnosti uočava model i opisuje ih različitim statističkim terminima. Model se može shvatiti kao parametrizovana funkcija koja može da \enquote{uči} iz podataka. Podaci se u mašinskom učenju dele na trening i test skupove. Trening skupovi imaju određene vrednosti za atribute i imaju izlaznu labelu klase kojoj pripadaju ili neke kontinualne vrednosti koju uzimaju. Model uzima jedan po jedan podatak iz trening skupa, ili čitavu grupu, i proba da napravi predikciju koje bi izlazne vrednosti mogle da odgovaraju tim ulazima. Kada vidi koliko njegova procena odudara od vrednosti labele za taj podatak, on se ispravi svoje parametre. Ovaj proces se naziva treniranje modela. Kada model optimizuje svoje parametre, i kada se odradi evaluacija modela, prelazi se na testiranje. Kada se model testira njemu se daju instance podataka koje nikad nije video. Za te instance on sada predviđa izlazne labele. \\
+Mašinsko učenje vuče korene iz statistike. Slobodno rečeno, mašinsko učenje, konkretno jedna od tehnika mašinskog učenja poznata kao klasifikacija, se može shvatiti kao primena statističkih metoda nad velikom količinom podataka, da bi se izvukle nekakve pravilnosti iz podataka. Te pravilnosti uočava model i opisuje ih različitim statističkim terminima. Model se može shvatiti kao parametrizovana funkcija koja može da \enquote{uči} iz podataka. Podaci se u mašinskom učenju dele na trening i test skupove. Trening skupovi imaju određene vrednosti za atribute i imaju izlaznu labelu klase kojoj pripadaju ili neke kontinualne vrednosti koju uzimaju. Model uzima jedan po jedan podatak iz trening skupa, ili čitavu grupu, i proba da napravi predikciju koje bi izlazne vrednosti mogle da odgovaraju tim ulazima. Kada vidi koliko njegova procena odudara od vrednosti labele za taj podatak, on se ispravi svoje parametre. Ovaj proces se naziva treniranje modela. Kada model optimizuje svoje parametre, i kada se odradi evaluacija modela, prelazi se na testiranje. Kada se model testira njemu se daju instance podataka koje nikad nije video. Za te instance on sada predviđa izlazne labele. \\
 
 Posle ovog kratkog objašnjenja procesa mašinskog učenja, lako se može naslutiti odgovor na prethodno postavljeno pitanje o poslovima koje će prvo 
 \enquote{progutati} inteligentni sistemi. Uzmimo primer radnika koji radi u skladištu i pomera kutije od mesta A do mesta B. Robot može da posmatra radnika koji nosi kutije i da zaključi da radnik na mestu A podigne kutiju, nosi je do mesta B i tu je spušta. To je njegov \enquote{trening skup} podataka. Kod ovakvog tipa inteligentih sistema najčešće se koriste konvolucione neuronske mreže za računarski vid, pomoću kojih sistem prima podatke o tome šta se dešava oko njega. Princip ostaje isti, sistem preko kamera, prima ulazne podatke, i ovo služi kao trening skup podataka. Trenira određen model, i kada se završi taj proces on može da izvede zadatak prenosa kutija. Ako se od sistema zahteva da radi nešto novo, slično prethodnom, on će probati to da uradi na jedan način, i u zavisnosti od ishoda \enquote{učiće} o tome gde je pogrešio, odnosno optimizovaće model. \\
@@ -49,7 +49,7 @@ Tehnike mašinskog učenja su srž inteligentnih sistema. Neki od važnijih mode
 	\item \textit{Klasifikacija} predviđa klasu koja odgovara podatku
 	\item \textit{Regresija} predviđa kontinualnu vrednost koja odgovara podatku
 	\item \textit{Klasterizacija} je tehnika nenadgledanog učenja. Za razliku od tehnika nadgledanog učenja, o kojima je do sad bilo reči, kod nenadgledanog učenja nemamo informaciju o tome koji podatak ima kakvu klasu/vrednost. Zadatak klasterizacije je da one podatke koji su \enquote{slični} (mera sličnost se definiše kao parametar tehnike) grupiše zajedno.
-	\item \textit{Neuronske mreže} su tehnika koja je donela revoluciju u svet mašinskog učenja i omogućila stvari poput računarskog vida i procesuiranja prirodnih jezika. Ideja za ovu tehniku dobijena je iz ideje ljudskog mozga. Cela neuronska mreža se sastoji iz veštačkih neurona, koji su međusobno povezani. Na slici 1.1 dat je prikaz jedne neuronske mreže. Neuronska mreža se sastoji iz tri sloja, \textit{ulaznog} sloja, mnoštvo \textit{skrivenih} slojeva i \textit{izlaznog sloja}. Ideja kod funkcionisanja neuronske mreže je da početni slojevi prepoznaju jako male delove sistema, npr kod računarskog vida prepoznaju ivice, kod procesuiranja prirodnih jezika prepoznaju pojedina slova. Skriveni slojevi prepoznaju složenije pojave, npr geometrijske figure ili tela, ili reči i rečenice. Na kraju izlazni neuroni se aktiviraju ako je prepoznato nešto. Primera radi, mreža može da se trenira da prepoznaje slike mačaka ili da prepoznaje da li je neka rečenica nosi pozitivna ili negativna osećanja. Ako mreža prepozna sliku mačke, ili ako je određena rečenica ima pozitivna osećanja, izlazni neuron se aktivira. 
+	\item \textit{Neuronske mreže} su tehnika koja je donela revoluciju u svet mašinskog učenja i omogućila stvari poput računarskog vida i procesuiranja prirodnih jezika. Ideja za ovu tehniku dobijena je iz ideje ljudskog mozga. Cela neuronska mreža se sastoji iz veštačkih neurona, koji su međusobno povezani. Na slici 1.1 dat je prikaz jedne neuronske mreže. Neuronska mreža se sastoji iz više slojeva, \textit{ulaznog} sloja, mnoštvo \textit{skrivenih} slojeva i \textit{izlaznog sloja}. Ideja kod funkcionisanja neuronske mreže je da početni slojevi prepoznaju jako male delove sistema, npr kod računarskog vida prepoznaju ivice, kod procesuiranja prirodnih jezika prepoznaju pojedina slova. Skriveni slojevi prepoznaju složenije pojave, npr geometrijske figure ili tela, ili reči i rečenice. Na kraju izlazni neuroni se aktiviraju ako je prepoznato nešto. Primera radi, mreža može da se trenira da prepoznaje slike mačaka ili da prepoznaje da li je neka rečenica nosi pozitivna ili negativna osećanja. Ako mreža prepozna sliku mačke, ili ako je određena rečenica ima pozitivna osećanja, izlazni neuron se aktivira. 
 \end{itemize}
 
 \begin{figure}[ht]
@@ -417,7 +417,7 @@ Kako bi se stekao nekakav intuitivni osećaj za podatke, moguće je da se tabela
     \caption{Prvih 5 elemenata skupa podataka}\label{fig:irishead}
 \end{figure}
 
-Naredbom \texttt{describe()} moguće je dobiti statističke podatke o skupu podataka. Funkcija vraća tabelu gde svaka kolona odgovara jednom atributu. U redovima tabele se nalaze informacije o broju instanci koje imaju ovaj podatak (gde je ova vrednost različita od null), o matematičkom očekivanju za taj atribut, o standardnoj devijaciji, o minimalnom i maksimalnom elementu skupa itd. Rezultat naredbe vidljiv je na slici \ref{fig:irisdescribe}.
+Naredbom \texttt{describe()} moguće je dobiti statističke podatke o skupu podataka. Funkcija vraća tabelu gde svaka kolona odgovara jednom atributu. U redovima tabele se nalaze informacije o broju instanci koje imaju ovaj podatak (gde je ova vrednost različita od null), o matematičkom očekivanju za taj atribut, o standardnoj devijaciji, o minimalnom i maksimalnom elementu skupa itd. Rezultat naredbe prikazan je na slici \ref{fig:irisdescribe}.
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.8\textwidth]{iris_describe.png}
@@ -495,7 +495,7 @@ Jedna od metrika koja se može dobiti iz matrice konfuzije je preciznost. Preciz
 	preciznost = \frac{TP}{TP + FP} = \frac{50}{1 + 50} = 0.98
 \end{equation}
 
-Preciznost je 0.67, odnosno od ukupnog broja instanci za koje je klasifikator rekao da su pozitivne, samo 67\% je stvarno pozitivno. 
+Preciznost je 0.98, odnosno od ukupnog broja instanci za koje je klasifikator rekao da su pozitivne, samo 98\% je stvarno pozitivno. 
 
 \begin{equation} \label{eq:recall}
 	odziv = \frac{TP}{TP + FN} = \frac{50}{0 + 50} = 1
@@ -567,7 +567,7 @@ Jedna od funkcija koja je izložena spoljnoj upotrebi je funkcija \texttt{fit}. 
     \caption{Implementacija funkcije za treniranje modela klase \texttt{SoftmaxRegression}}\label{fig:softfit}
 \end{figure}
 
-Nakon treniranja modela potrebno je da model može da vrši predviđanja za instance čije su labele nepoznate. Ovo se postiže funkcijama \texttt{predict prob} i \texttt{predict}. Obe klase imaju \texttt{public} modifikator pristupa što znači da bilo ko može da im pristupi. Funkcija \texttt{predict prob} uzima jednu instancu (vektor) ili više instanci (matricu)  i vraća predviđenu verovatnoću da instanca/instance pripada/ju pozitivnoj klasi. Funkcija \texttt{predict} takođe uzima kao parametar jednu instancu (vektor) ili više instanci (matricu) i vraća klasu koju je model predvideo da ta instanca/e pripada/ju.  Implementacija funkcija \texttt{predict prob} i \texttt{predict} je data na slici \ref{fig:softpred}.
+Nakon treniranja modela potrebno je da model može da vrši predviđanja za instance čije su labele nepoznate. Ovo se postiže funkcijama \texttt{predict prob} i \texttt{predict}. Obe funkcije imaju \texttt{public} modifikator pristupa što znači da bilo ko može da im pristupi. Funkcija \texttt{predict prob} uzima jednu instancu (vektor) ili više instanci (matricu)  i vraća predviđenu verovatnoću da instanca/instance pripada/ju pozitivnoj klasi. Funkcija \texttt{predict} takođe uzima kao parametar jednu instancu (vektor) ili više instanci (matricu) i vraća klasu koju je model predvideo da ta instanca/e pripada/ju.  Implementacija funkcija \texttt{predict prob} i \texttt{predict} je data na slici \ref{fig:softpred}.
 
 \begin{figure}[h]
     \centering
@@ -599,13 +599,13 @@ Treniranje modela se radi funkcijom \texttt{fit()}. Poziv funkcije za treniranje
     \caption{Podela skupa podataka na trening i test skup za softmaks regresiju}\label{fig:softtrain}
 \end{figure}
 
-Nakon treniranja modela, za evaluaciju biće prikazane metrike poput matrice konfuzije, preciznosti, odziva i f-mere. Vrednosti za sve ove mere biće generisane preko biblioteke scikit-learn. Kod kojim se dobijaju je dat na slici \ref{fig:softmaxeval}. \\
-
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.7\textwidth]{softmax_evaluation.png}
     \caption{Evaluacija modela za softmaks regresiju}\label{fig:softmaxeval}
 \end{figure}
+
+Nakon treniranja modela, za evaluaciju biće prikazane metrike poput matrice konfuzije, preciznosti, odziva i f-mere. Vrednosti za sve ove mere biće generisane preko biblioteke scikit-learn. Kod kojim se dobijaju je dat na slici \ref{fig:softmaxeval}. \\
 
 Iz matrice konfuzije se jasno vidi da model savršeno prepoznaje instance prve klase, međutim meša instance koje pripadaju klasi 2 i 3. Ovo je bila činjenica koju smo eksploatisali kada smo ovaj skup podataka koristili da logističkom regresijom radimo binarnu klasifikaciju za klasu 1. Da bi se izbegla pristrasnost klasifikatora pri evaluaciji modela najčešće se koristi \textit{k-fold cross validation} metoda. Korišćenjem metode \texttt{precision recall fscore support()} iz biblioteke sklearn, dobićemo preciznost, odziv f meru za svaku od klasa. Iz priloženih metrika se jasno vidi da model savršeno prepoznaje sve instance klase 1, a da meša instance klase 2 i 3. Preciznost je najlošija za klasu 3, što znači da od svih instanci koje je klasifikator prepoznao kao da pripadaju klasi 3, samo 63\% zaista pripada klasi 3. Najlošiji odziv ima klasa 2, što znači da je klasifikator od svih instanci koje pripadaju klasi 2, samo njih 56\% prepoznao kao da pripadaju klasi 2. \\
 
@@ -629,7 +629,7 @@ Veštačke neuronske mreže su inspirisane idejom bioloških neurona. Vremenom j
 
 \textbf{Model veštačkog neurona} ima jedan ili više binarnih (1/0) ulaza i jedan binarni izlaz. Veštački neuron aktivira svoj izlaz kada je određeni broj ulaza aktivan. Arhitekture sastavljene od ovog modela su bile pojednostavljene ali su mogle da izvršavaju jednostavne logičke operacije poput: \textit{$\wedge, \lor, \neg$} itd. \\
 
-Vremenom se došlo do bolje arhitekture veštačkih neuronskih mreža, tzv. \textbf{Perceptron} model. Perceptron arhitektura je smišljena 1957. godine. Zasnovana je na nešto drugačijem modelu veštačkog neurona koji se naziva \textit{threshold logic unit (srp. logička jedinica sa pragom)} u daljem tekstu TLU. Ulazi i izlazi u TLU su brojevi (ne binarne 1/0 vrednosti) i svaka ulazna konekcija ima određenu \textbf{težinu}. TLU računa skalarni proizvod ulaznog vektora i odgovarajućih težina (z = $x^T w$ = x\textsubscript{1}w\textsubscript{1} + x\textsubscript{2}w\textsubscript{2} + ... + x\textsubscript{n}w\textsubscript{n}).  Nad realnom vrednošću dobijenom iz skalarnog proizvoda primenjuje se \textit{stepena funkcija (engl. step function)} koja daje izlaz iz neurona, h\textsubscript{w}(x) = step(z), gde je z = $x^T w$. Ilustracija ovakvog modela veštačkog neurona je data na slici \ref{fig:perceptronAn}.
+Vremenom se došlo do bolje arhitekture veštačkih neuronskih mreža, tzv. \textbf{Perceptron} model. Perceptron arhitektura je smišljena 1957. godine. Zasnovana je na nešto drugačijem modelu veštačkog neurona koji se naziva \textit{threshold logic unit (srp. logička jedinica sa pragom)} u daljem tekstu TLU. Ulazi i izlazi u TLU su brojevi (ne binarne 1/0 vrednosti) i svaka ulazna konekcija ima određenu \textbf{težinu}. TLU računa skalarni proizvod ulaznog vektora i odgovarajućih težina (z = $x^T w$ = x\textsubscript{1}w\textsubscript{1} + x\textsubscript{2}w\textsubscript{2} + ... + x\textsubscript{n}w\textsubscript{n}).  Nad realnom vrednošću dobijenom iz skalarnog proizvoda primenjuje se \textit{odskočna funkcija (engl. step function)} koja daje izlaz iz neurona, h\textsubscript{w}(x) = step(z), gde je z = $x^T w$. Ilustracija ovakvog modela veštačkog neurona je data na slici \ref{fig:perceptronAn}.
 
 \begin{figure}[h]
     \centering
@@ -637,7 +637,7 @@ Vremenom se došlo do bolje arhitekture veštačkih neuronskih mreža, tzv. \tex
     \caption{Model veštačkog neurona kod perceptrona - TLU}\label{fig:perceptronAn}
 \end{figure}
 
-Najčešće korišćena stepena funkcija kod TLU je \textit{Heavyside step function} koja je dana u jednačini \eqref{eq:heavyside}. 
+Najčešće korišćena odskočna funkcija kod TLU je \textit{Heavyside step function} koja je dana u jednačini \eqref{eq:heavyside}. 
 
 \begin{equation}\label{eq:heavyside}
   \textit{heavyside(z)} =
@@ -657,7 +657,7 @@ Perceptron se sastoji od jednog sloja TLU-ova, i svaki TLU je povezan sa svakim 
     \caption{Arhitektura Perceptrona sa dva ulazna neurona, jednim bias neuronom i tri izlazna neurona}\label{fig:perceptron2i3o}
 \end{figure}
 
-Jednačinom \eqref{eq:outputsFullyConnected} je moguće efikasno izračunati izlaze sloja veštačkih neurona za nekoliko instanci istovremeno. U jednačini $X$ predstavlja matricu ulaznih instanci, $W$ je matrica težina, koja sadrži težine svih konekcija sem konekcija koje dolaze od bias neurona, $b$ je bias vektor koji sadrži sve težine konekcija između bias neurona i svih neurona sa kojima je povezan, funkcija $\phi$ se naziva \textit{aktivacionom funkcijom}: ona određuje kada neuron aktivira izlaz. Kod TLU aktivaciona funkcija je stepena funkcija. 
+Jednačinom \eqref{eq:outputsFullyConnected} je moguće efikasno izračunati izlaze sloja veštačkih neurona za nekoliko instanci istovremeno. U jednačini $X$ predstavlja matricu ulaznih instanci, $W$ je matrica težina, koja sadrži težine svih konekcija sem konekcija koje dolaze od bias neurona, $b$ je bias vektor koji sadrži sve težine konekcija između bias neurona i svih neurona sa kojima je povezan, funkcija $\phi$ se naziva \textit{aktivacionom funkcijom}: ona određuje kada neuron aktivira izlaz. Kod TLU aktivaciona funkcija je odskočna funkcija. 
 
 \begin{equation}\label{eq:outputsFullyConnected}
 h\textsubscript{W, b} = \phi (XW + b)
@@ -683,7 +683,7 @@ Višeslojni perceptroni se sastoje od jednog sloja propusnih neurona, i jednog i
 
 Kada neuronska mreža sadrži više skrivenih slojeva obično se naziva dubokom neuronskom mrežom. U početku razvoja ovog tipa mreža dugo vremena nije bilo moguće naći rešenje za njihovo treniranje. Međutim, 1986. godine grupa naučnika je dala rada kojim su osmislili algoritam bekpropagacije koji se i danas koristi kod treniranja mreža. Srž ovog algoritma je algoritam opadajućeg gradijenta o kojem je ranije bilo reči. U samo dva prolaza kroz mrežu (jedan napred, i jedan unazad) algoritam bekpropagacije može da izračuna gradijent funkcije gubitaka za svaki parametar modela. Jednostavnije rečeno, može da izračuna kako težina svake konekcije i svaki bias neuron treba da budu optimizovani da bi se smanjila greška u predikciji. Kada mreža izračuna ove parametre, postupa kao u slučaju klasičnog algoritma opadajućeg gradijenta, tj \enquote{kreće se niz strminu} sve dok ne konvergira ka nekom rešenju. U prolazu unapred model vrši predikciju, i meri grešku u predikciji na kraju. U povratku kroz mrežu meri koliko je svaka od konekcija doprinela grešci i na kraju optimizuje parametre da bi se greška smanjila. \\
 
-Da bi algoritam funkcionisao bez problema potrebno je promeniti i aktivacionu funkciju neurona. Umesto stepene funkcije, potrebno je koristiti sigmoidnu funkciju. Ova izmena je neophodna jer je stepena funkcija \enquote{ravna}, nema prevojnih tačaka, nema lokalnih i globalnih minimuma ka kojima bi se moglo kretati. Logistička funkcija ima svuda definisani nenulti izvod i zbog toga je moguće primeniti algoritam opadajućeg gradijenta. Logistička funkcija se i u neuronskim mrežama može koristiti za binarnu klasifikaciju tj određivanje da li instanca pripada nekoj klasi ili ne. Ako je potrebno da raditi višeklasnu klasifikaciju moguće je koristiti kao aktivacionu funkciju, softmaks funkciju. U narednom delu biće data implementacija neuronskih mreža za binarnu i višeklasnu klasifikaciju korišćenjem TensorFlow biblioteke otvorenog koda. Pored klasifikacija, neuronske mreže se mogu koristiti i za regresiju, kao i za klasifikaciju slika i obradu prirodnih jezika. \\
+Da bi algoritam funkcionisao bez problema potrebno je promeniti i aktivacionu funkciju neurona. Umesto stepene funkcije, potrebno je koristiti sigmoidnu funkciju. Ova izmena je neophodna jer je odskočna funkcija \enquote{ravna}, nema prevojnih tačaka, nema lokalnih i globalnih minimuma ka kojima bi se moglo kretati. Logistička funkcija ima svuda definisani nenulti izvod i zbog toga je moguće primeniti algoritam opadajućeg gradijenta. Logistička funkcija se i u neuronskim mrežama može koristiti za binarnu klasifikaciju tj određivanje da li instanca pripada nekoj klasi ili ne. Ako je potrebno da raditi višeklasnu klasifikaciju moguće je koristiti kao aktivacionu funkciju, softmaks funkciju. U narednom delu biće data implementacija neuronskih mreža za binarnu i višeklasnu klasifikaciju korišćenjem TensorFlow biblioteke otvorenog koda. Pored klasifikacija, neuronske mreže se mogu koristiti i za regresiju, kao i za klasifikaciju slika i obradu prirodnih jezika. \\
 
  \section{Implementacija veštačkih neuronskih mreža za klasifikaciju}
 
@@ -723,7 +723,23 @@ Nakon izgradnje modela, potrebno je taj model istrenirati nad skupom podataka. N
     \caption{Treniranje neuronske mreže na Fashion MNIST skupom podataka}\label{fig:model_compile_fit_NN}
 \end{figure}
 
-Posle treniranja modela moguće je koristiti model za predikciju. Najjednostavnije je uzeti nekoliko instanci iz test skupa i videti kako model vrši predikciju za njih. Primer koda za testiranje skupa dat je na slici \ref{fig:fashion_mnist_test}.
+
+Posle treniranja modela, moguće je odraditi evaluaciju modela. Evaluacija modela se i ovde radi cross validation algoritmom. Metrike poput matrice konfuzije, preciznosti, odziva i f-mere date su na slikama \ref{fig:softmax_NN_confusion_matrix} i \ref{fig:softmax_NN_metrics}.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.7\textwidth]{softmax_NN_confusion_matrix.png}
+    \caption{Matrica konfuzije nad Fashion MNIST skupom podataka }\label{fig:softmax_NN_confusion_matrix}
+\end{figure}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.7\textwidth]{softmax_NN_metrics.png}
+    \caption{Preciznost, odziv i f mera nad Fashion MNIST skupom podataka}\label{fig:softmax_NN_metrics}
+\end{figure}
+
+
+Posle evaluacije modela moguće je koristiti model za predikciju. Najjednostavnije je uzeti nekoliko instanci iz test skupa i videti kako model vrši predikciju za njih. Primer koda za testiranje skupa dat je na slici \ref{fig:fashion_mnist_test}, a rezultat naredbe je dat na slici \ref{fig:fashion_mnist_test_result}\\
 
 \begin{figure}[h]
     \centering
@@ -731,11 +747,17 @@ Posle treniranja modela moguće je koristiti model za predikciju. Najjednostavni
     \caption{Testiranje neuronske mreže nad Fashion MNIST skupom podataka}\label{fig:fashion_mnist_test}
 \end{figure}
 
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.5\textwidth]{fashion_mnist_test_result.png}
+    \caption{Rezultat testiranja neuronske mreže nad Fashion MNIST skupom podataka}\label{fig:fashion_mnist_test_result}
+\end{figure}
+
 \textbf{Primena logističke funkcije u neuronskim mrežama}\\
 
-Za testiranje funkcije logističke funkcije kao aktivacione funkcije kod neuronskih mreža iskoristićemo isti skup podataka, s jednom malom razlikom. Mreža mora biti trenirana za binarnu klasifikaciju i nasumično je izabrano da mreža prepoznaje sve slike sandala (označene labelom 5). U nastavku biće dat samo kod koji se razlikuje u odnosu na implementaciju softmaks funkcije.
+Za testiranje funkcije logističke funkcije kao aktivacione funkcije kod neuronskih mreža iskoristićemo isti skup podataka, s jednom malom razlikom. Mreža mora biti trenirana za binarnu klasifikaciju i nasumično je izabrano da mreža prepoznaje sve slike sandala (označene labelom 5). U nastavku biće dat samo kod koji se razlikuje u odnosu na implementaciju softmaks funkcije. \\
 
-Na slici \ref{fig:filter_mnist} je dat deo koda koji deli početni skup podatka na trening i test skup. Zatim se labele za trening i test skupove filtriraju, tako da samo govore da li instanca pripada klasi 5 ili ne.
+Na slici \ref{fig:filter_mnist} je dat deo koda koji deli početni skup podatka na trening i test skup. Zatim se labele za trening i test skupove filtriraju, tako da samo govore da li instanca pripada klasi 5 ili ne.\\
 
 \begin{figure}[h]
     \centering
@@ -743,7 +765,7 @@ Na slici \ref{fig:filter_mnist} je dat deo koda koji deli početni skup podatka 
     \caption{Podela skupa podataka na trening i test skup}\label{fig:filter_mnist}
 \end{figure}
 
-Nakon podele skupa podataka, potrebno je izgraditi model neuronske mreže. U TensorFlow biblioteci se to radi preko Sequential klase koja omogućava da se metodom add dodaju slojevi mreže jedan na drugi. Za svaki sloj se definiše broj neurona u tom sloju, i koju aktivacionu funkciju sloj koristi. Očigledno je da poslednji sloj koristi logističku funkciju kojom se dobija vrednost 1 ili 0 u zavisnosti da li ta instanca pripada klasi 5.
+Nakon podele skupa podataka, potrebno je izgraditi model neuronske mreže. U TensorFlow biblioteci se to radi preko Sequential klase koja omogućava da se metodom add dodaju slojevi mreže jedan na drugi. Za svaki sloj se definiše broj neurona u tom sloju, i koju aktivacionu funkciju sloj koristi. Očigledno je da poslednji sloj koristi logističku funkciju kojom se dobija vrednost 1 ili 0 u zavisnosti da li ta instanca pripada klasi 5.\\
 
 \begin{figure}[h]
     \centering
@@ -751,22 +773,40 @@ Nakon podele skupa podataka, potrebno je izgraditi model neuronske mreže. U Ten
     \caption{Arhitektura neuronske mreže koja koristi logističku regresiju kao funkciju izlaznog sloja}\label{fig:model_logistic}
 \end{figure}
 
-Nakon izgradnje modela, potrebno je taj model istrenirati nad skupom podataka. Najpre je potrebno pripremiti model što se radi funkcijom compile(). U funkciji compile je potrebno navesti koja se metoda optimizacije koristi i koja funkcija gubitaka se koristi. Treniranje modela se vrši funkcijom fit() koja ima sličan potpis kao funkcije fit biblioteke scikit-learn. Na slici \ref{fig:model_compile_fit_NN} je dat kod za treniranje neuronske mreže. Funkcija compile je izostavljena jer je ista kao u prethodom primeru. 
+Nakon izgradnje modela, potrebno je taj model istrenirati nad skupom podataka. Najpre je potrebno pripremiti model što se radi funkcijom compile(). U funkciji compile je potrebno navesti koja se metoda optimizacije koristi i koja funkcija gubitaka se koristi. Treniranje modela se vrši funkcijom fit() koja ima sličan potpis kao funkcije fit biblioteke scikit-learn. Na slici \ref{fig:model_compile_fit_NN} je dat kod za treniranje neuronske mreže. Funkcija compile je izostavljena jer je ista kao u prethodom primeru. \\
 
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.7\textwidth]{fit_logistic.png}
-    \caption{Treniranje neuronske mreže na Fashion MNIST skupom podataka}\label{fig:model_compile_fit_NN}
+    \caption{Treniranje neuronske mreže za binarnu klasifikaciju na Fashion MNIST skupom podataka}\label{fig:model_compile_fit_NN}
 \end{figure}
 
-Posle treniranja modela moguće je koristiti model za predikciju. Najjednostavnije je uzeti nekoliko instanci iz test skupa i videti kako model vrši predikciju za njih. Primer koda za testiranje skupa dat je na slici \ref{fig:test_logistic}.
+Posle treniranja modela, moguće je odraditi evaluaciju modela. Evaluacija modela se i ovde radi cross validation algoritmom. Metrike poput matrice konfuzije, preciznosti, odziva i f-mere date su na slikama \ref{fig:logistic_NN_confusion_matrix} i \ref{fig:logistic_NN_metrics}.\\
 
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.3\textwidth]{logistic_NN_confusion_matrix.png}
+    \caption{Matrica konfuzije za binarnu klasifikaciju nad Fashion MNIST skupom podataka }\label{fig:logistic_NN_confusion_matrix}
+\end{figure}
 
-\begin{wrapfigure}{c}{1\textwidth}
-  \begin{center}
-    \includegraphics[width=0.5\textwidth]{test_logistic}
-  \end{center}
-  \caption{Testiranje neuronske mreže Fashion MNIST skupom podataka}\label{fig:test_logistic}
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.7\textwidth]{logistic_NN_metrics.png}
+    \caption{Preciznost, odziv i f mera za binarnu klasifikaciju nad Fashion MNIST skupom podataka}\label{fig:logistic_NN_metrics}
+\end{figure}
+
+Posle evaluacije modela moguće je koristiti model za predikciju. Najjednostavnije je uzeti nekoliko instanci iz test skupa i videti kako model vrši predikciju za njih. Primer koda za testiranje skupa dat je na slici \ref{fig:logistic_NN_test}, a rezultat naredbe je dat na slici \ref{fig:logistic_NN_test_result}\\
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.5\textwidth]{logistic_NN_test.png}
+    \caption{Testiranje neuronske mreže za binarnu klasifikaciju nad Fashion MNIST skupom podataka}\label{fig:logistic_NN_test}
+\end{figure}
+
+\begin{wrapfigure}{c}{\textwidth}
+	\centering
+    \includegraphics{logistic_NN_test_result.png}
+    \caption{Rezultat testiranja neuronske mreže za binarnu klasifikaciju nad Fashion MNIST skupom podataka}\label{fig:logistic_NN_test_result}
 \end{wrapfigure}
 
 \chapter{Zaključak}
