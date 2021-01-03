@@ -1,0 +1,10 @@
+CREATE EXTERNAL TABLE IF NOT EXISTS logs (user_name STRING, time STRING, query STRING)
+ROW FORMAT DELIMITED
+FIELDS TERMINATED BY ','
+STORED AS TEXTFILE
+LOCATION '/inputs';
+CREATE TABLE result AS
+SELECT user_name, count(1) AS log_entries
+FROM logs
+GROUP BY user_name
+ORDER BY user_name;

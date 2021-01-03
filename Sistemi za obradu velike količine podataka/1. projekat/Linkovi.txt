@@ -1,0 +1,6 @@
+https://stackoverflow.com/questions/25362942/parse-csv-as-dataframe-dataset-with-apache-spark-and-java
+
+hdfs://path/input.csv <-- ovaj path treba da se prosledi!!!!!!!!!
+
+https://www.citibikenyc.com/system-data
+

@@ -1,0 +1,8 @@
+A,B
+C,B
+F,B
+A,A
+C,A
+R,F
+R,C
+B,B
