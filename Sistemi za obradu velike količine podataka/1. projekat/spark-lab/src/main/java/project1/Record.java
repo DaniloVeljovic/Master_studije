@@ -1,18 +1,21 @@
 package project1;
 
+import jnr.ffi.Struct;
 import org.apache.spark.sql.sources.In;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class Record implements Serializable {
     private final Integer tripDuration;
-    private final String startTime;
-    private final String stopTime;
+    private final OffsetDateTime startTime;
+    private final OffsetDateTime stopTime;
     private final Long startStationId;
     private final String startStationName;
-    private final String startStationLatitude;
-    private final String startStationLongitude;
+    private final BigDecimal startStationLatitude;
+    private final BigDecimal startStationLongitude;
     private final Long endStationId;
     private final String endStationName;
     private final String endStationLatitude;
@@ -26,11 +29,11 @@ public class Record implements Serializable {
         return tripDuration;
     }
 
-    public String getStartTime() {
+    public OffsetDateTime getStartTime() {
         return startTime;
     }
 
-    public String getStopTime() {
+    public OffsetDateTime getStopTime() {
         return stopTime;
     }
 
@@ -42,11 +45,11 @@ public class Record implements Serializable {
         return startStationName;
     }
 
-    public String getStartStationLatitude() {
+    public BigDecimal getStartStationLatitude() {
         return startStationLatitude;
     }
 
-    public String getStartStationLongitude() {
+    public BigDecimal getStartStationLongitude() {
         return startStationLongitude;
     }
 
@@ -111,19 +114,19 @@ public class Record implements Serializable {
 
     public static class Builder {
         private Integer tripDuration = -1;
-        private String startTime = "";
-        private String stopTime = "";
-        private Long startStationId = -1l;
+        private OffsetDateTime startTime = OffsetDateTime.MAX;
+        private OffsetDateTime stopTime = OffsetDateTime.MAX;
+        private Long startStationId = -1L;
         private String startStationName = "";
-        private String startStationLatitude = "";
-        private String startStationLongitude = "";
-        private Long endStationId = -1l;
+        private BigDecimal startStationLatitude = null;
+        private BigDecimal startStationLongitude = null;
+        private Long endStationId = -1L;
         private String endStationName = "";
         private String endStationLatitude = "";
         private String endStationLongitude = "";
-        private Long bikeId = -1l;
+        private Long bikeId = -1L;
         private String userType = "";
-        private Long birthYear = -1l;
+        private Long birthYear = -1L;
         private Integer gender = -1;
 
         public Builder() {
@@ -135,14 +138,26 @@ public class Record implements Serializable {
         }
 
         public Builder startTime(String val) {
-            //TODO: Treba konvertovati iz Stringa u DateTime, treba videti koji.
-            // Ovo vazi za sve stringove koji su datumi.
-            this.startTime = val;
+            String dateTimePattern = "yyyy-MM-dd hh:mm:ss";
+            DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(dateTimePattern);
+            OffsetDateTime toSet = OffsetDateTime.MAX;
+
+            if(!val.equals("NULL"))
+                toSet = OffsetDateTime.parse(val, dateTimeFormatter);
+
+            this.startTime = toSet;
             return this;
         }
 
         public Builder stopTime(String val) {
-            this.stopTime = val;
+            String dateTimePattern = "yyyy-MM-dd hh:mm:ss";
+            DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(dateTimePattern);
+            OffsetDateTime toSet = OffsetDateTime.MAX;
+
+            if(!val.equals("NULL"))
+                toSet = OffsetDateTime.parse(val, dateTimeFormatter);
+
+            this.stopTime = toSet;
             return this;
         }
 
@@ -157,12 +172,20 @@ public class Record implements Serializable {
         }
 
         public Builder startStationLatitude(String val) {
-            this.startStationLatitude = val;
+            BigDecimal bd = null;
+            if(!val.equals("NULL")){
+                bd = new BigDecimal(val);
+            }
+            this.startStationLatitude = bd;
             return this;
         }
 
         public Builder startStationLongitude(String val) {
-            this.startStationLongitude = val;
+            BigDecimal bd = null;
+            if(!val.equals("NULL")){
+                bd = new BigDecimal(val);
+            }
+            this.startStationLongitude = bd;
             return this;
         }
 
@@ -182,7 +205,7 @@ public class Record implements Serializable {
         }
 
         public Builder endStationLongitude(String val) {
-            this.startStationLongitude = val;
+            this.endStationLongitude = val;
             return this;
         }
 
