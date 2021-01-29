@@ -16,7 +16,7 @@ import java.util.Properties;
 
 public class CitiBikeGenerator {
 
-    private static final Log LOGGER = LogFactory.getLog(CitiBikeGenerator.class);
+    //private static final Log LOGGER = LogFactory.getLog(CitiBikeGenerator.class);
     public static final String BOOTSTRAP_SERVER = "localhost:9092";
     private static final String DATA_FILE = "src/main/resources/201306-citibike-tripdata.csv";
 
@@ -39,7 +39,8 @@ public class CitiBikeGenerator {
 
             kafkaProducer.send(rec);
 
-            LOGGER.debug("[PRODUCER] Sent message: " + line);
+            System.out.println("[PRODUCER] Sent message: " + line);
+            //LOGGER.debug("[PRODUCER] Sent message: " + line);
             line = reader.readLine();
 
             Thread.sleep(millisToSleep);

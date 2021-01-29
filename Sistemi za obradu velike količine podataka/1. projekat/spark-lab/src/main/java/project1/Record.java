@@ -2,16 +2,18 @@ package project1;
 
 import jnr.ffi.Struct;
 import org.apache.spark.sql.sources.In;
+import scala.tools.nsc.backend.icode.Members;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class Record implements Serializable {
     private final Integer tripDuration;
-    private final OffsetDateTime startTime;
-    private final OffsetDateTime stopTime;
+    private final LocalDateTime startTime;
+    private final LocalDateTime stopTime;
     private final Long startStationId;
     private final String startStationName;
     private final BigDecimal startStationLatitude;
@@ -29,11 +31,11 @@ public class Record implements Serializable {
         return tripDuration;
     }
 
-    public OffsetDateTime getStartTime() {
+    public LocalDateTime getStartTime() {
         return startTime;
     }
 
-    public OffsetDateTime getStopTime() {
+    public LocalDateTime getStopTime() {
         return stopTime;
     }
 
@@ -114,8 +116,8 @@ public class Record implements Serializable {
 
     public static class Builder {
         private Integer tripDuration = -1;
-        private OffsetDateTime startTime = OffsetDateTime.MAX;
-        private OffsetDateTime stopTime = OffsetDateTime.MAX;
+        private LocalDateTime startTime = LocalDateTime.MAX;
+        private LocalDateTime stopTime = LocalDateTime.MAX;
         private Long startStationId = -1L;
         private String startStationName = "";
         private BigDecimal startStationLatitude = null;
@@ -138,24 +140,24 @@ public class Record implements Serializable {
         }
 
         public Builder startTime(String val) {
-            String dateTimePattern = "yyyy-MM-dd hh:mm:ss";
+            String dateTimePattern = "yyyy-MM-dd HH:mm:ss";
             DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(dateTimePattern);
-            OffsetDateTime toSet = OffsetDateTime.MAX;
+            LocalDateTime toSet = LocalDateTime.MAX;
 
             if(!val.equals("NULL"))
-                toSet = OffsetDateTime.parse(val, dateTimeFormatter);
+                toSet = LocalDateTime.parse(val, dateTimeFormatter);
 
             this.startTime = toSet;
             return this;
         }
 
         public Builder stopTime(String val) {
-            String dateTimePattern = "yyyy-MM-dd hh:mm:ss";
+            String dateTimePattern = "yyyy-MM-dd HH:mm:ss";
             DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(dateTimePattern);
-            OffsetDateTime toSet = OffsetDateTime.MAX;
+            LocalDateTime toSet = LocalDateTime.MAX;
 
             if(!val.equals("NULL"))
-                toSet = OffsetDateTime.parse(val, dateTimeFormatter);
+                toSet = LocalDateTime.parse(val, dateTimeFormatter);
 
             this.stopTime = toSet;
             return this;

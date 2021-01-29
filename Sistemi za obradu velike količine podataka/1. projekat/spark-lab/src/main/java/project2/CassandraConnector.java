@@ -34,8 +34,37 @@ public class CassandraConnector {
         System.out.println("CONNECTED!");
     }
 
-    public static void main(String[] args) {
-        CassandraConnector connector = new CassandraConnector();
-        connector.connect();
+    public void createKeyspace(
+            String keyspaceName, String replicationStrategy, int replicationFactor) {
+        StringBuilder sb =
+                new StringBuilder("CREATE KEYSPACE IF NOT EXISTS ")
+                        .append(keyspaceName).append(" WITH replication = {")
+                        .append("'class':'").append(replicationStrategy)
+                        .append("','replication_factor':").append(replicationFactor)
+                        .append("};");
+
+        String query = sb.toString();
+        session.execute(query);
+    }
+
+    public void createTable(String tableName) {
+        StringBuilder sb = new StringBuilder("CREATE TABLE IF NOT EXISTS ")
+                .append(tableName).append("(")
+                .append("id uuid PRIMARY KEY, ")
+                .append("title text,")
+                .append("subject text);");
+
+        String query = sb.toString();
+        session.execute(query);
+    }
+
+    public void insertInto(String stringToWrite) {
+        StringBuilder sb = new StringBuilder("INSERT INTO ")
+                .append("citibike.citibike").append("(id, title) ")
+                .append("VALUES (").append(" now() ,")
+                .append(" '").append(stringToWrite).append("');");
+
+        String query = sb.toString();
+        session.execute(query);
     }
 }
