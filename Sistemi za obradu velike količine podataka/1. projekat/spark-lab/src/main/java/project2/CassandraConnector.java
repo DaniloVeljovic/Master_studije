@@ -1,6 +1,7 @@
 package project2;
 
 import com.datastax.driver.core.Cluster;
+import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Session;
 
 public class CassandraConnector {
@@ -58,6 +59,14 @@ public class CassandraConnector {
         session.execute(query);
     }
 
+    public void emptyTable() {
+        StringBuilder sb = new StringBuilder("TRUNCATE TABLE ")
+                .append("citibike.citibike");
+
+        String query = sb.toString();
+        session.execute(query);
+    }
+
     public void insertInto(String stringToWrite) {
         StringBuilder sb = new StringBuilder("INSERT INTO ")
                 .append("citibike.citibike").append("(id, title) ")
@@ -66,5 +75,10 @@ public class CassandraConnector {
 
         String query = sb.toString();
         session.execute(query);
+    }
+
+    public void deleteTable(String tableName) {
+        StringBuilder sb = new StringBuilder("DROP TABLE IF EXISTS " + tableName);
+        session.execute(sb.toString());
     }
 }

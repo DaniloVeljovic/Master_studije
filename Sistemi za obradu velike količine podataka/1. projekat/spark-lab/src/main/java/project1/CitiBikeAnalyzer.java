@@ -293,7 +293,7 @@ public class CitiBikeAnalyzer {
 
         fw.write("\n \n");
 
-        southOfLafayetteDepartures.collect().forEach(t -> {
+        gendersWhoRentBikesInSummer.collect().forEach(t -> {
             try {
                 fw.write("GENDERS : GENDER : " + t._1() + " number " + t._2() + " \n");
                 fw.flush();
