@@ -96,6 +96,15 @@
             <version>2.1.10</version>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/org.apache.spark/spark-mllib -->
+        <dependency>
+            <groupId>org.apache.spark</groupId>
+            <artifactId>spark-mllib_2.10</artifactId>
+            <version>1.6.0</version>
+        </dependency>
+
+
+
     </dependencies>
 
 </project>

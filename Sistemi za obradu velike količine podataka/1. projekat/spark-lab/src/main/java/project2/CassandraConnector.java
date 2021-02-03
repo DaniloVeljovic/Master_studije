@@ -3,6 +3,11 @@ package project2;
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Session;
+import org.apache.spark.sql.sources.In;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 public class CassandraConnector {
     private Cluster cluster;
@@ -52,8 +57,11 @@ public class CassandraConnector {
         StringBuilder sb = new StringBuilder("CREATE TABLE IF NOT EXISTS ")
                 .append(tableName).append("(")
                 .append("id uuid PRIMARY KEY, ")
-                .append("title text,")
-                .append("subject text);");
+                .append("location varchar,")
+                .append("min int,")
+                .append("max int,")
+                .append("avg double,")
+                .append("message varchar);");
 
         String query = sb.toString();
         session.execute(query);
@@ -67,11 +75,15 @@ public class CassandraConnector {
         session.execute(query);
     }
 
-    public void insertInto(String stringToWrite) {
+    public void insertInto(String location, Integer min, Integer max, Double avg, String message) {
         StringBuilder sb = new StringBuilder("INSERT INTO ")
-                .append("citibike.citibike").append("(id, title) ")
+                .append("citibike.citibike").append("(id, location, min, max, avg, message) ")
                 .append("VALUES (").append(" now() ,")
-                .append(" '").append(stringToWrite).append("');");
+                .append(" '").append(location).append("',")
+                .append(" ").append(min).append(", ")
+                .append(" ").append(max).append(", ")
+                .append(" ").append(avg).append(", ")
+                .append(" '").append(message).append("');");
 
         String query = sb.toString();
         session.execute(query);
