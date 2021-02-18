@@ -159,12 +159,15 @@ public class CitiBikeAnalyzer {
             }
         });
 
-        Integer maxNumberOfDeparturesForEachStationAtCertainTimeAndEveryDay = numberOfDeparturesFromEachStationAtACertainTimeAndForEveryDayOfTheWeek.map(t -> t._2).max(Comparator.naturalOrder());
+        Integer maxNumberOfDeparturesForEachStationAtCertainTimeAndEveryDay =
+                numberOfDeparturesFromEachStationAtACertainTimeAndForEveryDayOfTheWeek.map(t -> t._2).max(Comparator.naturalOrder());
 
-        Integer minNumberOfDeparturesForEachStationAtCertainTimeAndEveryDay = numberOfDeparturesFromEachStationAtACertainTimeAndForEveryDayOfTheWeek.map(t -> t._2).min(Comparator.naturalOrder());
+        Integer minNumberOfDeparturesForEachStationAtCertainTimeAndEveryDay =
+                numberOfDeparturesFromEachStationAtACertainTimeAndForEveryDayOfTheWeek.map(t -> t._2).min(Comparator.naturalOrder());
 
         Integer reduc = numberOfDeparturesFromEachStation.map(i -> i._2).reduce(Integer::sum);
-        double avgNumberOfDeparturesForEachStationAtCertainTimeAndEveryDay = reduc / (double) numberOfDeparturesFromEachStationAtACertainTimeAndForEveryDayOfTheWeek.count();
+        double avgNumberOfDeparturesForEachStationAtCertainTimeAndEveryDay = reduc
+                / (double) numberOfDeparturesFromEachStationAtACertainTimeAndForEveryDayOfTheWeek.count();
 
         fw.write("Maximum departures from a station is " + maxNumberOfDeparturesForEachStationAtCertainTimeAndEveryDay);
 

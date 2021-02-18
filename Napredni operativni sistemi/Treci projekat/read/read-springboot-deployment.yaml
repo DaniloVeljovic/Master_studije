@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose-windows-amd64.exe convert
+    kompose.version: 1.21.0 (992df58d8)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: read-springboot
+  name: read-springboot
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: read-springboot
+  strategy: {}
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose-windows-amd64.exe convert
+        kompose.version: 1.21.0 (992df58d8)
+      creationTimestamp: null
+      labels:
+        io.kompose.service: read-springboot
+    spec:
+      containers:
+      - env:
+        - name: KAFKA_BOOTSTRAPADDRESS
+          value: kafka-cluster:9092
+        - name: SPRING_DATASOURCE_PASSWORD
+          value: test
+        - name: SPRING_DATASOURCE_URL
+          value: jdbc:mysql://read-db:3307/read_db?createDatabaseIfNotExist=true
+        - name: SPRING_DATASOURCE_USERNAME
+          value: root
+        image: read-springboot
+        imagePullPolicy: "Never"
+        name: read-springboot
+        ports:
+        - containerPort: 8080
+        resources: {}
+      restartPolicy: Always
+      serviceAccountName: ""
+      volumes: null
+status: {}

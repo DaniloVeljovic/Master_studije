@@ -1,0 +1,86 @@
+services:
+    read_db:
+        restart: always
+        image: mysql:8.0.23
+        container_name: read_db
+        command: --default-authentication-plugin=mysql_native_password
+
+        environment:
+            MYSQL_ROOT_PASSWORD: test
+            MYSQL_DATABASE: read_db
+            MYSQL_USER: test
+            MYSQL_PASSWORD: test
+            MYSQL_TCP_PORT: 3307
+
+        ports:
+            - "3307:3307"
+    write_db:
+        restart: always
+        image: mysql:8.0.23
+        container_name: write_db
+        command: --default-authentication-plugin=mysql_native_password
+
+        environment:
+            MYSQL_ROOT_PASSWORD: test
+            MYSQL_DATABASE: write_db
+            MYSQL_USER: test
+            MYSQL_PASSWORD: test
+            MYSQL_TCP_PORT: 3308
+
+        ports:
+            - "3308:3308"
+    zookeeper:
+        image: wurstmeister/zookeeper
+        mem_limit: 512m
+        mem_reservation: 128M
+        cpus: 0.5
+ 
+    kafka:
+        image: wurstmeister/kafka
+        ports:
+            - "9092:9092"
+        environment:
+            KAFKA_ADVERTISED_HOST_NAME: 172.22.32.1
+            KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+        mem_limit: 512m
+        mem_reservation: 128M
+        cpus: 0.5
+    
+    read-springboot:                        #it is just a name, which will be used only in this file.
+        image: read-springboot               #name of the image after dockerfile executes
+        container_name: read-springboot  #name of the container created from docker image
+        build:
+            context: .                          #docker file path (. means root directory)
+            dockerfile: Dockerfile              #docker file name
+        ports:
+            - "8080:8080"                       #docker containter port with your os port
+        restart: always
+        
+        depends_on:                           #define dependencies of this app
+            - read_db            #dependency name (which is defined with this name 'db' in this file earlier)
+            - kafka
+        environment:
+            SPRING_DATASOURCE_URL: jdbc:mysql://read_db:3307/read_db?createDatabaseIfNotExist=true
+            SPRING_DATASOURCE_USERNAME: root
+            SPRING_DATASOURCE_PASSWORD: test
+            KAFKA_BOOTSTRAPADDRESS: kafka:9092
+            
+    write-springboot:                        #it is just a name, which will be used only in this file.
+        image: write-springboot               #name of the image after dockerfile executes
+        container_name: write-springboot  #name of the container created from docker image
+        build:
+            context: ../write/                          #docker file path (. means root directory)
+            dockerfile: Dockerfile              #docker file name
+        ports:
+            - "8081:8081"                       #docker containter port with your os port
+        restart: always
+        
+        depends_on:                           #define dependencies of this app
+            - write_db            #dependency name (which is defined with this name 'db' in this file earlier)
+            - kafka
+        environment:
+            SPRING_DATASOURCE_URL: jdbc:mysql://write_db:3308/write_db?createDatabaseIfNotExist=true
+            SPRING_DATASOURCE_USERNAME: root
+            SPRING_DATASOURCE_PASSWORD: test
+            KAFKA_BOOTSTRAPADDRESS: kafka:9092
+            SERVER_PORT: 8081
