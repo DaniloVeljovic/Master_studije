@@ -1,0 +1,16 @@
+version: "3"
+services:
+  hadoop:
+    build: ./hadoop
+    hostname: hadoop
+    image: hadoop
+    container_name: hadoop
+    ports:
+      - "50070:50070"
+      - "9000:9000"
+    volumes:
+      - ${ES_DATA_DIR}:/var/opt/extrasensory/data
+networks:
+  default:
+    external:
+      name: project3-network

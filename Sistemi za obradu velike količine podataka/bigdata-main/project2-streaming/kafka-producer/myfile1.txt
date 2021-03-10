@@ -1,0 +1,10 @@
+
+Shortest trip to Washington park, longest trip to Washington park and average length of trips to Washington park: 123, 123, 123Station: Hicks St & Montague St number of departures 1 
+Station: Broadway & W 24 St number of departures 2 
+Station: Little West St & 1 Pl number of departures 1 
+Station: Broadway & E 14 St number of departures 1 
+Station: W 37 St & 5 Ave number of departures 1 
+Station: E 15 St & Irving Pl number of departures 1 
+Maximum departures from a station is 2
+Minimum departures from a station is 1
+The average number of departures is 1.1666666666666667
