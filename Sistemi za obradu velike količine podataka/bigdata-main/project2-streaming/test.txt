@@ -1,0 +1,5 @@
+Submit application /app/application.jar with main class project2.CitiBikeConsumerAnalyzer to Spark master spark://spark-master:7077
+Passing arguments 
+Submit application /app/application.jar with main class project2.CitiBikeConsumerAnalyzer to Spark master spark://spark-master:7077
+Passing arguments 
+CONNECTED!
