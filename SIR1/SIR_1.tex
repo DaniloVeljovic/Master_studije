@@ -12,6 +12,7 @@
 \usepackage{index}
 \usepackage[autostyle]{csquotes}
 \usepackage{amssymb}
+
 \DeclareMathOperator*{\argmax}{argmax}
 \usepackage{listings}
 %\usepackage{booktabs}
@@ -190,7 +191,739 @@ Logovanje je još jedan način da se stekne uvid u funkcionisanje mikroservisnog
  
 \section{Bezbednost sistema}
 
+Bezbednost service mesh sistema uključuje slučajeve kao što su autorizacija i autentifikacija. \newline
+
+\textbf{mTLS autentikacija}\newline
+
+\textit{Treba dodatno objasniti mTLS i kako sve to funkcioniše}\newline
+
+Interservisna komunikacija se u service meshu odvija preko proxy-jeva. Proxy-ji mogu da generišu mTLS tunele između servisa, i svaki servis će imati svoj jedinstveni sertifikat koji garantuje identitet. Sertifikatima se upravlja u centralizovanoj komponenti koja je takođe odgovorna za rotaciju sertifikata. Enkripcija je vrši na sedmom nivou OSI, što znači da se enkriptuje sadržaj, a ne saobraćaj. 
+Postoje dva tipa enkripcije: 
+
+\begin{itemize}
+	\item restriktivna - kod ovog tipa enkripcije se servis konfiguriše da ne prihvata neenkriptovani saobraćaj
+	\item  permisivni - kod ovog tipa enkripcije servis prihvata i neenkriptovani saobraćaj po potrebi
+\end{itemize}
+
+\textbf{Autorizacija}\newline
+
+Autorizacija je analogna mikrosegmentaciji na sedmom nivou OSI. Mikro-segmentacija se sprovodi po principu nultog poverenja. Mikro-segmentacija znači da nijedan saobraćaj koji nema eksplicitinu dozvolu neće biti propušten. Svakom dolaznom zahtevu se ispituje header u potrazi za potrebnom dozvolom. U service mesh sistemima, autorizacija se pruža na nivou imenskog prostora, na servisnom nivou i na nivou pojednih metoda (tzv. endpointa). 
+
+Na slici \ref{fig:authorization-architecture} je dat primer autorizacije u service mesh sistemu. Kada proxy primi zahtev on čita trenutnu autorizacionu konfiguraciju i vidi da li taj zahtev dolazi od izvora koji ima pristup. Na osnovu toga se zahtev prihvata ili odbija. 
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.7\textwidth]{authorization_architecture}
+    \caption{Primer autorizacije u service mesh sistemu}
+    \label{fig:authorization-architecture}
+\end{figure} 
+
 \chapter{Consul kao primer service mesh}
+
+U nastavku će biti opisan Consul kao primer implementacije service mesh infrastrukturnog sloja. Consul je Hashicorp-ova implementacija service mesha. Najčešće se upotrebljava za otkrivanje i konfigurisanje različitih servisa koji su deo sistema. Pisan je u Golangu. Consul se na server može postavljati na samoj mašini kao standalone aplikacija ili mnogo češće kao Docker kontejner ili kao pod u Kubernetes klasteru. 
+
+\section{Arhitektura i funkcionalnosti Consula}
+
+Srž Consul sistema je proces Consul agent. Agent čuva informacije o članstvu u service meshu, može da registruje servise, da vrši health checking, odgovara na upite, daje informacije o sistemu itd. Consul agent može da bude deploy-ovan u dva različita moda, \textit{klijent} i \textit{server}: 
+
+\begin{itemize}
+	\item server - Consul agent koji je u server modu i služi da održava stanje klastera
+	\item klijent - Consul agent kojih ima mnogo više u sistemu (nalaze se u svakom čvoru sistema) i služe da komuniciraju sa serverima, pribavljaju konfiguraciju i komuniciraju je do proxy-ja. 
+\end{itemize}
+
+Svaki od Consul agenta u sebi ima informacije o : 
+
+\begin{itemize}
+	\item Ime čvora (engl. Node name) - ime hosta na kom se agent nalazi
+	\item Ime datacentra (engl. datacenter) - ime datacentra za koji je Consul konfigurisan. Svaki čvor se morati odazivati svom datacentru. 
+	\item Server - svaki agent ima indikator da li se izvršava u klijent ili server modu. Čvorovi koji se izvršavaju u server modu učestvuju u kvorumima konzenzusa, čuvanju informacija o stanju klastera. 
+	\item Adresu klijenta - adresa koju agent koristi za interfejse klijenta. Uključuje portove za HTTP, RPC i DNS. 
+	\item Adresu klastera - adresa i skup portova koja se koristi za komunikaciju između Consul agenta u klasteru. Adresa mora da bude dostupna za sve ostale agente u klasteru.
+\end{itemize}
+
+Consul ima podršku za Envoy implementaciju sidecar proxy-ja.  Ovi proxy-ji kontrolišu sav saobraćaj koji ulazi i izlazi iz servisa. \newline
+
+Na slici \ref{fig:consul-architecture} je dat prikaz arhitekture Consul service mesha. Nešto detaljnija arhitektura Consul service mesha sa više datacentara data je na slici \ref{fig:detailed-consul-architecture}. \newline
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.9\textwidth]{consul_architecture.jpg}
+    \caption{Primer arhitekture Consul service mesha}
+    \label{fig:consul-architecture}
+\end{figure} 
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.9\textwidth]{consul_architecture}
+    \caption{Detaljna arhitektura Consul service mesha u više datacentara}
+    \label{fig:detailed-consul-architecture}
+\end{figure} 
+
+Na slici \ref{fig:consul-architecture} se vide da postoje tri Consul agenta koji se nalaze u serverskom modu (u opštem slučaju ih može biti n). Raft algoritmom (raft - srp. splav), se od ova tri agenta bira jedan koji će biti lider i ostali koji će biti pratioci. Pratioci treba da prate odluke koje donosi lider. Sva tri servisa su međusobno povezana radi dalje komunikacije. Svaki od servera interaguje sa svojim klijentom putem RPC protokola. Komunikacija između klijenta se odvija tzv Gossip protokolom. \newline
+
+\textbf{Raft algoritam}\newline
+
+Raft algoritam služi za ostvarivanje konsenzusa. Raft klaster se sastoji od  nekoliko servera (obično neparan broj). Server može biti u nekom od tri stanja: \textit{Lider}, \textit{Pratilac} ili \textit{Kandidat}. Kada je sistem u stabilnom stanju postoji samo jedan lider i svi ostali su pratioci. Pratioci se nalaze u pasivnom stanju, tj. nemaju nikakve svoje zahteve već samo odgovaraju na zahteve lidera i eventualnih pratilaca. Na slici \ref{fig:raft-algorithms} se nalazi dijagram koji prikazuje način na funkcionisanja raft algoritma. \newline 
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.9\textwidth]{raft_algorithms.jpg}
+    \caption{Raft algoritam}
+    \label{fig:raft-algorithms}
+\end{figure} 
+
+Neko od pratioca započinje izbor novog lidera. Ako lider već postoji, on dobija informacije o tome ko je lider. Ako ne postoji lider, nakon što se započne izbor novog lidera, kandidat koji je započeo izbor, započinje odbrojavanje. Nakon završetka tog odbrojavanja, ako ne dobije informacije o postojećem lideru, on postaje novi lider. OBJASNI MALO BOLJE \newline
+
+\textbf{Key value store}\newline
+
+Od verzije Consula 0.7.1, postoji podrška za key-value store. Ovoj store se može pristupati preko komandne linije ili preko Consul UI, i podržava se dodavanje, ažuriranje, prikaz i brisanje podataka iz nje. Struktura koju čuva key value store je data na slici \ref{kv-ds}. \newline
+
+\begin{figure}
+
+\begin{verbatim}
+type KVPair struct {
+   	Key string
+   	CreateIndex uint64
+   	ModifyIndex uint64
+   	LockIndex uint64
+   	Flags uint64
+   	Value []byte
+   	Session string
+}
+\end{verbatim}
+    \caption{Key-value struktura podataka}
+    \label{kv-ds}
+\end{figure}
+
+Key parametar sa slike \ref{kv-ds} je ključ za koji treba zapamtiti neku vrednost. CreateIndex je vrednost indeksa koja je dodeljena kada je podatak prvi put upisan u KV store. ModifyIndex je broj indeksa koji je dodeljen u trenutku kada je unos ažuriran poslednji put. LockIndex čuva broj puta puta koliko je lock stavljen nad tim unosom. Flags polje može da se koristi od strane aplikacije za postavljanje različitih vrednosti koje se mogu i ne morjau koristiti kao flegovi. Value je vrednost koja se pamti, enkodirana kao base64 blob. Session polje daje informaciju o sesiji koja poseduje lock na unos. \newline
+
+Protokol kojim se komunicira između klijenata u Consul klasteru, je Gossip (srp. tračarenje) protokol. Kod ovog protokola vesti se prenose od čvora do čvora. Ovim protokolom se reguliše članstvo u klasteru i komunikacija između klijenata u klasteru. U okviru Consula, formiraju se dva pool-a, LAN i WAN poolovi. Svaki Consul datacentar ima svoj LAN pool u kome se nalaze svi serveri i klijenti koji mu pripadaju. Ovaj LAN pool olakšava klijentima da detektuju servere i smanjuje količinu potrebne konfiguracije. Ako dođe do pada nekog od servera (ili bilo kog drugog čvora) ova informacija se jako brzo može proširiti po celom klasteru. Takođe LAN pool-ovi omogućavaju brz i jednostavan broadcast poruka. \newline
+
+WAN pool je jedan, i globalno jedinstven, i svi serveri iz svih datacentara mu pripadaju. Prisustvo servera u WAN pool-u im omogućava da izvršavaju zahteve koji se prostiru kroz više datacentara. \newline
+
+Neke od funkcionalnosti koje nudi Consul su service discovery, bezbednost, telemetrija i monitoring, load balancing, health checking, rutiranje. \newline
+
+\textbf{Service discovery}\newline
+
+Jedna od najvažnijih funkcionalnosti service mesha je otkrivanje servisa. Consul se lako može deploy-ovati na svim postojećim cloud arhitekturama ili na bilo kom kontejneru, virtuelnoj mašini i na pravom serveru. Bez obzira da li se nalazi na istoj mreži ili ne, sa ostalim servisima, on može da ih otkrije. Ovim je postignuta velika fleksibilnost u sistemu, jer način i pozicija deploymenta ne zavisi od toga da li će servis biti otkriven, što pojednostavljuje service discovery funkcionalnost i omogućava projektantima sistema da koriste samo jedno service discovery rešenje umesto više njih. \newline
+
+\textbf{Bezbednost}\newline
+
+Za implementaciju bezbednosti Consul nudi više rešenja koja se mogu koristiti. Jedno od njih je Consul Connect koji pomaže u uspostavljanju zero-trust politike u komunikaciji. Zero-trust politika komunikacije se ovde uspostavlja preko mTLS konekcije između servisa. Ovako osigurane konekcije mogu da se prostiru na više datacentara i platformi. Consul Intentions je jedan od alata kojim se definiše 	kontrola pristupa preko Connecta. Intentions služi da definiše koji servisi smeju, a koji ne, da uspostave konekciju. Najčešće proxy osigurava sprovođenje politike zadate u Intentionsu. Consul ACLs su access liste kojima se obezbeđuju individualni endpointi, CLI ili GUI.  \newline
+
+\textbf{Telemetrija i monitoring}\newline
+
+Consul prikuplja različite metrike dok program radi. Ove metrike se najčešće prikupljaju na intervalu od 10s i čuvaju se do 1 minuta. Zatim se ove metrike strimuju do dela sistema zaduženog za čuvanje i obradu metrika, tzv. metrics store. Telemetrija i montiroing celog klastera, tako i pojedinih servisa pruža uvid u health celog klastera, i u unutrašnje funkcionisanje svakog od servisa.  \newline
+
+\textbf{Load balancing}\newline
+
+Consul automatski balansira opterećenje između zdravih instanci servisa u sistemu. Consul takođe omogućava publisher-subscriber mehanizam. Kada se servis registruje na sistem pri deploymentu, middleware može da se subscribuje na ovakve eventove (promena servisa) i da izvrši automatsku rekonfiguraciju. Ovo je korisno kada u sistemu postoji NGINX, F5 itd. \newline
+
+\textbf{Health checking}\newline
+
+Consul periodično vrši health checking u svim klasterima, da odvoji zdrave instance servisa od onih koje nisu funkcionalne. Zbog toga uvek postoji jasan pregled zdravih i nezdravih instanci servisa. \newline
+
+\textbf{Rutiranje}\newline
+
+Consul može da rutira saobraćaj na sedmom OSI nivou, korišćenjem proxy-ja i Consul Connecta. Sa mogućnošću rutiranja u Consulu, moguće je implementirati A/B testiranje, Canary release, itd. \newline
+
+\section{Implementacija }
+
+U narednoj glavi biće demonstrirane funkcionalnosti Consul service mesha, preko sample aplikacije koja se može besplatno preuzeti sa sajta zvanične Consul dokumentacije.  Biće demonstrirane funkcionalnosti poput health checking-a, service discovery-ja, rutiranja, load balancinga, canary release.  \newline
+
+\textbf{Struktura aplikacije}\newline
+
+Za demonstraciju funkcionalnosti Consul service mesha biće korišćene aplikacije koje su kontejnerizovane i deploy-ovane uz pomoć Dockera. Biće deploy-ovana dva servisa i Consul agent u server modu. Servisi se kreiraju iz nicholasjackson/fake-service:v0.4.1 image-a.  Ovim image-om se deploya servis koji vraća određenu poruku kada se pogodi GET HTTP zahtevom. Uz svaku od aplikacija, biće deploy-ovan i consul-envoy proxy, koji zajedno sa aplikacijom implementira Consul sidecar pattern. \newline
+
+Aplikacija kojom će se demonstrirati funkcionalnosti Consula se sastoji iz dva servisa, web servis i payments servis i svaki od servisa ima svoj proxy. Uz servise biće deploy-ovan i jedan Consul agent u serverskom režimu rada. Strukturni dijagram aplikacije dat je na slici \ref{fig:structure-diagram}.\newline
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.9\textwidth]{app_structure_diagram_start}
+    \caption{Strukturni dijagram aplikacije}
+    \label{fig:structure-diagram}
+\end{figure} 
+
+Web servis je kao API gateway aplikacije i on prosleđuje pozive ka payment servisima.  Kada web servis primi zahtev on ga prosleđuje tzv. upstream (srp. uzvodnim) servisima, tj rutira zahtev prema servisu koji ga obrađuje. U ovom slučaju to će biti payment servis. \newline
+
+\textbf{Demonstracija karakteristika Consula}\newline
+
+Consul, web i payment servis kao i odgovorajaući proxy-ji će biti kreirani jednim docker-compose fajlom. Svaki od elemenata će činiti zaseban kontejner i svi kontejneri će biti deo iste mreže, kako bi jedno drugom bili vidljivi. Na slici \ref{dc-consul} je dat deo docker-compose fajla koji se odnosi na Consul i njegov deployment. \newline
+
+\begin{figure}
+
+\begin{verbatim}
+  consul:
+    image: consul:1.6.0
+    command: ["consul","agent","-config-file=/config/consul-single-dc.hcl","-config-dir=/config"]
+    volumes:
+      - "../consul_config:/config"
+    ports:
+      - 8500:8500
+    networks:
+      vpcbr:
+        ipv4_address: 10.5.0.2
+\end{verbatim}
+    \caption{Deo docker-compose fajla koji se odnosi na Consul}
+    \label{dc-consul}
+\end{figure} 
+
+Na slici \ref{dc-consul} se jasno vidi da se koristi image consul:1.6.0, da se izvršava na portu 8500 i da pripada vpcbr mreži i da je u okviru te mreže njegova adresa 10.5.0.2. Takođe komanda koja se upućuje kontejneru pri podizanju je \texttt{consul agent -config-file=/config/consul-single-dc.hcl -config-dir=/config}, kojom se navodi da Consul čuva podatke u /config direktorijumu i da je fajl u kom se nalazi konfiguracija Consula consul-single-dc.hcl. U ovom dokumentu se nalaze podešavanja kojima se Consulu kaže kako je ime datacentra, u kom modu se izvršava, da li je dozvoljen Consul connect, na kom mrežnom interfejsu se izvršava, koji je log level itd. Consul konfiguracioni fajl je dat na slici \ref{hcl}. 
+
+\begin{figure}[h]
+\begin{verbatim}
+data_dir = "/tmp/"
+log_level = "DEBUG"
+datacenter = "dc1"
+server = true
+bootstrap_expect = 1
+ui = true
+bind_addr = "0.0.0.0"
+client_addr = "0.0.0.0"
+ports {
+  grpc = 8502
+}
+connect {
+  enabled = true
+}
+advertise_addr = "10.5.0.2"
+enable_central_service_config = true
+\end{verbatim}
+    \caption{consul-single-dc.hcl}
+    \label{hcl}
+\end{figure} 
+
+
+\begin{figure}[h]
+\begin{verbatim}[fontsize=\small]
+web:
+    image: nicholasjackson/fake-service:v0.4.1
+    environment:
+      LISTEN_ADDR: 0.0.0.0:9090
+      UPSTREAM_URIS: http://localhost:9091
+      NAME: web
+      MESSAGE: "Hello World"
+      HTTP_CLIENT_KEEP_ALIVES: "false"
+    networks:
+      vpcbr:
+        ipv4_address: 10.5.0.3
+    ports:
+      - 9090:9090
+  web_envoy:
+    image: nicholasjackson/consul-envoy:v1.6.0-v0.10.0
+    environment:
+      CONSUL_HTTP_ADDR: 10.5.0.2:8500
+      CONSUL_GRPC_ADDR: 10.5.0.2:8502
+      SERVICE_CONFIG: /config/web_v1.hcl
+    volumes:
+      - "./service_config:/config"
+      - "./central_config:/central_config"
+    command: ["consul", "connect", "envoy","-sidecar-for", "web-v1","--","-l","debug"]
+    network_mode: "service:web"
+\end{verbatim}
+    \caption{Deo docker-compose fajla koji se odnosi na web servis i njegov proxy}
+    \label{web-service-dc}
+\end{figure}
+
+Deo docker-compose fajla koji se odnosi na web servis i njegov proxy dat je na slici \ref{web-service-dc}. Image koji se koristi za ovaj kontejner je nicholasjackson/fake-service:v0.4.1. Ovom servisu je potrebno preko promenljivih okruženja proslediti adresu na kojoj sluša, eventualne upstream servise kojima će dalje da prosleđuje zahtev, koja mu je poruka i u koja mu je adresa u okviru mreže vpcbr. \newline
+
+
+Web proxy se kreira iz image-a \texttt{nicholasjackson/consul-envoy:v1.6.0-v0.10.0}, i prosleđuju mu se adrese preko kojih može da se obrati Consul serveru i putanja do konfiguracionog fajla. Naredba kojom se startuje web proxy kontejner je \texttt{consul connect envoy -sidecar-for web-v1 -- -l debug}, kojom se navodi da je taj proxy vezan za web servis. Na listingu \ref{web-service-conf} je prikazan konfiguracioni fajl za web servis proxy. \newline
+
+\begin{center}
+\begin{lstlisting}[
+    basicstyle=\small,
+    caption = Konfiguracioni fajl za web proxy, 
+   label = web-service-conf
+]
+service {
+  name = "web"
+  id = "web-v1"
+  address = "10.5.0.3"
+  port = 9090
+  connect { 
+    sidecar_service {
+      port = 20000
+      check {
+        name = "Connect Envoy Sidecar"
+        tcp = "10.5.0.3:20000"
+        interval ="10s"
+      }
+      proxy {
+        upstreams {
+          destination_name = "payments"
+          local_bind_address = "127.0.0.1"
+          local_bind_port = 9091
+        }
+      }
+    }  
+  }
+}
+\end{lstlisting}
+\end{center}
+
+
+
+
+
+Deo docker-compose fajla koji se odnosi na payments servis i njegov proxy dat je na listingu \ref{payments-service-dc}. Image koji se koristi za ovaj kontejner je nicholasjackson/fake-service:v0.4.1, kao u prethodnom slučaju. Ovom servisu je potrebno preko promenljivih okruženja proslediti adresu na kojoj sluša i poruku kojom odgovara na zahtev kao i adresu u okviru vpcbr mreže. \newline
+
+\begin{lstlisting}[
+    basicstyle=\small,
+    caption = Deo docker-compose fajla koji se odnosi na payments servis i njegov proxy, 
+   label = payments-service-dc
+]
+payments_v1:
+    image: nicholasjackson/fake-service:v0.4.1
+    environment:
+      LISTEN_ADDR: localhost:9090
+      NAME: payments-v1
+      MESSAGE: "PAYMENTS V1"
+    networks:
+      vpcbr:
+        ipv4_address: 10.5.0.4
+  payments_proxy_v1:
+    image: nicholasjackson/consul-envoy:v1.6.0-v0.10.0
+    environment:
+      CONSUL_HTTP_ADDR: 10.5.0.2:8500
+      CONSUL_GRPC_ADDR: 10.5.0.2:8502
+      SERVICE_CONFIG: /config/payments_v1.hcl
+      #      CENTRAL_CONFIG: "/central_config/api_service_defaults.hcl"
+    volumes:
+      - "./service_config:/config"
+      - "./central_config:/central_config"
+    command: ["consul", "connect", "envoy","-sidecar-for", "payments-v1"]
+    network_mode: "service:payments_v1"
+\end{lstlisting}
+
+Payments proxy se kreira iz image-a nicholasjackson/consul-envoy:v1.6.0-v0.10.0, i prosleđuju mu se adrese preko kojih može da se obrati Consul serveru i putanja do konfiguracionog fajla. Naredba kojom se startuje payments proxy kontejner je \texttt{consul connect envoy -sidecar-for payments-v1}, kojom se navodi da je taj proxy vezan za payments servis. Na slici \ref{payments-service-conf} je prikazan konfiguracioni fajl za web servis proxy. \newline
+
+
+\begin{lstlisting}[
+    basicstyle=\small,
+    caption = Konfiguracioni fajl za payments proxy, 
+   label = payments-service-conf
+]
+service {
+  name = "payments"
+  id = "payments-v1"
+  address = "10.5.0.4"
+  port = 9090
+  tags      = ["v1"]
+  meta      = {
+    version = "1"
+  }
+  connect { 
+    sidecar_service {
+      port = 20000
+      check {
+        name = "Connect Envoy Sidecar"
+        tcp = "10.5.0.4:20000"
+        interval ="10s"
+      }
+    }  
+  }
+}
+
+\end{lstlisting}
+
+Rezultat deploymenta ovih kontejnera dat je na slici \ref{fig:consul-services-deployment}.\newline
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.9\textwidth]{consul_services_deployment}
+    \caption{Deployovani kontejneri}
+    \label{fig:consul-services-deployment}
+\end{figure} 
+
+Consul automatski radi detekciju servisa i automatske health check-ove prilikom registracije. Prikaz service-discovery-ja je dat na slici \ref{fig:consul-service-discovery}. Na slici vidimo da se uz ime svakog od servisa vidi i zeleni štrik koji ukazuje da je svaki od servisa prošao sve health check-ove. \newline
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.9\textwidth]{consul_service_discovery}
+    \caption{Consul service discovery}
+    \label{fig:consul-service-discovery}
+\end{figure} 
+
+Svaki od servisa koje Consul treba da registeruje prolaze kroz 1 health check, tzv node health check, da se vidi da li se može pogoditi host servisa i da li odgovara. Proxy-ji prolaze kroz jedan dodatni service health check i njime se  utvrđuje da li je TCP port koji je naveden u konfiguraciji otvoren i da li može da odgovori na zahteve. Na slici \ref{fig:service-health-check} je dat prikaz health check-a kroz koji je prošao payments servis. Na slici \ref{fig:proxy-health-check} je dat prikaz health check-ova kroz koje je prošao payments proxy. \newline
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.9\textwidth]{service_health_check}
+    \caption{Payment servis health checks}
+    \label{fig:service-health-check}
+\end{figure} 
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.9\textwidth]{proxy_health_check}
+    \caption{Payment proxy health checks}
+    \label{fig:proxy-health-check}
+\end{figure}
+
+Ako pošaljemo zahtev GET na localhost:9090, dobićemo odgovor od payment servisa koji se očekuje i koji je dat na slici \ref{response-payments-v1}. \newline
+
+\begin{lstlisting}[
+    basicstyle=\small,
+    caption = Odgovor na HTTP GET zahtev na adresi localhost:9090, 
+   label = response-payments-v1
+]
+{
+  "name": "web",
+  "type": "HTTP",
+  "duration": "22.4807ms",
+  "body": "Hello World",
+  "upstream_calls": [
+    {
+      "name": "payments-v1",
+      "uri": "http://localhost:9091",
+      "type": "HTTP",
+      "duration": "35.9ms",
+      "body": "PAYMENTS V1"
+    }
+  ]
+}
+\end{lstlisting}
+
+Consul automatski vrši load balancing bez uplitanja korisnika, između više instanci istog servisa. \newline
+
+Zahvaljujući brojnim opcijama konfiguirisanja rutiranja, kod Consula je prilično jednostavno izvesti A/B testiranje i Canary release. Potrebno je da se uvede verzija 2 payments servisa u sistem. Strukturni dijagram aplikacije nakon uvođenja novog servisa dat je na slici \ref{fig:structure-diagram-v2}. \newline
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.9\textwidth]{app_structure_diagram}
+    \caption{Strukturni dijagram aplikacije sa dodatim servisom}
+    \label{fig:structure-diagram-v2}
+\end{figure} 
+
+Pre nego što se deploy-a payment servis v2, potrebno je konfigurisati traffic splitting. Da bi se omogućilo to razdvajanje saobraćaja potrebno je da se primene 3 konfiguraciona fajla: 
+
+\begin{itemize}
+	\item Service defaults
+	\item Service splitter 
+	\item Service resolver
+\end{itemize}
+
+\textbf{Konfigurisanje service defaults}\newline
+
+Razdvajanje saobraćaja zahteva da i upstream aplikacije koriste HTTP protokol, jer se razdvajanje dešava na 7 OSI sloju (za svaki zahtev zasebno). Potrebno je naglasiti Consulu da i upstream servisi koriste HTTP tako što se u service defaults naglasi to. Primer ovog konfiguracionog fajla nalazi se na slici \ref{service-defaults}. Polje kind naglašava tip konfiguracije koja se definiše, u ovom slučaju to je service-defaults. Polje name definiše servis na koji se odnosi service-defaults konfiguracija. Polje protokol označava protokol koji se definiše i u ovom slučaju je to HTTP. \newline
+
+\begin{lstlisting}[
+    basicstyle=\small,
+    caption = Service defaults konfiguracija, 
+   label = service-defaults
+]
+{
+  "kind": "service-defaults",
+  "name": "api",
+  "protocol": "http"
+}
+\end{lstlisting}
+
+Da bi promene iz konfiguracionog fajla bile primenjene, potrebno je poslati fajl sa slike  \ref{service-defaults} na adresu \texttt{http://localhost:8500/v1/config}, korišćenjem PUT zahteva. \newline
+
+\textbf{Konfigurisanje Service Resolvera}\newline
+
+Sledeće što treba konfigurisati je service resolver opcija. Service resolver omogućava da se podesi kako se biraju instance servisa za neko ime servisa. Service reslover omogućava da se filtrira podskup sevisa na osnovu informacija koje su pružene u trenutku registracije. U ovom slučaju, smo payment servis registrovali sa određenim metapodacima koji su vidljivi na \ref{payments-service-conf}. Vidi se da je payments servis na početku bio registrovan sa tagom v1 i meta verzijom 1. Potrebno je da kreiramo dva podskupa na osnovu ovih podataka (tag i meta verzija). Zato nam služi service-resolver. Svi servisi koji imaju meta verziju 1 i tag v1, biće smešteni u jedan podskup, svi servisi koji imaju tag v2 i meta verziju 2, biće smešteni u drugi podskup. Na slici je prikazana konfiguracije service resolver-a. Takođe, da bi promene iz konfiguracionog fajla bile primenjene, potrebno je poslati fajl sa slike  \ref{service-resolver} na adresu \texttt{http://localhost:8500/v1/config}, korišćenjem PUT zahteva. \newline
+
+\begin{lstlisting}[
+    basicstyle=\small,
+    caption = Service resolver konfiguracija, 
+   label = service-resolver
+]
+{
+  "kind": "service-resolver",
+  "name": "api",
+
+  "subsets": {
+    "v1": {
+      "filter": "Service.Meta.version == 1"
+    },
+    "v2": {
+      "filter": "Service.Meta.version == 2"
+    }
+  }
+}
+\end{lstlisting}
+
+\textbf{Konfigurisanje Service splittinga}\newline
+
+Poslednja konfiguracija koju treba primeniti se odnosi na procenat saobraćaja koji će biti prosleđen jednom i drugom podskupu servisa. Inicijalno, treba 100\% saobraćaja da bude usmereno na podskup v1. Konfiguracioni fajl kojim se ovo omogućava dat je na slici \ref{service-splitting-1}. Takođe je i njega potrebno primeniti na adresu \texttt{http://localhost:8500/v1/config}, korišćenjem PUT zahteva. \newline
+
+\begin{lstlisting}[
+    basicstyle=\small,
+    caption = Service splitting konfiguracija, 
+   label = service-splitting-1
+]
+{
+  "kind": "service-splitter",
+  "name": "api",
+  "splits": [
+    {
+      "weight": 100,
+      "service_subset": "v1"
+    },
+    {
+      "weight": 0,
+      "service_subset": "v2"
+    }
+  ]
+}
+\end{lstlisting}
+
+Posle ovoga, verzija 2 payment servisa se može deploy-ovati na server. Kako bi se i ova verzija aplikacije deploy-ovala i to u istu mrežu sa ostalim servisima potrebno je da se za nju kreira poseban docker-compose fajl. Deo docker-compose fajla koji se odnosi na verziju 2 payments servisa dat je na slici \ref{payments-v2-dc}. Uz sam servis se deploy-a i odgovarajući proxy. \newline
+
+\begin{lstlisting}[
+    basicstyle=\small,
+    caption = Deo docker-compose fajla koji se odnosi na payments servis verziju 2, 
+   label = payments-v2-dc
+]
+  payments_v2:
+    image: nicholasjackson/fake-service:v0.4.1
+    environment:
+      UPSTREAM_URIS: http://localhost:9091
+      LISTEN_ADDR: localhost:9090
+      NAME: payments-v2
+      MESSAGE: "PAYMENTS V2"
+    networks:
+      vpcbr:
+        ipv4_address: 10.5.0.6
+  payments_proxy_v2:
+    image: nicholasjackson/consul-envoy:v1.6.0-v0.10.0
+    environment:
+      CONSUL_HTTP_ADDR: 10.5.0.2:8500
+      CONSUL_GRPC_ADDR: 10.5.0.2:8502
+      SERVICE_CONFIG: /config/payments_v2.hcl
+      #  CENTRAL_CONFIG: "/central_config/api_service_resolver.hcl;/central_config/api_service_splitter_100_0.hcl"
+    volumes:
+      - "./service_config:/config"
+      - "./central_config:/central_config"
+    command: ["consul", "connect", "envoy","-sidecar-for", "payments-v2"]
+    network_mode: "service:payments_v2"
+
+\end{lstlisting}
+
+Na slici \ref{fig:payment-sd} je dat prikaz dve različite instance payment servisa - v1 i v2, kako ih Consul vidi. \newline
+ 
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.9\textwidth]{payment_service_discovery_v1_v2}
+    \caption{Payment servis sa dve različite instance}
+    \label{fig:payment-sd}
+\end{figure} 
+
+Nakon uspešnog deploymenta, potrebno je da sada podesimo Consul da saobraćaj deli 50-između dve različite grupe servisa. To se postiže slanjem novog service-splitter fajla koji je dat na slici \ref{service-splitting-2}.  \newline 
+\begin{lstlisting}[
+    basicstyle=\small,
+    caption = Service splitting konfiguracija 50-50, 
+   label = service-splitting-2
+]
+{
+  "kind": "service-splitter",
+  "name": "api",
+  "splits": [
+    {
+      "weight": 50,
+      "service_subset": "v1"
+    },
+    {
+      "weight": 50,
+      "service_subset": "v2"
+    }
+  ]
+}
+\end{lstlisting}
+
+Odgovori koji se dobijaju slanjem GET zahteva na localhost:9090 treba da variraju, u odnosu 50-50, između onog datog na slici \ref{response-payments-v1} i slici \ref{response-payments-v2}. Na kraju, sav saobraćaj je potrebno preusmeriti ka payment servisu, v2 da bi Canary release bio uspešno izvršen. Na slici \ref{service-splitting-3} na kojoj je prikazan konfiguracioni fajl kojim se ovo postiže. \newline
+
+\begin{lstlisting}[
+    basicstyle=\small,
+    caption = Response od payment servisa v2, 
+   label = response-payments-v2
+]
+  "name": "web",
+  "type": "HTTP",
+  "duration": "54.1339ms",
+  "body": "Hello World",
+  "upstream_calls": [
+    {
+      "name": "payments-v2",
+      "uri": "http://localhost:9091",
+      "type": "HTTP",
+      "duration": "28.7891ms",
+      "body": "PAYMENTS V2",
+      "upstream_calls": [
+        {
+          "name": "currency",
+          "uri": "http://localhost:9091",
+          "type": "HTTP",
+          "duration": "30.2ms",
+          "body": "2 USD for 1 GBP"
+        }
+      ]
+    }
+  ]
+}
+\end{lstlisting}
+
+\begin{lstlisting}[
+    basicstyle=\small,
+    caption = Service splitting konfiguracija 0-100, 
+   label = service-splitting-3
+]
+{
+  "kind": "service-splitter",
+  "name": "api",
+  "splits": [
+    {
+      "weight": 0,
+      "service_subset": "v1"
+    },
+    {
+      "weight": 100,
+      "service_subset": "v2"
+    }
+  ]
+}
+\end{lstlisting}
+
+\subsection{Rutiranje}
+
+Consul ima podršku za rutiranje zahteva. U odnosu na resurs koji je se gađa, Consul može da rutira zahtev ka odgovarajućem servisu. Uz deployment payment servisa (slika \ref{payments-service-dc}) i Consul servera (slika \ref{dc-consul} ), potrebno je i instancirati novi servis, currency servis. Na slici \ref{currency-ds} je dat deo docker-compose fajla koji se odnosi na currency servis i njegov proxy. \newline 
+
+\begin{lstlisting}[
+    basicstyle=\small,
+    caption = Deo docker-compose fajla koji se odnosi na Currency servis, 
+   label = currency-ds
+]
+  currency:
+    image: nicholasjackson/fake-service:v0.4.1
+    environment:
+      LISTEN_ADDR: localhost:9090
+      NAME: currency
+      MESSAGE: "Currency"
+      SERVER_TYPE: "http"
+    networks:
+      vpcbr:
+        ipv4_address: 10.5.0.5
+  currency_proxy:
+    image: nicholasjackson/consul-envoy:v1.6.0-v0.10.0
+    environment:
+      CONSUL_HTTP_ADDR: 10.5.0.2:8500
+      CONSUL_GRPC_ADDR: 10.5.0.2:8502
+      SERVICE_CONFIG: /config/currency_v1.hcl
+    volumes:
+      - "./service_config:/config"
+    command: ["consul", "connect", "envoy","-sidecar-for", "currency-v1"]
+    network_mode: "service:currency"
+\end{lstlisting}
+
+Nakon deploymenta, potrebno je da se naglasi Consulu da svi zahtevi HTTP GET localhost:9090/currency, treba da se prosledi currency servisu, dok se svi ostali zahtevi treba da se proslede ka payment servisu. Najpre je potrebno da se naglasi Consulu da payment servis i currency servis koriste HTTP protokol, i to se radi podesavanjem service-defaults opcije. Na slici \ref{currency-service-defaults} je dato podešavanje service-defaults za currency servis, a na slici \ref{payments-service-defaults} za payments servis. Oba ova podešavanja je potrebno poslati na adresu \texttt{http://localhost:8500/v1/config}, korišćenjem PUT zahteva \newline
+
+\begin{lstlisting}[
+    basicstyle=\small,
+    caption = Service defaults podesavanje za currency servis, 
+   label = currency-service-defaults
+]
+{
+  "kind": "service-defaults",
+  "name": "currency",
+  "protocol": "http"
+}
+\end{lstlisting}
+
+\begin{lstlisting}[
+    basicstyle=\small,
+    caption = Service defaults podesavanje za payments servis, 
+   label = payments-service-defaults
+]
+{
+  "kind": "service-defaults",
+  "name": "payments",
+  "protocol": "http"
+}
+\end{lstlisting}
+
+Zatim je potrebno da se prosledi service-router podešavanje za payment servis ka Consul-u. Ovim se naglašava da svaki zahtev koji ide ka /currency endpointu, treba da se prosledi currency servisu, a svi ostali zahtevi treba da se proslede ka payments servisu. Na slici \ref{payments-service-router} je data konfiguracija koju potrebno poslati na adresu \texttt{http://localhost:8500/v1/config}, korišćenjem PUT zahteva \newline
+
+\begin{lstlisting}[
+    basicstyle=\small,
+    caption = Service router podešavanja za Consul rutiranje, 
+   label = payments-service-router
+]
+{
+    "kind": "service-router",
+    "name": "payments",
+    "routes": [
+        {
+            "match": {
+                "http": {
+                    "path_prefix": "/currency"
+                }
+            },
+            "destination": {
+                "service": "currency"
+            }
+        },
+        {
+            "match": {
+                "http": {
+                    "path_prefix": "/"
+                }
+            },
+            "destination": {
+                "service": "payments"
+            }
+        }
+    ]
+}
+\end{lstlisting}
+
+Nakon uspešne primene podešavanja, ako pošaljemo HTTP GET na localhost:9090/currency dobićemo odgovor kao na slici \ref{currency-response}. U suprotnom, ako se pošalje zahtev na localhost:9090, dobija se odgovor kao na slici \ref{payments-response}. 
+
+\begin{lstlisting}[
+    basicstyle=\small,
+    caption = Odgovor na /currency, 
+   label = currency-response
+]
+{
+  "name": "web",
+  "type": "HTTP",
+  "duration": "30.2717ms",
+  "body": "Hello World",
+  "upstream_calls": [
+    {
+      "name": "currency",
+      "uri": "http://localhost:9091",
+      "type": "HTTP",
+      "duration": "31.9ms",
+      "body": "2 USD for 1 GBP"
+    }
+  ]
+}
+\end{lstlisting}
+
+\begin{lstlisting}[
+    basicstyle=\small,
+    caption = Odgovor na /, 
+   label = payments-response
+]
+{
+  "name": "web",
+  "type": "HTTP",
+  "duration": "14.2487ms",
+  "body": "Hello World",
+  "upstream_calls": [
+    {
+      "name": "payments-v1",
+      "uri": "http://localhost:9091",
+      "type": "HTTP",
+      "duration": "31.9ms",
+      "body": "PAYMENTS V1"
+    }
+  ]
+}
+\end{lstlisting}
 
 \chapter{Zaključak}
 
