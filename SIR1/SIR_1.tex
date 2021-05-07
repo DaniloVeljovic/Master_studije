@@ -25,7 +25,7 @@
 %\renewcommand{\contentsname}{Sadržaj}
 %\renewcommand{\chaptername}{Poglavlje}
 
-\title{\Large{\textbf{Service mesh infrstrukturni sloj distribuiranih aplikacija }}}
+\title{\Large{\textbf{Service mesh infrastrukturni sloj distribuiranih aplikacija }}}
 \author{Student: Danilo Veljović, broj indeksa: 1120}
 \date{Novembar 6, 2020}
 \maketitle
@@ -38,9 +38,79 @@
 
 \chapter{Uvod}
 
-Web aplikacije čine veliki deo naše svakodnevice. Preko njih se informišemo, naručujemo stvari, trgujemo, a u ovo vreme ih i sve češće koristimo za rad od kuće. Samim tim i očekivanja korisnika od ovih aplikacija vremenom postaju sve veća. Uz to što aplikacije moraju da podržavaju veliki broj istovremenih korisnika, one moraju biti stalno dostupne, otporne na greške i lake za održavanje i dodavanje novih funkcionalnosti. Kao odgovor na ove potrebe smišljena je \textit{arhitektura mikroservisa} koja je postavila presedan u razvoju softvera i postala defakto standard za savremene aplikacije. U arhitekturi mikroservisa sistem se projektuje kao skup nezavisnih servisa koji implementiraju različite funkcionalnosti i koji mogu međusobno da komuniciraju.  Ovako projektovane aplikacije se mogu lako skalirati kako se broj korisnika povećava, pojedini servisi se mogu nezavisno postavljati na server, pa je lako menjati pojedine delove tako da to ne utiče na ostatak sistema. Ovakvi sistemi su takođe jako otporni na greške, i ako jedan od servisa prestane da funkcioniše, to neće uticati na ostale servise.  \newline
+Web aplikacije čine veliki deo naše svakodnevice. Preko njih se informišemo, naručujemo stvari, trgujemo, a u ovo vreme ih i sve češće koristimo za rad od kuće. Samim tim i očekivanja korisnika od ovih aplikacija vremenom postaju sve veća. Uz to što aplikacije moraju da podržavaju veliki broj istovremenih korisnika, one moraju biti stalno dostupne, otporne na greške i lake za održavanje i dodavanje novih funkcionalnosti. Kao odgovor na ove potrebe smišljena je \textit{arhitektura mikroservisa} koja je postavila presedan u razvoju softvera i postala defakto standard za savremene aplikacije. \newline
+
+U arhitekturi mikroservisa sistem se projektuje kao skup nezavisnih servisa koji implementiraju različite funkcionalnosti i koji mogu međusobno da komuniciraju.  Ovako projektovane aplikacije se mogu lako skalirati kako se broj korisnika povećava, pojedini servisi se mogu nezavisno postavljati na server, pa je lako menjati pojedine delove tako da to ne utiče na ostatak sistema. Ovakvi sistemi su takođe jako otporni na greške, i ako jedan od servisa prestane da funkcioniše, to neće uticati na ostale servise.  \newline
 
 Jedan od glavnih izazova u implementaciji ovakve arhitekture je interservisna komunikacija. Servisi mogu komunicirati međusobom sinhrono ili asinhrono. Ukoliko dođe do gubitka poruka usled komunikacije to može dovesti sistem u neočekivano stanje. Još jedan od problema je skaliranje i postavljanje na server koje se danas sve češće rešava kombinacijom Docker i Kubernetes. Međutim ovo zahteva dodatnu infrastrukturu i inženjere koji su isključivo posvećeni tom delu sistema što može biti jako skupo. Rutiranje takođe može biti problematično u mikroservisnoj arhitekturi. Najčešće se koristi API gateway obrazac za rutiranje zahteva, međutim ovaj jednostavan obrazac sve češće ne može da odgovori na rastuće zahteve sistema. \newline
+
+Nedostupni servisi su čest problem u mikroservisnoj arhitekturi. Servis može da prestane da radi iz raznih razloga (manjak memorije na mašini na kojoj se izvršava, nestanak struje, fatalna greška prilikom izvršenja itd). Bilo bi jako poželjno da sistem detektuje da servisi nisu u funkciji, što je to ranije moguće. Ovim bi se takve greške ranije detektovale i servisi bi imali mnogo manji down-time, jer bi inženjeri ranije ispravljali takve greške. \newline
+
+Još jedan od problema u mikroservisnoj arhitekturi je balansiranje opterećenja između istih instanci servisa. Ako jedan od servisa ima prekomeran broj zahteva, ideja je da se podigne još jedna replika istog servisa i da se dolazeći zahtevi ravnomerno distribuiraju između ove dve instance. Broj instanci koji se podigne može biti neograničen, i služi da rastereti servise, kako bi korisnici brže dobijali odgovore i kako bi se izbegli nepotrebni padovi aplikacije. \newline 
+
+U ovom radu biće proučena rešenja za izazove u organizaciji mikroservisne aplikacije. Proučiće se način na koji se kod svakog rešenja vrši balansiranje opterećenja, otkrivanje servisa, rutiranje zahteva, health checking itd. Kao posebno zanimljivo rešenje, i fokus ovog rada, biće predstavljen service mesh infrastrukturni sloj. Na kraju će biti implementirana aplikacija koja pokazuje prednosti korišćenja service mesh infrastrukturnog sloja u distribuiranim aplikacijama. \newline 
+
+\chapter{Enterprise service bus (ESB)}
+
+Enterprise service bus (u daljem tekstu ESB) predstavlja standardizovanu platoformu za integraciju heterogenih servisa. Povezuje koncepte razmene poruka (engl. messaging), web servisa, transformacije podataka i rutiranja, da bi pouzdano povezala i koordinisala rad velikog broja heterogenih aplikacija uz podršku za transakcije. To je arhitekturni obrazac u softverskoj arhitekturi kojim se može projektovati i implementirati komunikacija između različitih softverskih komponenti u servisno-orijentisanoj arhitekturi (skr. SOA).\newline
+
+\subsubsection{Arhitektura}
+
+ESB je inspirisana magistralom, pojmom iz hardverske arhitekture računara. Glavna ideja je bila da se nađe standardizovan način povezivanja heterogenih servisa. Podrazumeva se da će ovi servisi biti nezavisno deploy-ovani, da se nezavisno izvršavaju i da se nalaze na različitim mrežnim lokacijama. Ideja je da se sve funkcionalnosti koje su zajedničke za servise grupišu zajedno u magistralu. Na slici \ref{fig:esb-architecture} je dat prikaz ESB. \newline
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\textwidth]{esb_architecture}
+    \caption{ESB arhitektura}
+    \label{fig:esb-architecture}
+\end{figure}
+
+U ESB arhitekturi aplikacije su međusobno povezane preko ESB, umesto direktno jedna s drugom. ESB sadrži svu logiku za interakciju između različitih servisa. 
+
+\subsubsection{Funkcionalnosti}
+
+Primarne funkcionlanosti ESB su:
+
+\begin{itemize}
+	\item Rutiranje poruka između servisa
+	\item Monitoring i kontrola razmene poruka između servisa
+	\item Upravljanje deployment-om i verzionisanjem servisa
+	\item Upravljanje sa više instanci istog servisa
+	\item Pružanje dodatnih usluga poput hendlovanja eventa, konvertovanje formata poruka, sekvenciranje poruka i event-ova, obrada izuzetaka, konverzije protokola itd. 
+      \item Upravljanje transakcijama između više servisa
+	\item Obezbeđivanje servisa od nedozvoljenog pristupa
+\end{itemize}
+
+Neke od popularnih implementacija ESB su: 
+ 
+\begin{itemize}
+	\item Jboss ESB
+	\item Apache Servicemix
+	\item Open ESB
+	\item Mule ESB
+	\item JBoss Fuse
+\end{itemize}
+
+Neke od ključnih prednosti ESB arhitekture su: 
+
+\begin{itemize}
+	\item Nema dodatnog koda za integraciju servisa u sistem
+	\item Podrška za transakcionu obradu podataka
+	\item Podrška za redundantne instance servisa
+	\item Mogućnost da se servisi projektuju tako da samo treba da ostvaruju neku funkcionalnost, bez razmišljanja o integraciji sa drugim servisima
+\end{itemize}
+
+Neke od mana ESB arhitekture su: 
+
+\begin{itemize}
+	\item Sporija komunikacija između servisa
+	\item Single point of failure - u slučaju da ESB prestane sa radom, ceo sistem se zaustavlja
+	\item Kompleksna konfiguracija sistema
+	\item Otežano održavanje sistema
+\end{itemize}
+
+
+\chapter{Service mesh arhitektura}
 
 Kao jedno od rešenja, pre svega infrastrukturnih, problema mikroservisnih sistema, smišljen je \textit{service mesh}. Service mesh (srp. servisna mreža, mreža servisa) je poseban infrastrukturni sloj. Konfigurabilan je, ima malu latentnost i dizajniran je tako da podnese intenzivnu interservisnu komunikaciju. Neke od rešenja koje donosi service mesh su: 
 
@@ -52,10 +122,6 @@ Kao jedno od rešenja, pre svega infrastrukturnih, problema mikroservisnih siste
 	\item enkripcija komunikacije
 	\item \textit{circuit breaker} obrazac (srp. prekidač - obrazac kojim se omogućava servisima koji su oboreni ili zatrpani zahtevima, da se oporave)
 \end{itemize}
-
-U narednim poglavljima biće reči o samoj definiciji service mesha, prednostima korišćenja ovog obrasca, i \textit{Consul}-u kao jednoj od implementacija service mesh arhitekture. Nakon toga biće dat primer korišćenja Consul-a na jednoj mikroservisnoj aplikaciji.
-
-\chapter{Service mesh arhitektura}
 
 Service mesh je alat koji pomaže u monitoringu, komunikaciji između servisa i kontrolisanju stanja sistema. To je zasebna infrastrukturna komponenta koja se sastoji iz dve ravni: 
 \begin{itemize}
@@ -218,9 +284,52 @@ Na slici \ref{fig:authorization-architecture} je dat primer autorizacije u servi
     \label{fig:authorization-architecture}
 \end{figure} 
 
-\chapter{Consul kao primer service mesh}
+\chapter{Implementacije service mesh sloja}
 
 U nastavku će biti opisan Consul kao primer implementacije service mesh infrastrukturnog sloja. Consul je Hashicorp-ova implementacija service mesha. Najčešće se upotrebljava za otkrivanje i konfigurisanje različitih servisa koji su deo sistema. Pisan je u Golangu. Consul se na server može postavljati na samoj mašini kao standalone aplikacija ili mnogo češće kao Docker kontejner ili kao pod u Kubernetes klasteru. 
+
+\section{Druge implementacije service mesh sloja}
+
+\subsection{Istio}
+
+Istio je jedan od najpopularnijih open source service mesh rešenja, koje koriste IBM, Google i Red Hat. Istio je jedna od prvih service mesh platformi koja koristi Envoy kao proxy. Arhitektura Istio service mesh-a je klasična podela na centralnu kontrolnu ravan i distribuiranu ravan podataka sa pridruženim mikroservisima. Na slici \ref{fig:istio-architecture} je data arhitektura Istio service mesh rešenja. \newline
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.5\textwidth]{istio_architecture}
+    \caption{Istio service mesh arhitektura}
+    \label{fig:istio-architecture}
+\end{figure}
+
+Istio pruža tri ključne prednosti mikroservisnim arhitekturama: 
+
+\begin{itemize}
+	\item Upravljanje saobraćajem - Istio pojednostavljuje konfigurisanje opcija poput circuit breaking, timeout, retries itd. Takođe olakšava implementaciju canary release, A/B testiranja itd. 
+	\item Bezbednost - Istio pruža ugrađenu podršku za međuservisnu komunikaciju. Pruža bezbedne komunikacione kanale, upravlja autorizacijom i autentifikacijom i enkripcijom poruka. Takođe omogućava specifikaciju pravila, koji servis sa kojim može da komunicira. 
+	\item Monitoring - Istio proxy presreće sav dolazni i odlazni saobraćaj. Time ima uvid u trenutno stanje servisa. Istio pruža opcije za trasiranje saobraćaja, monitoring, i logovanje da bi se stekao uvid u runtime performanse sistema. 
+\end{itemize}
+
+\subsection{Linkerd 2.x}
+
+Linkerd 2.x je open source service mesh platforma koja ima ekskluzivnu podršku za Kubernetes. Ima 3 komponente:
+
+\begin{enumerate}
+	\item CLI i UI
+	\item  control plane
+	\item  data plane
+\end{enumerate}
+
+Komponente Linkerd 2.x sistema su dati na slici \ref{fig:linkerd-architecture}. Sve komponente kontrolne ravni se instaliraju kao Kubernetes deployment unutar linkerd namespace-a. Kontrolnoj ravni se može pristupati preko CLI i web interfejsom, i one koriste public api komponentu kontrolera. Destination komponenta čuva i komunicira informacije o rutiranju proksijima. Injector komponenta dodaje proxy svaki put kada se novi pod deploy-a na sistem. Identity komponenta čuva sertifikate koji se koriste pri komunikaciji između servisa. Tap komponenta prima zahteve od CLI i web UI, o praćenju zahteva u realnom vremenu.\newline
+
+Svakom servisu u sistemu pridružen je proxy. Linkerd koristi sopstvenu implementaciju proxy-ja, umesto Envoy proxy-ja koji koriste sve ostale service mesh implementacije. Linkerd ima podršku za rutiranje, za sigurnu komunikaciju i monitoring, kao Istio. 
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.7\textwidth]{linkerd_architecture}
+    \caption{Linkerd service mesh arhitektura}
+    \label{fig:linkerd-architecture}
+\end{figure}
+
 
 \section{Arhitektura i funkcionalnosti Consula}
 
