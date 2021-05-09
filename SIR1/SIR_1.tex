@@ -42,7 +42,7 @@ Web aplikacije čine veliki deo naše svakodnevice. Preko njih se informišemo, 
 
 U arhitekturi mikroservisa sistem se projektuje kao skup nezavisnih servisa koji implementiraju različite funkcionalnosti i koji mogu međusobno da komuniciraju.  Ovako projektovane aplikacije se mogu lako skalirati kako se broj korisnika povećava, pojedini servisi se mogu nezavisno postavljati na server, pa je lako menjati pojedine delove tako da to ne utiče na ostatak sistema. Ovakvi sistemi su takođe jako otporni na greške, i ako jedan od servisa prestane da funkcioniše, to neće uticati na ostale servise.  \newline
 
-Jedan od glavnih izazova u implementaciji ovakve arhitekture je interservisna komunikacija. Servisi mogu komunicirati međusobom sinhrono ili asinhrono. Ukoliko dođe do gubitka poruka usled komunikacije to može dovesti sistem u neočekivano stanje. Još jedan od problema je skaliranje i postavljanje na server koje se danas sve češće rešava kombinacijom Docker i Kubernetes. Međutim ovo zahteva dodatnu infrastrukturu i inženjere koji su isključivo posvećeni tom delu sistema što može biti jako skupo. Rutiranje takođe može biti problematično u mikroservisnoj arhitekturi. Najčešće se koristi API gateway obrazac za rutiranje zahteva, međutim ovaj jednostavan obrazac sve češće ne može da odgovori na rastuće zahteve sistema. \newline
+Jedan od glavnih izazova u implementaciji ovakve arhitekture je interservisna komunikacija. Ukoliko dođe do gubitka poruka usled komunikacije to može dovesti sistem u neočekivano stanje. Još jedan od problema je skaliranje i postavljanje na server koje se danas sve češće rešava kombinacijom Docker-a i Kubernetes-a. Međutim ovo zahteva dodatnu infrastrukturu i inženjere koji su isključivo posvećeni tom delu sistema što može biti jako skupo. Rutiranje takođe može biti problematično u mikroservisnoj arhitekturi. Najčešće se koristi API gateway obrazac za rutiranje zahteva, međutim ovaj jednostavan obrazac sve češće ne može da odgovori na rastuće zahteve sistema. \newline
 
 Nedostupni servisi su čest problem u mikroservisnoj arhitekturi. Servis može da prestane da radi iz raznih razloga (manjak memorije na mašini na kojoj se izvršava, nestanak struje, fatalna greška prilikom izvršenja itd). Bilo bi jako poželjno da sistem detektuje da servisi nisu u funkciji, što je to ranije moguće. Ovim bi se takve greške ranije detektovale i servisi bi imali mnogo manji down-time, jer bi inženjeri ranije ispravljali takve greške. \newline
 
@@ -52,11 +52,11 @@ U ovom radu biće proučena rešenja za izazove u organizaciji mikroservisne apl
 
 \chapter{Enterprise service bus (ESB)}
 
-Enterprise service bus (u daljem tekstu ESB) predstavlja standardizovanu platoformu za integraciju heterogenih servisa. Povezuje koncepte razmene poruka (engl. messaging), web servisa, transformacije podataka i rutiranja, da bi pouzdano povezala i koordinisala rad velikog broja heterogenih aplikacija uz podršku za transakcije. To je arhitekturni obrazac u softverskoj arhitekturi kojim se može projektovati i implementirati komunikacija između različitih softverskih komponenti u servisno-orijentisanoj arhitekturi (skr. SOA).\newline
+Enterprise service bus (u daljem tekstu ESB) predstavlja standardizovanu platoformu za integraciju heterogenih servisa. ESB ima podršku za mehanizme za razmenu poruka (engl. messaging), za web servise, za transformaciju podataka i rutiranje kao i transakcije koje uključuju više servisa. Još jedan način za definisanje ESB je kao arhitekturni obrazac u softverskoj arhitekturi kojim se može projektovati i implementirati komunikacija između različitih softverskih komponenti u servisno-orijentisanoj arhitekturi (skr. SOA).\newline
 
 \subsubsection{Arhitektura}
 
-ESB je inspirisana magistralom, pojmom iz hardverske arhitekture računara. Glavna ideja je bila da se nađe standardizovan način povezivanja heterogenih servisa. Podrazumeva se da će ovi servisi biti nezavisno deploy-ovani, da se nezavisno izvršavaju i da se nalaze na različitim mrežnim lokacijama. Ideja je da se sve funkcionalnosti koje su zajedničke za servise grupišu zajedno u magistralu. Na slici \ref{fig:esb-architecture} je dat prikaz ESB. \newline
+ESB je inspirisana magistralom, pojmom iz hardverske arhitekture računara. Glavna ideja, pri kreiranju ESB-a, je bila da se nađe standardizovan način povezivanja heterogenih servisa. Podrazumeva se da će ovi servisi biti nezavisno deploy-ovani, da se nezavisno izvršavaju i da se nalaze na različitim mrežnim lokacijama. Ideja je da se sve funkcionalnosti koje su zajedničke za servise grupišu zajedno u magistralu. Na slici \ref{fig:esb-architecture} je dat prikaz ESB. \newline
 
 \begin{figure}[h]
     \centering
@@ -65,7 +65,7 @@ ESB je inspirisana magistralom, pojmom iz hardverske arhitekture računara. Glav
     \label{fig:esb-architecture}
 \end{figure}
 
-U ESB arhitekturi aplikacije su međusobno povezane preko ESB, umesto direktno jedna s drugom. ESB sadrži svu logiku za interakciju između različitih servisa. 
+U ESB arhitekturi aplikacije su međusobno povezane preko ESB, umesto direktno jedna s drugom. ESB sadrži svu logiku za integraciju i interakciju između različitih servisa. 
 
 \subsubsection{Funkcionalnosti}
 
@@ -81,6 +81,8 @@ Primarne funkcionlanosti ESB su:
 	\item Obezbeđivanje servisa od nedozvoljenog pristupa
 \end{itemize}
 
+\subsubsection{Implementacije}
+
 Neke od popularnih implementacija ESB su: 
  
 \begin{itemize}
@@ -90,6 +92,8 @@ Neke od popularnih implementacija ESB su:
 	\item Mule ESB
 	\item JBoss Fuse
 \end{itemize}
+
+\subsubsection{Prednosti i mane}
 
 Neke od ključnih prednosti ESB arhitekture su: 
 
@@ -125,11 +129,11 @@ Kao jedno od rešenja, pre svega infrastrukturnih, problema mikroservisnih siste
 
 Service mesh je alat koji pomaže u monitoringu, komunikaciji između servisa i kontrolisanju stanja sistema. To je zasebna infrastrukturna komponenta koja se sastoji iz dve ravni: 
 \begin{itemize}
-	\item ravan podataka (engl. data plane)
-	\item ravan kontrole (engl. control plane)
+	\item ravan podataka (engl. \textit{data plane})
+	\item ravan kontrole (engl. \textit{control plane})
 \end{itemize}
 
-Ravan podataka upravlja komunikacijom između instanci servisa. Kontrolna ravan generiše konfiguraciju i dostavlja je do svih instanci u ravni podataka. Korisnik se na kontrolnu ravan može povezati ili API-jem, terminalom ili grafičkim interfejsom. Pregled najvažnijih komponenti service mesh-a dati su na slici  \ref{fig:service-mesh-topology}. 
+Ravan podataka upravlja komunikacijom između instanci servisa. Kontrolna ravan generiše konfiguraciju i dostavlja je do svih instanci u ravni podataka. Korisnik se na kontrolnu ravan može povezati ili API-jem, terminalom ili grafičkim interfejsom. Pregled najvažnijih komponenti service mesh-a dati su na slici  \ref{fig:service-mesh-topology}. \newline
 
 \begin{figure}[h]
     \centering
@@ -138,7 +142,7 @@ Ravan podataka upravlja komunikacijom između instanci servisa. Kontrolna ravan 
     \label{fig:service-mesh-topology}
 \end{figure}
 
-U ravni podataka svakoj od deploy-ovanih instanci servisa pridružen je i (jedan ili više) proxy (srp. posrednik). Zajedno, instanca i njen proxy čine sidecar (srp. prikolica) obrazac.  U sidecar obrascu se sve dodatne mogućnosti koje su potrebne servisu, dodaju u proxy-ju koji je zaseban kontejner koji se deploy-a uz aplikaciju. Ovaj obrazac omogućava da se dodaju nove funkcionalnosti bez izmene servisa. Na ovaj način se u service mesh-u dodaju funkcionalnosti poput monitoringa, logovanja, circuit breaker obrasca, load balancinga, enkripcije konekcije itd. Važno je napomenuti da bilo koji saobraćaj prvo prolazi kroz proxy, a zatim dolazi do servisa. Postoji još jedan obrazac koji se ređe koristi za deployment proxy-ja, a to je per-host proxy. U ovom slučaju će svaki host imati svoj proxy. Jedan host može biti virutelna mašina, Kubernetes pod ili poseban server.  \newline
+U ravni podataka svakoj od deploy-ovanih instanci servisa pridružen je i (jedan ili više) \textit{proxy} (srp. posrednik). Zajedno, instanca i njen proxy čine \textit{sidecar} (srp. prikolica) obrazac.  U sidecar obrascu se sve dodatne mogućnosti koje su potrebne servisu, dodaju u proxy-ju koji je zaseban kontejner koji se deploy-a uz aplikaciju. Ovaj obrazac omogućava da se dodaju nove funkcionalnosti bez izmene servisa. Na ovaj način se u service mesh-u dodaju funkcionalnosti poput monitoringa, logovanja, circuit breaker obrasca, load balancinga, enkripcije itd. Važno je napomenuti da bilo koji saobraćaj prvo prolazi kroz proxy, a zatim dolazi do servisa. Postoji još jedan obrazac koji se ređe koristi za deployment proxy-ja, a to je \textit{per-host} proxy. Kod per-host proxy-ja će svaki host imati svoj proxy. Jedan host može biti virutelna mašina, Kubernetes pod ili poseban server.  \newline
 
 Na primer, ako jedan servis želi da komunicira s drugim servisom, taj zahtev presreće proxy servisa koji šalje zahtev. Proxy rutira zahtev do proxy-ja odredišta. Proxy odredišta presreće pristigli zahtev, pre nego što ga pošalje odredišnom servisu. Korišćenje proxy-ja olakšava da se sva svojstva nevezana za biznis logiku, a koja su zajednička za sve servise smeste u njega. Činjenica da saobraćaj prolazi kroz proxy-je omogućava da se beleži koji servisi međusobno komuniciraju, koliko traje komunikcija, i koliko je potebno da servisi odgovore na zahteve i koji je procenat uspešnosti i nespešnosti zahteva. \newline
 
@@ -146,7 +150,7 @@ Kontrolna ravan služi za centralizovano upravljanje service mesh-om. Bilo kakva
 
 Kontrolna ravan može da kontroliše i konfiguriše autorizaciju (koji servis može sa kojim da komunicira) i politiku rutiranja. Ovu konfiguraciju može da postavi korisnik, a onda će kontrolna ravan to proslediti ravni podataka. U ravni podataka se čita tekuća konfiguracija i komunicira se u skladu sa njom. \newline
 
-Nešto malo detaljnija arhitektura service mesh-a je data na slici \ref{fig:advanced-service-mesh-topology}.
+Detaljnija arhitektura service mesh-a je data na slici \ref{fig:advanced-service-mesh-topology}.\newline
 
 \begin{figure}[h]
     \centering
@@ -155,7 +159,7 @@ Nešto malo detaljnija arhitektura service mesh-a je data na slici \ref{fig:adva
     \label{fig:advanced-service-mesh-topology}
 \end{figure}
 
-Na slici \ref{advanced-service-mesh-topology} su prikazane sledeće komponente service mesh sistema: 
+Na slici \ref{fig:advanced-service-mesh-topology} su prikazane sledeće komponente service mesh sistema: 
 
 \begin{itemize}
 	\item čovek (engl. the human) - deo sistema koji donosi odluke visokog nivoa, vezane za rutiranje, autorizaciju itd. 
@@ -261,19 +265,17 @@ Bezbednost service mesh sistema uključuje slučajeve kao što su autorizacija i
 
 \textbf{mTLS autentikacija}\newline
 
-\textit{Treba dodatno objasniti mTLS i kako sve to funkcioniše}\newline
-
-Interservisna komunikacija se u service meshu odvija preko proxy-jeva. Proxy-ji mogu da generišu mTLS tunele između servisa, i svaki servis će imati svoj jedinstveni sertifikat koji garantuje identitet. Sertifikatima se upravlja u centralizovanoj komponenti koja je takođe odgovorna za rotaciju sertifikata. Enkripcija je vrši na sedmom nivou OSI, što znači da se enkriptuje sadržaj, a ne saobraćaj. 
+\textit{Mutual authentication} (skr. mTLS) je protokol kojim se simultano autentifikuju dve strane u komunikaciji. Ovakav protokol je namenjen prenosu osetljivih podataka kroz mrežu. Interservisna komunikacija se u service meshu odvija preko proxy-jeva. Proxy-ji mogu da generišu mTLS tunele između servisa, i svaki servis će imati svoj jedinstveni sertifikat koji garantuje identitet. Sertifikatima se upravlja u centralizovanoj komponenti koja je takođe odgovorna za rotaciju sertifikata. Enkripcija je vrši na sedmom nivou OSI, što znači da se enkriptuje sadržaj, a ne saobraćaj. 
 Postoje dva tipa enkripcije: 
 
 \begin{itemize}
-	\item restriktivna - kod ovog tipa enkripcije se servis konfiguriše da ne prihvata neenkriptovani saobraćaj
+	\item restriktivni - kod ovog tipa enkripcije se servis konfiguriše da ne prihvata neenkriptovani saobraćaj
 	\item  permisivni - kod ovog tipa enkripcije servis prihvata i neenkriptovani saobraćaj po potrebi
 \end{itemize}
 
 \textbf{Autorizacija}\newline
 
-Autorizacija je analogna mikrosegmentaciji na sedmom nivou OSI. Mikro-segmentacija se sprovodi po principu nultog poverenja. Mikro-segmentacija znači da nijedan saobraćaj koji nema eksplicitinu dozvolu neće biti propušten. Svakom dolaznom zahtevu se ispituje header u potrazi za potrebnom dozvolom. U service mesh sistemima, autorizacija se pruža na nivou imenskog prostora, na servisnom nivou i na nivou pojednih metoda (tzv. endpointa). 
+Autorizacija je analogna mikrosegmentaciji na sedmom nivou OSI. Mikro-segmentacija se sprovodi po principu nultog poverenja. Mikro-segmentacija znači da nijedan saobraćaj koji nema eksplicitinu dozvolu neće biti propušten. Svakom dolaznom zahtevu se ispituje header u potrazi za potrebnom dozvolom. U service mesh sistemima, autorizacija se pruža na nivou imenskog prostora, na servisnom nivou i na nivou pojednih metoda (tzv. endpointa). \newline
 
 Na slici \ref{fig:authorization-architecture} je dat primer autorizacije u service mesh sistemu. Kada proxy primi zahtev on čita trenutnu autorizacionu konfiguraciju i vidi da li taj zahtev dolazi od izvora koji ima pristup. Na osnovu toga se zahtev prihvata ili odbija. 
 
@@ -343,8 +345,8 @@ Srž Consul sistema je proces Consul agent. Agent čuva informacije o članstvu 
 Svaki od Consul agenta u sebi ima informacije o : 
 
 \begin{itemize}
-	\item Ime čvora (engl. Node name) - ime hosta na kom se agent nalazi
-	\item Ime datacentra (engl. datacenter) - ime datacentra za koji je Consul konfigurisan. Svaki čvor se morati odazivati svom datacentru. 
+	\item Ime čvora (engl. \textit{node name}) - ime hosta na kom se agent nalazi
+	\item Ime datacentra (engl. \textit{datacenter}) - ime datacentra za koji je Consul konfigurisan. Svaki čvor se morati odazivati svom datacentru. 
 	\item Server - svaki agent ima indikator da li se izvršava u klijent ili server modu. Čvorovi koji se izvršavaju u server modu učestvuju u kvorumima konzenzusa, čuvanju informacija o stanju klastera. 
 	\item Adresu klijenta - adresa koju agent koristi za interfejse klijenta. Uključuje portove za HTTP, RPC i DNS. 
 	\item Adresu klastera - adresa i skup portova koja se koristi za komunikaciju između Consul agenta u klasteru. Adresa mora da bude dostupna za sve ostale agente u klasteru.
@@ -352,7 +354,7 @@ Svaki od Consul agenta u sebi ima informacije o :
 
 Consul ima podršku za Envoy implementaciju sidecar proxy-ja.  Ovi proxy-ji kontrolišu sav saobraćaj koji ulazi i izlazi iz servisa. \newline
 
-Na slici \ref{fig:consul-architecture} je dat prikaz arhitekture Consul service mesha. Nešto detaljnija arhitektura Consul service mesha sa više datacentara data je na slici \ref{fig:detailed-consul-architecture}. \newline
+Na slici \ref{fig:consul-architecture} je dat prikaz arhitekture Consul service mesha. Detaljnija arhitektura Consul service mesha na kojoj je prikazana i interakcija servisa sa komponentama Consul sistema data je na slici \ref{fig:detailed-consul-architecture}. \newline
 
 \begin{figure}[h]
     \centering
@@ -364,7 +366,7 @@ Na slici \ref{fig:consul-architecture} je dat prikaz arhitekture Consul service 
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.9\textwidth]{consul_architecture}
-    \caption{Detaljna arhitektura Consul service mesha u više datacentara}
+    \caption{Detaljna arhitektura Consul service mesh}
     \label{fig:detailed-consul-architecture}
 \end{figure} 
 
@@ -376,12 +378,12 @@ Raft algoritam služi za ostvarivanje konsenzusa. Raft klaster se sastoji od  ne
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.9\textwidth]{raft_algorithms.jpg}
+    \includegraphics[width=0.9\textwidth]{raft_algorithm}
     \caption{Raft algoritam}
     \label{fig:raft-algorithms}
 \end{figure} 
 
-Neko od pratioca započinje izbor novog lidera. Ako lider već postoji, on dobija informacije o tome ko je lider. Ako ne postoji lider, nakon što se započne izbor novog lidera, kandidat koji je započeo izbor, započinje odbrojavanje. Nakon završetka tog odbrojavanja, ako ne dobije informacije o postojećem lideru, on postaje novi lider. OBJASNI MALO BOLJE \newline
+Neko od pratioca započinje izbor novog lidera, nakon timeouta. Pratioc menja stanje u kandidata za lidera. Ako u sistemu, već postoji lider, kandidat ga detektuje i menja stanje u pratioc. U suprotnom, sve dok neko od kandidata ne dobije većinu glasova od ostatka, izbor se nastavlja. \newline
 
 \textbf{Key value store}\newline
 
@@ -457,11 +459,13 @@ Web servis je kao API gateway aplikacije i on prosleđuje pozive ka payment serv
 
 \textbf{Demonstracija karakteristika Consula}\newline
 
-Consul, web i payment servis kao i odgovorajaući proxy-ji će biti kreirani jednim docker-compose fajlom. Svaki od elemenata će činiti zaseban kontejner i svi kontejneri će biti deo iste mreže, kako bi jedno drugom bili vidljivi. Na slici \ref{dc-consul} je dat deo docker-compose fajla koji se odnosi na Consul i njegov deployment. \newline
+Consul, web i payment servis kao i odgovorajaući proxy-ji će biti kreirani jednim docker-compose fajlom. Svaki od elemenata će činiti zaseban kontejner i svi kontejneri će biti deo iste mreže, kako bi jedno drugom bili vidljivi. Na listingu \ref{dc-consul} je dat deo docker-compose fajla koji se odnosi na Consul i njegov deployment. \newline
 
-\begin{figure}
-
-\begin{verbatim}
+\begin{lstlisting}[
+    basicstyle=\small,
+    caption = Deo docker-compose fajla koji se odnosi na Consul, 
+   label = dc-consul
+]
   consul:
     image: consul:1.6.0
     command: ["consul","agent","-config-file=/config/consul-single-dc.hcl","-config-dir=/config"]
@@ -472,15 +476,15 @@ Consul, web i payment servis kao i odgovorajaući proxy-ji će biti kreirani jed
     networks:
       vpcbr:
         ipv4_address: 10.5.0.2
-\end{verbatim}
-    \caption{Deo docker-compose fajla koji se odnosi na Consul}
-    \label{dc-consul}
-\end{figure} 
+\end{lstlisting}
 
-Na slici \ref{dc-consul} se jasno vidi da se koristi image consul:1.6.0, da se izvršava na portu 8500 i da pripada vpcbr mreži i da je u okviru te mreže njegova adresa 10.5.0.2. Takođe komanda koja se upućuje kontejneru pri podizanju je \texttt{consul agent -config-file=/config/consul-single-dc.hcl -config-dir=/config}, kojom se navodi da Consul čuva podatke u /config direktorijumu i da je fajl u kom se nalazi konfiguracija Consula consul-single-dc.hcl. U ovom dokumentu se nalaze podešavanja kojima se Consulu kaže kako je ime datacentra, u kom modu se izvršava, da li je dozvoljen Consul connect, na kom mrežnom interfejsu se izvršava, koji je log level itd. Consul konfiguracioni fajl je dat na slici \ref{hcl}. 
+U listingu \ref{dc-consul} se jasno vidi da se koristi image consul:1.6.0, da se izvršava na portu 8500 i da pripada vpcbr mreži i da je u okviru te mreže njegova adresa 10.5.0.2. Takođe komanda koja se upućuje kontejneru pri podizanju je \texttt{consul agent -config-file=/config/consul-single-dc.hcl -config-dir=/config}, kojom se navodi da Consul čuva podatke u /config direktorijumu i da je fajl u kom se nalazi konfiguracija Consula consul-single-dc.hcl. U ovom dokumentu se nalaze podešavanja kojima se Consulu kaže kako je ime datacentra, u kom modu se izvršava, da li je dozvoljen Consul connect, na kom mrežnom interfejsu se izvršava, koji je log level itd. Consul konfiguracioni fajl je dat na listingu \ref{hcl}. \newline
 
-\begin{figure}[h]
-\begin{verbatim}
+\begin{lstlisting}[
+    basicstyle=\small,
+    caption = Konfiguracioni fajl za Consul server, 
+   label = hcl
+]
 data_dir = "/tmp/"
 log_level = "DEBUG"
 datacenter = "dc1"
@@ -497,14 +501,14 @@ connect {
 }
 advertise_addr = "10.5.0.2"
 enable_central_service_config = true
-\end{verbatim}
-    \caption{consul-single-dc.hcl}
-    \label{hcl}
-\end{figure} 
+\end{lstlisting}
 
 
-\begin{figure}[h]
-\begin{verbatim}[fontsize=\small]
+\begin{lstlisting}[
+    basicstyle=\small,
+    caption = Deo docker-compose fajla koji se odnosi na web servis i njegov proxy, 
+   label = web-service-dc
+]
 web:
     image: nicholasjackson/fake-service:v0.4.1
     environment:
@@ -529,13 +533,9 @@ web:
       - "./central_config:/central_config"
     command: ["consul", "connect", "envoy","-sidecar-for", "web-v1","--","-l","debug"]
     network_mode: "service:web"
-\end{verbatim}
-    \caption{Deo docker-compose fajla koji se odnosi na web servis i njegov proxy}
-    \label{web-service-dc}
-\end{figure}
+\end{lstlisting}
 
-Deo docker-compose fajla koji se odnosi na web servis i njegov proxy dat je na slici \ref{web-service-dc}. Image koji se koristi za ovaj kontejner je nicholasjackson/fake-service:v0.4.1. Ovom servisu je potrebno preko promenljivih okruženja proslediti adresu na kojoj sluša, eventualne upstream servise kojima će dalje da prosleđuje zahtev, koja mu je poruka i u koja mu je adresa u okviru mreže vpcbr. \newline
-
+Deo docker-compose fajla koji se odnosi na web servis i njegov proxy dat je na listingu \ref{web-service-dc}. Image koji se koristi za ovaj kontejner je \texttt{nicholasjackson/fake-service:v0.4.1}. Ovom servisu je potrebno preko promenljivih okruženja proslediti adresu na kojoj sluša, eventualne upstream servise kojima će dalje da prosleđuje zahtev, koja mu je poruka i u koja mu je adresa u okviru mreže vpcbr. \newline
 
 Web proxy se kreira iz image-a \texttt{nicholasjackson/consul-envoy:v1.6.0-v0.10.0}, i prosleđuju mu se adrese preko kojih može da se obrati Consul serveru i putanja do konfiguracionog fajla. Naredba kojom se startuje web proxy kontejner je \texttt{consul connect envoy -sidecar-for web-v1 -- -l debug}, kojom se navodi da je taj proxy vezan za web servis. Na listingu \ref{web-service-conf} je prikazan konfiguracioni fajl za web servis proxy. \newline
 
@@ -605,7 +605,7 @@ payments_v1:
     network_mode: "service:payments_v1"
 \end{lstlisting}
 
-Payments proxy se kreira iz image-a nicholasjackson/consul-envoy:v1.6.0-v0.10.0, i prosleđuju mu se adrese preko kojih može da se obrati Consul serveru i putanja do konfiguracionog fajla. Naredba kojom se startuje payments proxy kontejner je \texttt{consul connect envoy -sidecar-for payments-v1}, kojom se navodi da je taj proxy vezan za payments servis. Na slici \ref{payments-service-conf} je prikazan konfiguracioni fajl za web servis proxy. \newline
+Payments proxy se kreira iz image-a nicholasjackson/consul-envoy:v1.6.0-v0.10.0, i prosleđuju mu se adrese preko kojih može da se obrati Consul serveru i putanja do konfiguracionog fajla. Naredba kojom se startuje payments proxy kontejner je \texttt{consul connect envoy -sidecar-for payments-v1}, kojom se navodi da je taj proxy vezan za payments servis. Na listingu \ref{payments-service-conf} je prikazan konfiguracioni fajl za web servis proxy. \newline
 
 
 \begin{lstlisting}[
@@ -896,7 +896,7 @@ Odgovori koji se dobijaju slanjem GET zahteva na localhost:9090 treba da variraj
 }
 \end{lstlisting}
 
-\subsection{Rutiranje}
+\subsubsection{Rutiranje}
 
 Consul ima podršku za rutiranje zahteva. U odnosu na resurs koji je se gađa, Consul može da rutira zahtev ka odgovarajućem servisu. Uz deployment payment servisa (slika \ref{payments-service-dc}) i Consul servera (slika \ref{dc-consul} ), potrebno je i instancirati novi servis, currency servis. Na slici \ref{currency-ds} je dat deo docker-compose fajla koji se odnosi na currency servis i njegov proxy. \newline 
 
@@ -1035,5 +1035,12 @@ Nakon uspešne primene podešavanja, ako pošaljemo HTTP GET na localhost:9090/c
 \end{lstlisting}
 
 \chapter{Zaključak}
+
+Mikroservisna arhitektura ima određene nedostatke u pogledu load balancing-a, skaliranja arhitekture, interservisne komunikacije itd. Svi ovi nedostaci mogu u realnim situacijama da izazovu gubitke podataka, da uzrokuju u većem downtime-u sistema itd. Na više načina je pokušano da se nađe rešenje za ove probleme. Pokušali su ljudi da menjaju servise same po sebi, tako da oni kada šalju poruke obezbeđuju redundansu u slanju, da se implementaira posebna service discovery komponenta, koja bi sama vršila load balancing itd. Drugi pristup je bio infrastrukturni. Ideja je bila da servisi samo implementiraju potrebne biznis funkcionalnosti, a sama infrastruktura na koju su postavljeni će se postarati za sve ostalo. \newline
+
+Najpre se došlo na ideju Enterprise service bus (ESB) komponente. Svi servisi se povezuju na magistralu. Ta magistrala u sebi ima mehanizme za prosleđivanje poruka, za transakcije koje obuhvataju više servisa, za load balancing itd. Dobre strane tog sistema su te što se po prvi put razdvajaju funkcionalnosti servisa, te servis brine o biznis logici, a bus brine o greškama koje se dešavaju. Integracija servisa je bila jednostavna i postojao je način da se povežu različiti servisi, jednostavnom konfiguracijom magistrale. Međutim taj sistem se pokazao kao jako spor i težak za održavanje. Takođe je imao veliku manu, da ako prestane sa radom, ceo sistem je nefunkcionalan. \newline
+
+Kao sledeće rešenje, smišljena je service mesh arhitektura. Kod ovog arhitekturnog obrasca logička podela se svodi na kontrolu ravan i ravan podataka. Kontrolna ravan upravlja globalnom konfiguracijom i distribuira je na ravan podataka. Ravan podataka se sastoji od servisa i proxy-ja, koji zajedno čine sidecar obrazac. Ravan podataka čita konfiguraciju od kontrolne ravni i prema tome upravlja komunikacijom između servisa, prikuplja metriku i brine o bezbednosti sistema. Prednosti service mesh arhitekture su te što ne postoji single-point-of-failure u sistemu, prosto sistem funkcioniše šta god da prestane da radi. Servisi brinu samo o biznis logici, bez uplitanja u bilo šta drugo. Upravljanje sistemom je konfigurabilno, i zahvaljući dobro napisanim proxy-jima, komunikacija u sistemu je brza, bezbedna i efikasna. \newline
+
 
 \end{document}
