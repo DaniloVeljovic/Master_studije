@@ -1,0 +1,56 @@
+version: '2'
+services:
+  mosquitto:
+    image: pascaldevink/rpi-mosquitto
+    container_name: moquitto
+    ports:
+     - "9001:9001"
+     - "1883:1883"
+    restart: always
+  kuiper:
+    image: emqx/kuiper:1.2.1-slim
+    ports:
+      - "127.0.0.1:9081:9081"
+      - "127.0.0.1:20498:20498"
+    container_name: manager-kuiper
+    hostname: manager-kuiper
+    environment:
+      MQTT_SOURCE__DEFAULT__SERVERS: "[tcp://moquitto:1883]"
+  influxdb:
+    image: influxdb:1.8
+    ports:
+      - '8086:8086'
+    volumes:
+      - influxdb-storage:/var/lib/influxdb
+    environment:
+      - INFLUXDB_DB=db0
+      - INFLUXDB_ADMIN_USER=${INFLUXDB_USERNAME}
+      - INFLUXDB_ADMIN_PASSWORD=${INFLUXDB_PASSWORD}
+  chronograf:
+    image: chronograf:latest
+    ports:
+      - '127.0.0.1:8888:8888'
+    volumes:
+      - chronograf-storage:/var/lib/chronograf
+    depends_on:
+      - influxdb
+    environment:
+      - INFLUXDB_URL=http://influxdb:8086
+      - INFLUXDB_USERNAME=${INFLUXDB_USERNAME}
+      - INFLUXDB_PASSWORD=${INFLUXDB_PASSWORD}
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - '3000:3000'
+    volumes:
+      - grafana-storage:/var/lib/grafana
+      - ./grafana-provisioning/:/etc/grafana/provisioning
+    depends_on:
+      - influxdb
+    environment:
+      - GF_SECURITY_ADMIN_USER=${GRAFANA_USERNAME}
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD}
+volumes:
+  influxdb-storage:
+  chronograf-storage:
+  grafana-storage:
