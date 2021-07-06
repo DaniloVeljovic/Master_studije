@@ -27,22 +27,23 @@ public class SensorValueReadEventListener implements ApplicationListener<SensorV
         logger.info("Sensor value read listener.");
 
         Double gmValue = SensorServiceImpl.currentValuesReadFromSensors.get("gm");
+        
         Double temperatureValue = SensorServiceImpl.currentValuesReadFromSensors.get("temp");
-        Double lightValue = SensorServiceImpl.currentValuesReadFromSensors.get("light");
 
-        if (!publisher.isConnected()) {
+        Double lightValue = SensorServiceImpl.currentValuesReadFromSensors.get("light");
+        
+        System.out.println(this.publisher);
+        if (!this.publisher.isConnected()) {
+            logger.info("Sensor value read listener: Publisher not connected");
             return;
         }
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        logger.info("Creating message.");
         MqttMessage msg = createMqttMessage(gmValue, temperatureValue, lightValue);
         msg.setQos(0);
         msg.setRetained(true);
         try {
             publisher.publish("devices/checkMeasurement", msg);
+            logger.info("Published event.");
         } catch (MqttException e) {
             e.printStackTrace();
         }
@@ -59,6 +60,7 @@ public class SensorValueReadEventListener implements ApplicationListener<SensorV
         options.setConnectionTimeout(0);
         publisher.connect(options);
         this.publisher = publisher;
+        System.out.println("APP READY  " + this.publisher);
     }
 
     private MqttMessage createMqttMessage(Double gmValue, Double tempValue, Double lightValue) {

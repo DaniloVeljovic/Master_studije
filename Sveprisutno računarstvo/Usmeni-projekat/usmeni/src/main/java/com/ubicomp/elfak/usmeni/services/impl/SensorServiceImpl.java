@@ -74,7 +74,7 @@ public class SensorServiceImpl implements SensorService {
     }
 
     @Override
-    public SensorMeasurementDTO readSensorMeasurement(Long sensorId) {
+    public SensorMeasurementDTO readSensorMeasurement(String sensorId) {
         InfluxDB influxDB = InfluxDBFactory.connect(host, username, password);
 
         QueryResult queryResult = influxDB

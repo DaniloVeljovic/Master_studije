@@ -2,6 +2,7 @@ package com.ubicomp.elfak.usmeni.services.impl;
 
 import com.pi4j.io.gpio.*;
 import com.ubicomp.elfak.usmeni.models.Irrigation;
+import com.ubicomp.elfak.usmeni.models.dto.IrrigationDTO;
 import com.ubicomp.elfak.usmeni.services.IrrigationService;
 import org.influxdb.InfluxDB;
 import org.influxdb.InfluxDBFactory;
@@ -18,7 +19,7 @@ import java.util.concurrent.TimeUnit;
 @Service
 public class IrrigationServiceImpl implements IrrigationService {
 
-    public volatile Boolean isCurrentlyIrrigating = false;
+    public static volatile Boolean isCurrentlyIrrigating = false;
 
     private static Logger log = LoggerFactory.getLogger(IrrigationServiceImpl.class);
 
@@ -32,14 +33,14 @@ public class IrrigationServiceImpl implements IrrigationService {
     private String password;
 
     @Override
-    public Irrigation tryToIrrigate(Long userId) throws InterruptedException {
+    public Irrigation tryToIrrigate(IrrigationDTO irrigationDTO) throws InterruptedException {
         if(isCurrentlyIrrigating) {
             return null;
         }
         irrigate();
 
         Irrigation irrigation = new Irrigation();
-        irrigation.setLength(5000L);
+        irrigation.setLength(irrigationDTO.getLength());
         irrigation.setTime(Instant.now());
         InfluxDB influxDB = InfluxDBFactory.connect(host, username, password);
 
@@ -63,16 +64,21 @@ public class IrrigationServiceImpl implements IrrigationService {
 
     @Override
     public void irrigate() throws InterruptedException {
-        synchronized (isCurrentlyIrrigating) {
             //activatePinsForIrrigation(userId);
             if(!isCurrentlyIrrigating) {
                 isCurrentlyIrrigating = true;
-
+                try{
                 activatePinsForIrrigation();
-
-                isCurrentlyIrrigating = false;
+                
+                }
+                catch(Exception e) {
+                e.printStackTrace();
+                }
+                finally{
+                        isCurrentlyIrrigating = false;
+                        }
+                
             }
-        }
     }
 
     private void activatePinsForIrrigation() throws InterruptedException {
@@ -117,7 +123,7 @@ public class IrrigationServiceImpl implements IrrigationService {
         // stop all GPIO activity/threads by shutting down the GPIO controller
         // (this method will forcefully shutdown all GPIO monitoring threads and scheduled tasks)
         gpio.shutdown();
-
+        gpio.unprovisionPin(pin);
         log.info("Exiting ControlGpioExample");
     }
 }

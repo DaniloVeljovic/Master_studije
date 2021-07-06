@@ -1,6 +1,5 @@
 package com.ubicomp.elfak.usmeni.models;
 
-import edu.princeton.cs.algs4.In;
 import org.influxdb.annotation.Column;
 import org.influxdb.annotation.Measurement;
 

@@ -20,9 +20,16 @@ public class SensorController {
         return ResponseEntity.ok(sensorService.createSensorMeasurement(sensorMeasurement));
     }
 
+    @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/{sensorId}")
-    public @ResponseBody ResponseEntity<SensorMeasurementDTO> readSensorMeasurement(@PathVariable Long sensorId) {
+    public @ResponseBody ResponseEntity<SensorMeasurementDTO> readSensorMeasurement(@PathVariable String sensorId) {
         return ResponseEntity.ok(sensorService.readSensorMeasurement(sensorId));
     }
+
+//    @CrossOrigin(origins = "http://localhost:3000")
+//    @GetMapping("/{sensorId}")
+//    public @ResponseBody ResponseEntity<SensorMeasurementDTO> readSensorMeasurement(@PathVariable Long sensorId) {
+//        return ResponseEntity.ok(sensorService.readSensorMeasurement(sensorId));
+//    }
 
 }
