@@ -10,6 +10,7 @@ import org.eclipse.paho.client.mqttv3.MqttException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
@@ -22,12 +23,20 @@ public class SensorMeasurementCreatedListener {
     @Autowired
     private SensorService sensorService;
 
+    @Value("${mosquitto.host}")
+    private String host;
+
+    @Value("${mosquitto.port}")
+    private String port;
+
+    @Value("${mosquitto.topic}")
+    private String topic;
+
     @EventListener(ApplicationReadyEvent.class)
     private void initializeSubscriber() throws MqttException {
 
-        String publisherId = "com.ubicomp.elfak.sensorMeasurementListener";
-        String topicName = "devices/sensors";
-        IMqttClient publisher = new MqttClient("tcp://localhost:1883", publisherId);
+        String publisherId = "com.ubicomp.elfak.ingestion.sensor.measurement";
+        IMqttClient publisher = new MqttClient(host + port, publisherId);
         MqttConnectOptions options = new MqttConnectOptions();
         options.setAutomaticReconnect(true);
         options.setCleanSession(true);
@@ -38,7 +47,7 @@ public class SensorMeasurementCreatedListener {
             return;
         }
 
-        publisher.subscribe(topicName, (topic, msg1) -> {
+        publisher.subscribe(topic, (topic, msg1) -> {
             byte[] payload = msg1.getPayload();
             String s = new String(payload);
             Gson gson = new Gson();
