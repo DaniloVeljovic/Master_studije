@@ -65,6 +65,8 @@ public class SensorServiceImpl implements SensorService {
 
         //if not, create it
         classifier = createAndTrainModel(datasetPath);
+        //evaluate classifier and write the results to a file
+        //evaluateClassifier(classifier);
         writeModelToFS(modelPath, classifier);
     }
 
@@ -87,7 +89,7 @@ public class SensorServiceImpl implements SensorService {
 
         batchPoints.point(point1);
         influxDB.write(batchPoints);
-
+        logger.info("Saved measurement: " + sensorMeasurement);
         influxDB.close();
 
         return sensorMeasurement;
@@ -95,7 +97,12 @@ public class SensorServiceImpl implements SensorService {
 
     @Override
     public Object analyzeMeasurement(SensorMeasurementDTO sensorMeasurementDTO) {
-        double[] doubles = new double[]{};
+        double[] doubles = new double[]{
+                sensorMeasurementDTO.getLightIntensity(),
+                sensorMeasurementDTO.getGroundMoisture(),
+                sensorMeasurementDTO.getWindIntensity(),
+                sensorMeasurementDTO.getSoilHumidity()};
+
         Instance instance = new DenseInstance(doubles);
         return classifier.classify(instance);
     }
@@ -103,7 +110,9 @@ public class SensorServiceImpl implements SensorService {
     @Override
     public void analyzeMeasurementAndActuateIfNeeded(SensorMeasurementDTO sensorMeasurementDTO) {
         Object predictedClass = analyzeMeasurement(sensorMeasurementDTO);
+        logger.info("Predicted class for sensor measurement " + sensorMeasurementDTO + " is " + predictedClass);
         if(predictedClass.equals(shouldActuateIfPredicted)) {
+            logger.info("Performing actuation.");
             sendActuationMessage(new Date(), 5000L, "GPIO_01");
         }
     }

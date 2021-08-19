@@ -1,3 +1,9 @@
+        double[] doubles = new double[]{
+                sensorMeasurementDTO.getLightIntensity(),
+                sensorMeasurementDTO.getGroundMoisture(),
+                sensorMeasurementDTO.getWindIntensity(),
+                sensorMeasurementDTO.getSoilHumidity()};
+
 /* Load a data set */
 		//Dataset data = FileHandler.loadDataset(new File("devtools/data/iris.data"), 4, ",");
 		/* Contruct a KNN classifier that uses 5 neighbors to make a
