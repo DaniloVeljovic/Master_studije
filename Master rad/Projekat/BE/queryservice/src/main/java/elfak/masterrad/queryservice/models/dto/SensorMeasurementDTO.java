@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 public class SensorMeasurementDTO implements Serializable {
 
+    private String requestId;
 
     private Double lightIntensity;
 
@@ -12,6 +13,14 @@ public class SensorMeasurementDTO implements Serializable {
     private Double windIntensity;
 
     private Double soilHumidity;
+
+    public String getRequestId() {
+        return requestId;
+    }
+
+    public void setRequestId(String requestId) {
+        this.requestId = requestId;
+    }
 
     public Double getLightIntensity() {
         return lightIntensity;
@@ -48,10 +57,11 @@ public class SensorMeasurementDTO implements Serializable {
     @Override
     public String toString() {
         return "SensorMeasurementDTO{" +
-                "lightIntensity=" + lightIntensity +
+                "requestId='" + requestId + '\'' +
+                ", lightIntensity=" + lightIntensity +
                 ", groundMoisture=" + groundMoisture +
                 ", windIntensity=" + windIntensity +
-                ", soilHumidity='" + soilHumidity + '\'' +
+                ", soilHumidity=" + soilHumidity +
                 '}';
     }
 }

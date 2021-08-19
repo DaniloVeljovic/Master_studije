@@ -13,8 +13,11 @@ import org.influxdb.impl.InfluxDBResultMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @Component
 public class SensorServiceImpl implements SensorService {
@@ -54,11 +57,11 @@ public class SensorServiceImpl implements SensorService {
     }
 
     @Override
-    public SensorMeasurementDTO readSensorMeasurement(Long sensorId) {
+    public SensorMeasurementDTO readLatestSensorMeasurement() {
         InfluxDB influxDB = InfluxDBFactory.connect(host, username, password);
 
         QueryResult queryResult = influxDB
-                .query(new Query("Select * from sensorMeasurement where sensorId =" + sensorId + " order by time desc", "sensorMeasurement"));
+                .query(new Query("SELECT * FROM sensorMeasurement ORDER BY time DESC LIMIT 1", "sensorMeasurement"));
 
         InfluxDBResultMapper resultMapper = new InfluxDBResultMapper();
         List<SensorMeasurement> sensorMeasurements = resultMapper
@@ -67,17 +70,41 @@ public class SensorServiceImpl implements SensorService {
         influxDB.close();
 
         return mapPOJOToDTO(sensorMeasurements.get(0));
+    }
 
+    @Override
+    public List<SensorMeasurementDTO> readSensorMeasurementsInBetweenDates(Instant from, Instant to) {
+        InfluxDB influxDB = InfluxDBFactory.connect(host, username, password);
+
+        QueryResult queryResult = influxDB
+                .query(new Query("SELECT * FROM sensorMeasurement WHERE time >= '" + from + "' AND time <= '" + to + "'", "sensorMeasurement"));
+
+        InfluxDBResultMapper resultMapper = new InfluxDBResultMapper();
+        List<SensorMeasurement> sensorMeasurements = resultMapper
+                .toPOJO(queryResult, SensorMeasurement.class);
+
+        influxDB.close();
+
+        return mapPOJOsToDTOs(sensorMeasurements);
+    }
+
+    @Override
+    public List<SensorMeasurementDTO> readSensorMeasurementsInTheLastMinutes(Long minutes) {
+        Instant to = Instant.now();
+        Instant from = to.minusMillis(minutes);
+        return readSensorMeasurementsInBetweenDates(from, to);
     }
 
     private SensorMeasurementDTO mapPOJOToDTO(SensorMeasurement sensorMeasurement) {
-
         SensorMeasurementDTO sensorMeasurementDTO = new SensorMeasurementDTO();
         sensorMeasurementDTO.setGroundMoisture(sensorMeasurement.getGroundMoisture());
         sensorMeasurementDTO.setLightIntensity(sensorMeasurement.getLightIntensity());
         sensorMeasurementDTO.setSoilHumidity(sensorMeasurement.getSoilHumidity());
         sensorMeasurementDTO.setWindIntensity(sensorMeasurement.getWindIntensity());
         return sensorMeasurementDTO;
+    }
 
+    private List<SensorMeasurementDTO> mapPOJOsToDTOs(List<SensorMeasurement> measurements) {
+        return measurements.stream().map(this::mapPOJOToDTO).collect(Collectors.toList());
     }
 }
