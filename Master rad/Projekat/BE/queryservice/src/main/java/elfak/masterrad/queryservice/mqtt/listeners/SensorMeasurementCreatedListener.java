@@ -15,6 +15,8 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
+import java.util.UUID;
+
 @Component
 public class SensorMeasurementCreatedListener {
 
@@ -24,20 +26,19 @@ public class SensorMeasurementCreatedListener {
     private SensorService sensorService;
 
     @Value("${mosquitto.host}")
-    private String host;
+    private String mosquittoHost;
 
     @Value("${mosquitto.port}")
-    private String port;
+    private String mosquittoPort;
 
     @Value("${mosquitto.topic}")
-    private String topic;
+    private String mosquittoTopic;
+
+    private static final String publisherId = "query.sensorMeasurementListener["+ UUID.randomUUID().toString()+"]";
 
     @EventListener(ApplicationReadyEvent.class)
     private void initializeSubscriber() throws MqttException {
-
-        String publisherId = "com.ubicomp.elfak.ingestion.sensor.measurement";
-        String connectionString = buildConnectionString(host, port);
-        IMqttClient publisher = new MqttClient(connectionString, publisherId);
+        IMqttClient publisher = new MqttClient(returnConnectionString(mosquittoHost, mosquittoPort), publisherId);
         MqttConnectOptions options = new MqttConnectOptions();
         options.setAutomaticReconnect(true);
         options.setCleanSession(true);
@@ -48,7 +49,7 @@ public class SensorMeasurementCreatedListener {
             return;
         }
 
-        publisher.subscribe(topic, (topic, msg1) -> {
+        publisher.subscribe(mosquittoTopic, (topic, msg1) -> {
             byte[] payload = msg1.getPayload();
             String s = new String(payload);
             Gson gson = new Gson();
@@ -59,9 +60,7 @@ public class SensorMeasurementCreatedListener {
 
     }
 
-    private String buildConnectionString(String host, String port) {
-        return host +
-                ":" +
-                port;
+    private String returnConnectionString(String mosquittoHost, String mosquittoPort) {
+        return mosquittoHost + ":" + mosquittoPort;
     }
 }

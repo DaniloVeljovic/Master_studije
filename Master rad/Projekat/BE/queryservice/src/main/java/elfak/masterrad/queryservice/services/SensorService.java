@@ -4,8 +4,8 @@ import elfak.masterrad.queryservice.models.dto.SensorMeasurementDTO;
 
 public interface SensorService {
 
-    boolean storeMeasurement(SensorMeasurementDTO sensorMeasurement);
+    SensorMeasurementDTO storeMeasurement(SensorMeasurementDTO sensorMeasurement);
 
-    SensorMeasurementDTO readSensorMeasurement(String sensorId);
+    SensorMeasurementDTO readSensorMeasurement(Long sensorId);
 
 }

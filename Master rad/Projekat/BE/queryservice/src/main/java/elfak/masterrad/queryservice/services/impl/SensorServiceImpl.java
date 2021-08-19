@@ -29,8 +29,7 @@ public class SensorServiceImpl implements SensorService {
     private String password;
 
     @Override
-    public boolean storeMeasurement(SensorMeasurementDTO sensorMeasurement) {
-
+    public SensorMeasurementDTO storeMeasurement(SensorMeasurementDTO sensorMeasurement) {
         InfluxDB influxDB = InfluxDBFactory.connect(host, username, password);
 
         BatchPoints batchPoints = BatchPoints
@@ -40,10 +39,10 @@ public class SensorServiceImpl implements SensorService {
 
         Point point1 = Point.measurement("sensorMeasurement")
                 .time(System.currentTimeMillis(), TimeUnit.MILLISECONDS)
-                .addField("sensorType", sensorMeasurement.getSensorType())
-                .addField("value", sensorMeasurement.getValue())
-                .addField("sensorId", sensorMeasurement.getSensorId())
-                .addField("unit", sensorMeasurement.getUnit())
+                .addField("soilHumidity", sensorMeasurement.getSoilHumidity())
+                .addField("groundMoisture", sensorMeasurement.getGroundMoisture())
+                .addField("lightIntensity", sensorMeasurement.getLightIntensity())
+                .addField("windIntensity", sensorMeasurement.getWindIntensity())
                 .build();
 
         batchPoints.point(point1);
@@ -51,11 +50,11 @@ public class SensorServiceImpl implements SensorService {
 
         influxDB.close();
 
-        return true;
+        return sensorMeasurement;
     }
 
     @Override
-    public SensorMeasurementDTO readSensorMeasurement(String sensorId) {
+    public SensorMeasurementDTO readSensorMeasurement(Long sensorId) {
         InfluxDB influxDB = InfluxDBFactory.connect(host, username, password);
 
         QueryResult queryResult = influxDB
@@ -74,10 +73,10 @@ public class SensorServiceImpl implements SensorService {
     private SensorMeasurementDTO mapPOJOToDTO(SensorMeasurement sensorMeasurement) {
 
         SensorMeasurementDTO sensorMeasurementDTO = new SensorMeasurementDTO();
-        sensorMeasurementDTO.setSensorId(sensorMeasurement.getSensorId());
-        sensorMeasurementDTO.setSensorType(sensorMeasurement.getSensorType());
-        sensorMeasurementDTO.setUnit(sensorMeasurement.getUnit());
-        sensorMeasurementDTO.setValue(sensorMeasurement.getValue());
+        sensorMeasurementDTO.setGroundMoisture(sensorMeasurement.getGroundMoisture());
+        sensorMeasurementDTO.setLightIntensity(sensorMeasurement.getLightIntensity());
+        sensorMeasurementDTO.setSoilHumidity(sensorMeasurement.getSoilHumidity());
+        sensorMeasurementDTO.setWindIntensity(sensorMeasurement.getWindIntensity());
         return sensorMeasurementDTO;
 
     }

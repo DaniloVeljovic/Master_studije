@@ -17,14 +17,7 @@ public class SensorController {
 
     @CrossOrigin(origins = "http://localhost:3000", allowedHeaders = {"*"})
     @GetMapping("/{sensorId}")
-    public @ResponseBody ResponseEntity<SensorMeasurementDTO> readSensorMeasurement(@PathVariable String sensorId) {
+    public @ResponseBody ResponseEntity<SensorMeasurementDTO> readSensorMeasurement(@PathVariable Long sensorId) {
         return ResponseEntity.ok(sensorService.readSensorMeasurement(sensorId));
     }
-
-//    @CrossOrigin(origins = "http://localhost:3000")
-//    @GetMapping("/{sensorId}")
-//    public @ResponseBody ResponseEntity<SensorMeasurementDTO> readSensorMeasurement(@PathVariable Long sensorId) {
-//        return ResponseEntity.ok(sensorService.readSensorMeasurement(sensorId));
-//    }
-
 }

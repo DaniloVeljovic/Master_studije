@@ -4,53 +4,54 @@ import java.io.Serializable;
 
 public class SensorMeasurementDTO implements Serializable {
 
-    private String sensorType;
 
-    private Double value;
+    private Double lightIntensity;
 
-    private Integer sensorId;
+    private Double groundMoisture;
 
-    private String unit;
+    private Double windIntensity;
 
-    public String getSensorType() {
-        return sensorType;
+    private Double soilHumidity;
+
+    public Double getLightIntensity() {
+        return lightIntensity;
     }
 
-    public void setSensorType(String sensorType) {
-        this.sensorType = sensorType;
+    public void setLightIntensity(Double lightIntensity) {
+        this.lightIntensity = lightIntensity;
     }
 
-    public Double getValue() {
-        return value;
+    public Double getGroundMoisture() {
+        return groundMoisture;
     }
 
-    public void setValue(Double value) {
-        this.value = value;
+    public void setGroundMoisture(Double groundMoisture) {
+        this.groundMoisture = groundMoisture;
     }
 
-    public Integer getSensorId() {
-        return sensorId;
+    public Double getWindIntensity() {
+        return windIntensity;
     }
 
-    public void setSensorId(Integer sensorId) {
-        this.sensorId = sensorId;
+    public void setWindIntensity(Double windIntensity) {
+        this.windIntensity = windIntensity;
     }
 
-    public String getUnit() {
-        return unit;
+    public Double getSoilHumidity() {
+        return soilHumidity;
     }
 
-    public void setUnit(String unit) {
-        this.unit = unit;
+    public void setSoilHumidity(Double soilHumidity) {
+        this.soilHumidity = soilHumidity;
     }
 
     @Override
     public String toString() {
         return "SensorMeasurementDTO{" +
-                "sensorType='" + sensorType + '\'' +
-                ", value=" + value +
-                ", sensorId=" + sensorId +
-                ", unit='" + unit + '\'' +
+                "lightIntensity=" + lightIntensity +
+                ", groundMoisture=" + groundMoisture +
+                ", windIntensity=" + windIntensity +
+                ", soilHumidity='" + soilHumidity + '\'' +
                 '}';
     }
 }
