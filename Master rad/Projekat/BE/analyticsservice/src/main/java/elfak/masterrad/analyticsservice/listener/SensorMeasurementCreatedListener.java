@@ -11,6 +11,7 @@ import org.eclipse.paho.client.mqttv3.MqttException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
@@ -23,12 +24,20 @@ public class SensorMeasurementCreatedListener {
     @Autowired
     private SensorService sensorService;
 
-    @EventListener(ApplicationReadyEvent.class)
-    private void initializeSubscriber() throws InterruptedException, MqttException {
+    @Value("${mosquitto.host}")
+    private String mosquittoHost;
 
-        String publisherId = "com.ubicomp.elfak.sensorMeasurementListener";
-        String topicName = "devices/sensors";
-        IMqttClient publisher = new MqttClient("tcp://localhost:1883", publisherId);
+    @Value("${mosquitto.port}")
+    private String mosquittoPort;
+
+    @Value("${mosquitto.topic}")
+    private String mosquittoTopic;
+
+    private static final String publisherId = "analytics.sensorMeasurementListener";
+
+    @EventListener(ApplicationReadyEvent.class)
+    private void initializeSubscriber() throws MqttException {
+        IMqttClient publisher = new MqttClient(returnConnectionString(mosquittoHost, mosquittoPort), publisherId);
         MqttConnectOptions options = new MqttConnectOptions();
         options.setAutomaticReconnect(true);
         options.setCleanSession(true);
@@ -39,16 +48,19 @@ public class SensorMeasurementCreatedListener {
             return;
         }
 
-        publisher.subscribe(topicName, (topic, msg1) -> {
+        publisher.subscribe(mosquittoTopic, (topic, msg1) -> {
             byte[] payload = msg1.getPayload();
             String s = new String(payload);
             Gson gson = new Gson();
             SensorMeasurementDTO sensorMeasurementDTO = gson.fromJson(s, SensorMeasurementDTO.class);
             log.info("Received measurement: " + sensorMeasurementDTO);
-            //if(sensorMeasurementDTO.getSensorId() != null)
             sensorService.createSensorMeasurement(sensorMeasurementDTO);
             sensorService.analyzeMeasurementAndActuateIfNeeded(sensorMeasurementDTO);
         });
 
+    }
+
+    private String returnConnectionString(String mosquittoHost, String mosquittoPort) {
+        return mosquittoHost + ":" + mosquittoPort;
     }
 }

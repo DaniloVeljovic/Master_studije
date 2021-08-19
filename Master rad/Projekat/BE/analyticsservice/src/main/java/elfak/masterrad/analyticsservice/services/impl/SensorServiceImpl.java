@@ -1,6 +1,5 @@
 package elfak.masterrad.analyticsservice.services.impl;
 
-
 import elfak.masterrad.analyticsservice.models.dto.SensorMeasurementDTO;
 import elfak.masterrad.analyticsservice.services.SensorService;
 import net.sf.javaml.classification.Classifier;
@@ -13,6 +12,8 @@ import org.influxdb.InfluxDB;
 import org.influxdb.InfluxDBFactory;
 import org.influxdb.dto.BatchPoints;
 import org.influxdb.dto.Point;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
@@ -34,49 +35,31 @@ public class SensorServiceImpl implements SensorService {
     @Value("${influx.password}")
     private String password;
 
+    @Value("${model.location}")
+    private String modelPath;
+
+    @Value("${model.dataset}")
+    private String datasetPath;
+
     private static Classifier classifier;
 
     private final static Object shouldActuateIfPredicted = "Bad";
 
+    private final Logger logger = LoggerFactory.getLogger(SensorServiceImpl.class);
+
     @EventListener(ApplicationReadyEvent.class)
     public void trainOrAcquireModel() throws IOException {
-        File model =
-                new File("C:\\Users\\danil\\Desktop\\Master_studije\\Master rad\\Projekat\\BE\\analyticsservice\\src\\main\\resources\\classifier.ser");
+        File model = new File(modelPath);
 
+        //if exist, read it
         if(model.exists()) {
-            try {
-                FileInputStream fileIn = new FileInputStream("/tmp/employee.ser");
-                ObjectInputStream in = new ObjectInputStream(fileIn);
-                classifier = (Classifier) in.readObject();
-                in.close();
-                fileIn.close();
-            } catch (IOException i) {
-                i.printStackTrace();
-                return;
-            } catch (ClassNotFoundException c) {
-                System.out.println("Employee class not found");
-                c.printStackTrace();
-                return;
-            }
+            classifier = loadModelFromFS(modelPath);
             return;
         }
 
-        File file = new File("C:\\Users\\danil\\Desktop\\Master_studije\\Master rad\\Projekat\\BE\\analyticsservice\\src\\main\\resources\\iris.data");
-        Dataset data = FileHandler.loadDataset(file, 4, ",");
-        classifier = new KNearestNeighbors(5);
-        classifier.buildClassifier(data);
-
-        try {
-            FileOutputStream fileOut =
-                    new FileOutputStream("C:\\Users\\danil\\Desktop\\Master_studije\\Master rad\\Projekat\\BE\\analyticsservice\\src\\main\\resources\\classifier.ser");
-            ObjectOutputStream out = new ObjectOutputStream(fileOut);
-            out.writeObject(classifier);
-            out.close();
-            fileOut.close();
-            System.out.printf("Serialized data is saved in /tmp/classifier.ser");
-        } catch (IOException i) {
-            i.printStackTrace();
-        }
+        //if not, create it
+        classifier = createAndTrainModel(datasetPath);
+        writeModelToFS(modelPath, classifier);
     }
 
     @Override
@@ -122,5 +105,45 @@ public class SensorServiceImpl implements SensorService {
     @Override
     public void sendActuationMessage(Date activationDate, long length, String pinToActivate) {
         //send message to a Kafka topic with these params
+    }
+
+    private Classifier loadModelFromFS(String pathToModel) {
+        try {
+            FileInputStream fileIn = new FileInputStream(pathToModel);
+            ObjectInputStream in = new ObjectInputStream(fileIn);
+            Classifier classifier = (Classifier) in.readObject();
+            in.close();
+            fileIn.close();
+            return classifier;
+        } catch (IOException i) {
+            i.printStackTrace();
+            return null;
+        } catch (ClassNotFoundException c) {
+            logger.error("Model not found");
+            c.printStackTrace();
+            return null;
+        }
+    }
+
+    private Classifier createAndTrainModel(String datasetPath) throws IOException {
+        File file = new File(datasetPath);
+        Dataset data = FileHandler.loadDataset(file, 4, ",");
+        Classifier classifier = new KNearestNeighbors(5);
+        classifier.buildClassifier(data);
+        return classifier;
+    }
+
+    private void writeModelToFS(String pathToModel, Classifier classifier) {
+        try {
+            FileOutputStream fileOut =
+                    new FileOutputStream(pathToModel);
+            ObjectOutputStream out = new ObjectOutputStream(fileOut);
+            out.writeObject(classifier);
+            out.close();
+            fileOut.close();
+            logger.info("Serialized data is saved in classifier.ser");
+        } catch (IOException i) {
+            i.printStackTrace();
+        }
     }
 }
