@@ -11,17 +11,17 @@ public class SensorMeasurement {
     @Column(name = "time")
     private Instant time;
 
-    @Column(name = "sensorType")
-    private String sensorType;
+    @Column(name = "lightIntensity")
+    private Double lightIntensity;
 
-    @Column(name = "value")
-    private Double value;
+    @Column(name = "groundMoisture")
+    private Double groundMoisture;
 
-    @Column(name = "sensorId")
-    private Integer sensorId;
+    @Column(name = "windIntensity")
+    private Double windIntensity;
 
-    @Column(name = "unit")
-    private String unit;
+    @Column(name = "soilHumidity")
+    private Double soilHumidity;
 
     public Instant getTime() {
         return time;
@@ -31,35 +31,46 @@ public class SensorMeasurement {
         this.time = time;
     }
 
-    public String getSensorType() {
-        return sensorType;
+    public Double getLightIntensity() {
+        return lightIntensity;
     }
 
-    public void setSensorType(String sensorType) {
-        this.sensorType = sensorType;
+    public void setLightIntensity(Double lightIntensity) {
+        this.lightIntensity = lightIntensity;
     }
 
-    public Double getValue() {
-        return value;
+    public Double getGroundMoisture() {
+        return groundMoisture;
     }
 
-    public void setValue(Double value) {
-        this.value = value;
+    public void setGroundMoisture(Double groundMoisture) {
+        this.groundMoisture = groundMoisture;
     }
 
-    public Integer getSensorId() {
-        return sensorId;
+    public Double getWindIntensity() {
+        return windIntensity;
     }
 
-    public void setSensorId(Integer sensorId) {
-        this.sensorId = sensorId;
+    public void setWindIntensity(Double windIntensity) {
+        this.windIntensity = windIntensity;
     }
 
-    public String getUnit() {
-        return unit;
+    public Double getSoilHumidity() {
+        return soilHumidity;
     }
 
-    public void setUnit(String unit) {
-        this.unit = unit;
+    public void setSoilHumidity(Double soilHumidity) {
+        this.soilHumidity = soilHumidity;
+    }
+
+    @Override
+    public String toString() {
+        return "SensorMeasurement{" +
+                "time=" + time +
+                ", lightIntensity=" + lightIntensity +
+                ", groundMoisture=" + groundMoisture +
+                ", windIntensity=" + windIntensity +
+                ", soilHumidity=" + soilHumidity +
+                '}';
     }
 }

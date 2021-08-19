@@ -4,6 +4,6 @@ import elfak.masterrad.ingestionservice.models.dto.SensorMeasurementDTO;
 
 public interface SensorService {
 
-    boolean storeMeasurement(SensorMeasurementDTO sensorMeasurement);
+    SensorMeasurementDTO storeMeasurement(SensorMeasurementDTO sensorMeasurement);
 
 }

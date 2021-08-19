@@ -1,4 +1,4 @@
-package elfak.masterrad.ingestionservice.mqtt.listeners;
+package elfak.masterrad.ingestionservice.mosquitto.listeners;
 
 import com.google.gson.Gson;
 import elfak.masterrad.ingestionservice.models.dto.SensorMeasurementDTO;
@@ -15,6 +15,8 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
+import java.util.UUID;
+
 @Component
 public class SensorMeasurementCreatedListener {
 
@@ -24,19 +26,19 @@ public class SensorMeasurementCreatedListener {
     private SensorService sensorService;
 
     @Value("${mosquitto.host}")
-    private String host;
+    private String mosquittoHost;
 
     @Value("${mosquitto.port}")
-    private String port;
+    private String mosquittoPort;
 
     @Value("${mosquitto.topic}")
-    private String topic;
+    private String mosquittoTopic;
+
+    private static final String publisherId = "ingestion.sensorMeasurementListener["+ UUID.randomUUID().toString()+"]";
 
     @EventListener(ApplicationReadyEvent.class)
     private void initializeSubscriber() throws MqttException {
-
-        String publisherId = "com.ubicomp.elfak.ingestion.sensor.measurement";
-        IMqttClient publisher = new MqttClient(host + port, publisherId);
+        IMqttClient publisher = new MqttClient(returnConnectionString(mosquittoHost, mosquittoPort), publisherId);
         MqttConnectOptions options = new MqttConnectOptions();
         options.setAutomaticReconnect(true);
         options.setCleanSession(true);
@@ -47,7 +49,7 @@ public class SensorMeasurementCreatedListener {
             return;
         }
 
-        publisher.subscribe(topic, (topic, msg1) -> {
+        publisher.subscribe(mosquittoTopic, (topic, msg1) -> {
             byte[] payload = msg1.getPayload();
             String s = new String(payload);
             Gson gson = new Gson();
@@ -56,5 +58,9 @@ public class SensorMeasurementCreatedListener {
             sensorService.storeMeasurement(sensorMeasurementDTO);
         });
 
+    }
+
+    private String returnConnectionString(String mosquittoHost, String mosquittoPort) {
+        return mosquittoHost + ":" + mosquittoPort;
     }
 }

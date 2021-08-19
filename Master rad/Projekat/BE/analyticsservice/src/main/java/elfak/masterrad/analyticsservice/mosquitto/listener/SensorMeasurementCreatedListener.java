@@ -1,4 +1,4 @@
-package elfak.masterrad.analyticsservice.listener;
+package elfak.masterrad.analyticsservice.mosquitto.listener;
 
 import com.google.gson.Gson;
 
@@ -15,6 +15,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
+
+import java.util.UUID;
 
 @Component
 public class SensorMeasurementCreatedListener {
@@ -33,7 +35,7 @@ public class SensorMeasurementCreatedListener {
     @Value("${mosquitto.topic}")
     private String mosquittoTopic;
 
-    private static final String publisherId = "analytics.sensorMeasurementListener";
+    private static final String publisherId = "analytics.sensorMeasurementListener["+ UUID.randomUUID().toString()+"]";
 
     @EventListener(ApplicationReadyEvent.class)
     private void initializeSubscriber() throws MqttException {
