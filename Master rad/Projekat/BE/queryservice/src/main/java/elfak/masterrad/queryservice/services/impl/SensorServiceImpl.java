@@ -10,6 +10,8 @@ import org.influxdb.dto.Point;
 import org.influxdb.dto.Query;
 import org.influxdb.dto.QueryResult;
 import org.influxdb.impl.InfluxDBResultMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -31,6 +33,8 @@ public class SensorServiceImpl implements SensorService {
     @Value("${influx.password}")
     private String password;
 
+    private final Logger logger = LoggerFactory.getLogger(SensorServiceImpl.class);
+
     @Override
     public SensorMeasurementDTO storeMeasurement(SensorMeasurementDTO sensorMeasurement) {
         InfluxDB influxDB = InfluxDBFactory.connect(host, username, password);
@@ -50,7 +54,7 @@ public class SensorServiceImpl implements SensorService {
 
         batchPoints.point(point1);
         influxDB.write(batchPoints);
-
+        logger.info("Saved measurement: " + sensorMeasurement);
         influxDB.close();
 
         return sensorMeasurement;
