@@ -1,5 +1,7 @@
 package elfak.masterrad.analyticsservice.services.impl;
 
+import elfak.masterrad.analyticsservice.kafka.models.ActuationMessage;
+import elfak.masterrad.analyticsservice.kafka.publishers.ActuationMessagePublisher;
 import elfak.masterrad.analyticsservice.models.dto.SensorMeasurementDTO;
 import elfak.masterrad.analyticsservice.services.SensorService;
 import net.sf.javaml.classification.Classifier;
@@ -14,6 +16,7 @@ import org.influxdb.dto.BatchPoints;
 import org.influxdb.dto.Point;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
@@ -25,6 +28,9 @@ import java.util.concurrent.TimeUnit;
 
 @Service
 public class SensorServiceImpl implements SensorService {
+
+    @Autowired
+    private ActuationMessagePublisher publisher;
 
     @Value("${influx.host}")
     private String host;
@@ -104,7 +110,7 @@ public class SensorServiceImpl implements SensorService {
 
     @Override
     public void sendActuationMessage(Date activationDate, long length, String pinToActivate) {
-        //send message to a Kafka topic with these params
+        publisher.publishMessage(new ActuationMessage(activationDate, length, pinToActivate));
     }
 
     private Classifier loadModelFromFS(String pathToModel) {
