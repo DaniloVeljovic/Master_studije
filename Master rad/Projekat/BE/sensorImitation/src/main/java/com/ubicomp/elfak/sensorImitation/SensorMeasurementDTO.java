@@ -4,6 +4,8 @@ import java.io.Serializable;
 
 public class SensorMeasurementDTO implements Serializable {
 
+    private String requestId;
+
     private String lightIntensity;
 
     private String groundMoisture;
@@ -12,7 +14,8 @@ public class SensorMeasurementDTO implements Serializable {
 
     private String soilHumidity;
 
-    public SensorMeasurementDTO() {}
+    public SensorMeasurementDTO() {
+    }
 
     public SensorMeasurementDTO(String lightIntensity, String groundMoisture, String windIntensity, String soilHumidity) {
         this.lightIntensity = lightIntensity;
@@ -53,10 +56,19 @@ public class SensorMeasurementDTO implements Serializable {
         this.soilHumidity = soilHumidity;
     }
 
+    public String getRequestId() {
+        return requestId;
+    }
+
+    public void setRequestId(String requestId) {
+        this.requestId = requestId;
+    }
+
     @Override
     public String toString() {
         return "SensorMeasurementDTO{" +
-                "lightIntensity='" + lightIntensity + '\'' +
+                "requestId='" + requestId + '\'' +
+                ", lightIntensity='" + lightIntensity + '\'' +
                 ", groundMoisture='" + groundMoisture + '\'' +
                 ", windIntensity='" + windIntensity + '\'' +
                 ", soilHumidity='" + soilHumidity + '\'' +
