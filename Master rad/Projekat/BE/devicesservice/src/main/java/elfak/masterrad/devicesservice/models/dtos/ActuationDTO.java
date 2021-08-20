@@ -1,28 +1,11 @@
-package elfak.masterrad.devicesservice.entities;
+package elfak.masterrad.devicesservice.models.dtos;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import java.util.Date;
 
-@Entity
-public class Actuation {
-    @Id
-    @GeneratedValue(strategy=GenerationType.AUTO)
-    private Integer id;
-
+public class ActuationDTO {
     private Date activationDate;
     private Long length;
     private String pinToActivate;
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
 
     public Date getActivationDate() {
         return activationDate;
@@ -50,9 +33,8 @@ public class Actuation {
 
     @Override
     public String toString() {
-        return "Actuation{" +
-                "id=" + id +
-                ", activationDate=" + activationDate +
+        return "ActuationDTO{" +
+                "activationDate=" + activationDate +
                 ", length=" + length +
                 ", pinToActivate='" + pinToActivate + '\'' +
                 '}';

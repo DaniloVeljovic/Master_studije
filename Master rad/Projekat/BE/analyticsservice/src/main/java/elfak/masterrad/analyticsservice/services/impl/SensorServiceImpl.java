@@ -113,13 +113,13 @@ public class SensorServiceImpl implements SensorService {
         logger.info("Predicted class for sensor measurement " + sensorMeasurementDTO + " is " + predictedClass);
         if(predictedClass.equals(shouldActuateIfPredicted)) {
             logger.info("Performing actuation.");
-            sendActuationMessage(new Date(), 5000L, "GPIO_01");
+            sendActuationMessage(new Date(), 5000L, "GPIO_01", "1");
         }
     }
 
     @Override
-    public void sendActuationMessage(Date activationDate, long length, String pinToActivate) {
-        publisher.publishMessage(new ActuationMessage(activationDate, length, pinToActivate));
+    public void sendActuationMessage(Date activationDate, long length, String pinToActivate, String deviceId) {
+        publisher.publishMessage(new ActuationMessage(activationDate, length, pinToActivate, deviceId));
     }
 
     private Classifier loadModelFromFS(String pathToModel) {

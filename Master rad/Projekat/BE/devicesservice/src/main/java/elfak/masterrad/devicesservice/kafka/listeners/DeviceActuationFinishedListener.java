@@ -8,14 +8,10 @@ import elfak.masterrad.devicesservice.services.ActuationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.annotation.KafkaListener;
-import org.springframework.stereotype.Component;
 
-@Component
-public class ActuationMessageListener {
-
-    private final Logger logger = LoggerFactory.getLogger(ActuationMessageListener.class);
+public class DeviceActuationFinishedListener {
+    private final Logger logger = LoggerFactory.getLogger(DeviceActuationFinishedListener.class);
 
     @Autowired
     private ActuationService actuationService;
@@ -23,13 +19,11 @@ public class ActuationMessageListener {
     @Autowired
     private Mapper mapper;
 
-    @KafkaListener(topics = "${kafka.actuationMessageTopic}", containerFactory = "greetingKafkaListenerContainerFactory")
-    public void messageListener(ActuationMessage message) {
-        logger.info("Received actuation message: " + message);
-        Actuation actuation = mapper.mapMessageToEntity(message);
-        actuation.setStatus(ActuationStatus.NEW);
+    @KafkaListener(topics = "${kafka.actuationFinished}", containerFactory = "greetingKafkaListenerContainerFactory")
+    public void messageListener(Actuation actuation) {
+        logger.info("Finished with actuation: " + actuation);
+        actuation.setStatus(ActuationStatus.FINISHED);
         actuationService.saveActuation(actuation);
     }
-
 
 }

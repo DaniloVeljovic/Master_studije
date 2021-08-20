@@ -1,23 +1,36 @@
-package elfak.masterrad.analyticsservice.kafka.models;
+package elfak.masterrad.devicesservice.models.entities;
 
+import elfak.masterrad.devicesservice.models.ActuationStatus;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import java.util.Date;
 
-public class ActuationMessage {
+@Entity
+public class Actuation {
+
+    @Id
+    @GeneratedValue(strategy=GenerationType.AUTO)
+    private Integer id;
 
     private Date activationDate;
+
     private Long length;
+
     private String pinToActivate;
+
+    private ActuationStatus status;
+
     private String deviceId;
 
-    public ActuationMessage() {
-
+    public Integer getId() {
+        return id;
     }
 
-    public ActuationMessage(Date activationDate, Long length, String pinToActivate, String deviceId) {
-        this.activationDate = activationDate;
-        this.length = length;
-        this.pinToActivate = pinToActivate;
-        this.deviceId = deviceId;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public Date getActivationDate() {
@@ -44,6 +57,14 @@ public class ActuationMessage {
         this.pinToActivate = pinToActivate;
     }
 
+    public ActuationStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(ActuationStatus status) {
+        this.status = status;
+    }
+
     public String getDeviceId() {
         return deviceId;
     }
@@ -54,10 +75,12 @@ public class ActuationMessage {
 
     @Override
     public String toString() {
-        return "ActuationMessage{" +
-                "activationDate=" + activationDate +
+        return "Actuation{" +
+                "id=" + id +
+                ", activationDate=" + activationDate +
                 ", length=" + length +
                 ", pinToActivate='" + pinToActivate + '\'' +
+                ", status=" + status +
                 ", deviceId='" + deviceId + '\'' +
                 '}';
     }

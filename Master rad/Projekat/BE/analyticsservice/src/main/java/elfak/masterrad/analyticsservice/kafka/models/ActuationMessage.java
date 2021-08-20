@@ -7,15 +7,17 @@ public class ActuationMessage {
     private Date activationDate;
     private Long length;
     private String pinToActivate;
+    private String deviceId;
 
     public ActuationMessage() {
 
     }
 
-    public ActuationMessage(Date activationDate, Long length, String pinToActivate) {
+    public ActuationMessage(Date activationDate, Long length, String pinToActivate, String deviceId) {
         this.activationDate = activationDate;
         this.length = length;
         this.pinToActivate = pinToActivate;
+        this.deviceId = deviceId;
     }
 
     public Date getActivationDate() {

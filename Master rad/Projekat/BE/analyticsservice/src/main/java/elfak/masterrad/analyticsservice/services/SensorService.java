@@ -12,5 +12,5 @@ public interface SensorService {
 
     void analyzeMeasurementAndActuateIfNeeded(SensorMeasurementDTO sensorMeasurementDTO);
 
-    void sendActuationMessage(Date date, long l, String pin);
+    void sendActuationMessage(Date date, long l, String pin, String deviceId);
 }

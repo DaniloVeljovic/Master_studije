@@ -16,8 +16,14 @@ public class KafkaTopicConfig {
     @Value(value = "${kafka.bootstrapAddress}")
     private String bootstrapAddress;
 
-    @Value(value = "${kafka.actuationTopic}")
+    @Value(value = "${kafka.actuationMessageTopic}")
+    private String actuationMessageTopic;
+
+    @Value(value = "${kafka.actuationToDeviceTopic}")
     private String actuationTopic;
+
+    @Value(value = "${kafka.actuationFinished}")
+    private String actuationFinished;
 
     @Bean
     public KafkaAdmin kafkaAdmin() {
@@ -27,7 +33,16 @@ public class KafkaTopicConfig {
     }
 
     @Bean
-    public NewTopic createTopic() {
+    public NewTopic createMessageActuationTopic() {
+        return new NewTopic(actuationMessageTopic, 1, (short) 1);
+    }
+
+    @Bean
+    public NewTopic createActuationDeviceTopic() {
         return new NewTopic(actuationTopic, 1, (short) 1);
     }
+
+    @Bean
+    public NewTopic createActuationFinished() { return new NewTopic(actuationFinished, 1, (short) 1); }
+
 }

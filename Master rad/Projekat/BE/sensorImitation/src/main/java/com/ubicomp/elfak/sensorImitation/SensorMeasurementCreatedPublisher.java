@@ -55,7 +55,7 @@ public class SensorMeasurementCreatedPublisher {
                     String[] dataArray = data.split(",");
                     MqttMessage msg = createMqttMessage(dataArray);
                     publishMessage(publisher, msg);
-                    Thread.sleep(5000L);
+                    Thread.sleep(1000L);
                 }
                 myReader.close();
             } catch (FileNotFoundException e) {
