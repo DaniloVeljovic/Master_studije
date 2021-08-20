@@ -44,12 +44,21 @@ public class ActuationMessage {
         this.pinToActivate = pinToActivate;
     }
 
+    public String getDeviceId() {
+        return deviceId;
+    }
+
+    public void setDeviceId(String deviceId) {
+        this.deviceId = deviceId;
+    }
+
     @Override
     public String toString() {
         return "ActuationMessage{" +
                 "activationDate=" + activationDate +
                 ", length=" + length +
                 ", pinToActivate='" + pinToActivate + '\'' +
+                ", deviceId='" + deviceId + '\'' +
                 '}';
     }
 }
