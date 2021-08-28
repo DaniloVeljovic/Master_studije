@@ -111,7 +111,7 @@ public class SensorServiceImpl implements SensorService {
         InfluxDB influxDB = InfluxDBFactory.connect(host, username, password);
 
         QueryResult queryResult = influxDB
-                .query(new Query("SELECT * FROM sensorMeasurement WHERE lightIntensity >= '" + lightIntensityThreshold + " LIMIT 5", "sensorMeasurement"));
+                .query(new Query("SELECT * FROM sensorMeasurement WHERE lightIntensity >= " + lightIntensityThreshold + " LIMIT 5", "sensorMeasurement"));
 
         InfluxDBResultMapper resultMapper = new InfluxDBResultMapper();
         List<SensorMeasurement> sensorMeasurements = resultMapper

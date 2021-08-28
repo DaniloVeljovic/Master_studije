@@ -38,7 +38,7 @@ public class SensorController {
 
     @CrossOrigin(origins = "http://localhost:3000", allowedHeaders = {"*"})
     @GetMapping("/lightIntensity/{threshold}")
-    public @ResponseBody ResponseEntity<List<SensorMeasurementDTO>> readSensorMeasurementOverLightIntensityThreshold(Double lightIntensityThreshold) {
-        return ResponseEntity.ok(sensorService.readSensorMeasurementOverLightIntensityThreshold(lightIntensityThreshold));
+    public @ResponseBody ResponseEntity<List<SensorMeasurementDTO>> readSensorMeasurementOverLightIntensityThreshold(@PathVariable Double threshold) {
+        return ResponseEntity.ok(sensorService.readSensorMeasurementOverLightIntensityThreshold(threshold));
     }
 }
