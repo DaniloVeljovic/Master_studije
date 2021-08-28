@@ -12,7 +12,9 @@ import org.influxdb.dto.QueryResult;
 import org.influxdb.impl.InfluxDBResultMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
@@ -32,6 +34,9 @@ public class SensorServiceImpl implements SensorService {
 
     @Value("${influx.password}")
     private String password;
+
+    @Autowired
+    SimpMessagingTemplate template;
 
     private final Logger logger = LoggerFactory.getLogger(SensorServiceImpl.class);
 
@@ -56,6 +61,8 @@ public class SensorServiceImpl implements SensorService {
         influxDB.write(batchPoints);
         logger.info("Saved measurement: " + sensorMeasurement);
         influxDB.close();
+
+        template.convertAndSend("/topic/message", sensorMeasurement);
 
         return sensorMeasurement;
     }
