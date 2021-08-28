@@ -35,4 +35,10 @@ public class SensorController {
     public @ResponseBody ResponseEntity<SensorMeasurementDTO> readLatestMeasurement() {
         return ResponseEntity.ok(sensorService.readLatestSensorMeasurement());
     }
+
+    @CrossOrigin(origins = "http://localhost:3000", allowedHeaders = {"*"})
+    @GetMapping("/lightIntensity/{threshold}")
+    public @ResponseBody ResponseEntity<List<SensorMeasurementDTO>> readSensorMeasurementOverLightIntensityThreshold(Double lightIntensityThreshold) {
+        return ResponseEntity.ok(sensorService.readSensorMeasurementOverLightIntensityThreshold(lightIntensityThreshold));
+    }
 }

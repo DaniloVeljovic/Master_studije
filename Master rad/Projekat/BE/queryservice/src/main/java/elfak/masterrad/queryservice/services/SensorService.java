@@ -14,4 +14,6 @@ public interface SensorService {
     List<SensorMeasurementDTO> readSensorMeasurementsInBetweenDates(Instant from, Instant to);
 
     List<SensorMeasurementDTO> readSensorMeasurementsInTheLastMinutes(Long minutes);
+
+    List<SensorMeasurementDTO> readSensorMeasurementOverLightIntensityThreshold(Double lightIntensityThreshold);
 }

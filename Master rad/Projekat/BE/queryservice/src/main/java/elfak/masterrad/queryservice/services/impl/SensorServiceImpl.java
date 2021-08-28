@@ -81,7 +81,7 @@ public class SensorServiceImpl implements SensorService {
         InfluxDB influxDB = InfluxDBFactory.connect(host, username, password);
 
         QueryResult queryResult = influxDB
-                .query(new Query("SELECT * FROM sensorMeasurement WHERE time >= '" + from + "' AND time <= '" + to + "'", "sensorMeasurement"));
+                .query(new Query("SELECT * FROM sensorMeasurement WHERE time >= '" + from + "' AND time <= '" + to + "' LIMIT 5", "sensorMeasurement"));
 
         InfluxDBResultMapper resultMapper = new InfluxDBResultMapper();
         List<SensorMeasurement> sensorMeasurements = resultMapper
@@ -97,6 +97,22 @@ public class SensorServiceImpl implements SensorService {
         Instant to = Instant.now();
         Instant from = to.minusMillis(minutes);
         return readSensorMeasurementsInBetweenDates(from, to);
+    }
+
+    @Override
+    public List<SensorMeasurementDTO> readSensorMeasurementOverLightIntensityThreshold(Double lightIntensityThreshold) {
+        InfluxDB influxDB = InfluxDBFactory.connect(host, username, password);
+
+        QueryResult queryResult = influxDB
+                .query(new Query("SELECT * FROM sensorMeasurement WHERE lightIntensity >= '" + lightIntensityThreshold + " LIMIT 5", "sensorMeasurement"));
+
+        InfluxDBResultMapper resultMapper = new InfluxDBResultMapper();
+        List<SensorMeasurement> sensorMeasurements = resultMapper
+                .toPOJO(queryResult, SensorMeasurement.class);
+
+        influxDB.close();
+
+        return mapPOJOsToDTOs(sensorMeasurements);
     }
 
     private SensorMeasurementDTO mapPOJOToDTO(SensorMeasurement sensorMeasurement) {
